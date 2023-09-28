@@ -1,12 +1,4 @@
-import { UserCreditsModels } from "../src/db/index";
-import {Offer} from "../src/db/schema/Offer";
-
-let dbModels: UserCreditsModels;
-let offerOrm: Offer;
-
 beforeAll(() => {
-  dbModels = new UserCreditsModels();
-  offerOrm = dbModels.getOffer()
 });
 
 describe("add function", () => {
