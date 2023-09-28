@@ -4,10 +4,10 @@ export interface OrderStatus {
   status: "pending" | "paid" | "refused";
 }
 
-export interface IOrder {
+export interface IOrder<K extends object> {
   // history: [OrderStatus];
-  offerId: unknown;
+  offerId: K;
   status: "pending" | "paid" | "refused";
   tokenCount: number;
-  userId: unknown;
+  userId: K;
 }

@@ -1,4 +1,4 @@
-import mongoose, {Model} from "mongoose";
+import mongoose, {Model, ObjectId} from "mongoose";
 
 import offerModel from "./Offer";
 import orderModel from "./Order";
@@ -9,7 +9,7 @@ import {IUserCredits} from "../../../db/model/IUserCredits";
 
 export class UserCreditsModels {
   private offer: Model<IOffer>;
-  private order: Model<IOrder>;
+  private order: Model<IOrder<ObjectId>>;
   private userCredits: Model<IUserCredits>;
 
   constructor() {
@@ -32,7 +32,7 @@ export class UserCreditsModels {
     return this.offer;
   }
 
-  orderDao(): Model<IOrder> {
+  orderDao(): Model<IOrder<ObjectId>> {
     return this.order;
   }
 

@@ -1,3 +1,5 @@
+import { Types } from "mongoose";
+
 import { Payment } from "../../../src/impl/mongoose/service/Payment";
 
 // Mocking implementation of the IPayment interface
@@ -13,8 +15,8 @@ beforeAll(async () => {
 //NOTE ideally this code should go to the base tests: https://stackoverflow.com/questions/77192614/how-how-to-define-a-generic-test-with-interfaces-in-jest-then-run-it-for-each-im
 describe("IPayment implementation should be able to create an order, execute it, get notified of updates and tell the user token credit status", () => {
   it("createOrder should return an IOrder object", async () => {
-    const offerId = "123";
-    const userId = "456";
+    const offerId = new Types.ObjectId();
+    const userId = new Types.ObjectId();
     const order = await paymentService.createOrder(offerId, userId);
     expect(order).toBeDefined();
     expect(order.offerId).toBe(offerId);

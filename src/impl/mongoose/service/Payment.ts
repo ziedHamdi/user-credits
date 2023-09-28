@@ -1,4 +1,4 @@
-import { HydratedDocument, Model } from "mongoose";
+import { HydratedDocument, Model, ObjectId } from "mongoose";
 
 import { AppErrors } from "../../../db/Errors";
 import { IOrder } from "../../../db/model/IOrder";
@@ -7,14 +7,14 @@ import { IPayment } from "../../../service/IPayment";
 import { UserCreditsModels } from "../model";
 import EntityNotFoundError = AppErrors.EntityNotFoundError;
 
-type OrderDocument = HydratedDocument<IOrder>;
+type OrderDocument = HydratedDocument<IOrder<ObjectId>>;
 type UserCreditsDocument = HydratedDocument<IUserCredits>;
 
-export class Payment implements IPayment {
+export class Payment implements IPayment<ObjectId> {
   private readonly uri: string;
   private readonly dbName: string;
   private daoFactory: UserCreditsModels;
-  private orderDao: Model<IOrder>;
+  private orderDao: Model<IOrder<ObjectId>>;
   private userCreditsDao: Model<IUserCredits>;
 
   constructor(uri: string, dbName: string) {
@@ -29,15 +29,20 @@ export class Payment implements IPayment {
     return this;
   }
 
-  async createOrder(offerId: string, userId: string): Promise<OrderDocument> {
+  async createOrder(
+    offerId: ObjectId,
+    userId: ObjectId,
+  ): Promise<OrderDocument> {
     const order: OrderDocument = await this.orderDao.create({
-      offerId,
-      userId,
+      offerId: offerId,
+      status: "pending",
+      tokenCount: 100,
+      userId: userId,
     });
     return order;
   }
 
-  async execute(order: IOrder): Promise<IUserCredits> {
+  async execute(order: IOrder<ObjectId>): Promise<IUserCredits> {
     const newCredits = {
       subscriptions: [],
       tokens: order.tokenCount,
@@ -47,17 +52,17 @@ export class Payment implements IPayment {
   }
 
   async orderStatusChanged(
-    orderId: string,
+    orderId: ObjectId,
     status: "pending" | "paid" | "refused",
-  ): Promise<IOrder> {
+  ): Promise<IOrder<ObjectId>> {
     const order: null | OrderDocument = await this.orderDao.findById(orderId);
     if (!order) throw new EntityNotFoundError("IOrder", orderId);
     order.status = status;
     await order.save();
-    return order as IOrder;
+    return order as IOrder<ObjectId>;
   }
 
-  async remainingTokens(userId: string): Promise<IUserCredits> {
+  async remainingTokens(userId: ObjectId): Promise<IUserCredits> {
     const userCredits: null | UserCreditsDocument =
       await this.userCreditsDao.findOne({ userId });
     if (!userCredits) throw new EntityNotFoundError("IUserCredits", userId);

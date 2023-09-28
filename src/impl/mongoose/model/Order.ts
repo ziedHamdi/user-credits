@@ -1,6 +1,8 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, {ObjectId, Schema} from "mongoose";
 
 import { IOrder, OrderStatus } from "../../../db/model/IOrder";
+
+type MongooseOrder = IOrder<ObjectId>
 
 const orderStatusSchema: Schema<OrderStatus> = new Schema<OrderStatus>({
   date: Date,
@@ -12,7 +14,7 @@ const orderStatusSchema: Schema<OrderStatus> = new Schema<OrderStatus>({
   },
 });
 
-const orderSchema: Schema<IOrder> = new Schema<IOrder>(
+const orderSchema = new Schema<MongooseOrder>(
   {
     // history: [orderStatusSchema],
     offerId: {
@@ -35,4 +37,4 @@ const orderSchema: Schema<IOrder> = new Schema<IOrder>(
   { timestamps: true },
 );
 
-export default mongoose.model<IOrder>("IOrder", orderSchema);
+export default mongoose.model<MongooseOrder>("IOrder", orderSchema);
