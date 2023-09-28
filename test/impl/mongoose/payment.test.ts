@@ -1,50 +1,21 @@
-import { IOrder } from "../../../src/db/model/IOrder";
-import { IUserCredits } from "../../../src/db/model/IUserCredits";
-import { IPayment } from "../../../src/service/IPayment";
+import { Payment } from "../../../src/impl/mongoose/service/Payment";
 
 // Mocking implementation of the IPayment interface
-const paymentService: IPayment = {
-  createOrder: (offerId, userId) => {
-    // Replace this with your mock IOrder object
-    return {
-      // history: [],
-      offerId,
-      status: "pending",
-      tokenCount: 100,
-      userId,
-    } as IOrder;
-  },
-  execute: (order) => {
-    // Replace this with your mock IUserCredits object
-    return { tokens: 100, userId: order.userId } as IUserCredits;
-  },
-  orderStatusChanged: (orderId, status) => {
-    // Replace this with your mock IOrder object
-    return {
-      offerId: "123",
-      orderId,
-      status,
-      tokenCount: 100,
-      userId: "456",
-    } as IOrder;
-  },
-  remainingTokens: (userId) => {
-    // Replace this with your mock IUserCredits object
-    return { tokens: 200, userId } as IUserCredits;
-  },
-};
+const paymentService: Payment = new Payment(
+  "mongodb+srv://vercel-admin-user:1fl97v6wmzZwFOZ3@cluster0.4rjswei.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
+  "cvlinkin",
+);
 
-// describe("IPayment implementation should be able to create an order, execute it, get notified of updates and tell the user token credit status", () => {
-//   it("runs mongoose tests", () => {
-//     testPayment(paymentService);
-//   });
-// });
-//FIXME should go to the base tests: https://stackoverflow.com/questions/77192614/how-how-to-define-a-generic-test-with-interfaces-in-jest-then-run-it-for-each-im
+beforeAll(async () => {
+  await paymentService.init();
+});
+
+//NOTE ideally this code should go to the base tests: https://stackoverflow.com/questions/77192614/how-how-to-define-a-generic-test-with-interfaces-in-jest-then-run-it-for-each-im
 describe("IPayment implementation should be able to create an order, execute it, get notified of updates and tell the user token credit status", () => {
-  it("createOrder should return an IOrder object", () => {
+  it("createOrder should return an IOrder object", async () => {
     const offerId = "123";
     const userId = "456";
-    const order = paymentService.createOrder(offerId, userId);
+    const order = await paymentService.createOrder(offerId, userId);
     expect(order).toBeDefined();
     expect(order.offerId).toBe(offerId);
     expect(order.userId).toBe(userId);

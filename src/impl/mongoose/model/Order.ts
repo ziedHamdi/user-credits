@@ -14,7 +14,7 @@ const orderStatusSchema: Schema<OrderStatus> = new Schema<OrderStatus>({
 
 const orderSchema: Schema<IOrder> = new Schema<IOrder>(
   {
-    history: [orderStatusSchema],
+    // history: [orderStatusSchema],
     offerId: {
       ref: "IOffer",
       required: true,
@@ -35,4 +35,4 @@ const orderSchema: Schema<IOrder> = new Schema<IOrder>(
   { timestamps: true },
 );
 
-export default mongoose.model("IOrder", orderSchema);
+export default mongoose.model<IOrder>("IOrder", orderSchema);

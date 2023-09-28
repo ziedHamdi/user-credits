@@ -14,4 +14,4 @@ const offerSchema: Schema<IOffer> = new Schema<IOffer>({
   tokensCount: { required: true, type: Number },
 });
 
-export default mongoose.model("IOffer", offerSchema);
+export default mongoose.model<IOffer>("IOffer", offerSchema);

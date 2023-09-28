@@ -1,12 +1,14 @@
-export interface Subscription {
+import { IOffer } from "./IOffer";
+
+export interface ISubscription {
   expires: Date;
-  offer: string;
+  offerId: unknown;
   starts: Date;
   status: "pending" | "paid" | "refused";
 }
 
 export interface IUserCredits {
-  subscriptions: Subscription[];
+  subscriptions: (unknown extends ISubscription ? unknown : never)[];
   tokens: number;
-  userId: string;
+  userId: unknown;
 }

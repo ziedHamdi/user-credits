@@ -1,10 +1,14 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema, Model } from "mongoose";
 
-import { Subscription, IUserCredits } from "../../../db/model/IUserCredits";
+import { ISubscription, IUserCredits } from "../../../db/model/IUserCredits";
 
-const subscriptionSchema: Schema<Subscription> = new Schema<Subscription>({
+const subscriptionSchema = new Schema<ISubscription, Model<ISubscription>>({
   expires: Date,
-  offer: { ref: "IOffer", required: true, type: mongoose.Schema.Types.ObjectId },
+  offerId: {
+    ref: "IOffer",
+    required: true,
+    type: mongoose.Schema.Types.ObjectId,
+  },
   starts: Date,
   status: {
     enum: ["pending", "paid", "refused"],
@@ -13,7 +17,7 @@ const subscriptionSchema: Schema<Subscription> = new Schema<Subscription>({
   },
 });
 
-const userCreditsSchema: Schema<IUserCredits> = new Schema<IUserCredits>(
+const userCreditsSchema = new Schema<IUserCredits, Model<IUserCredits>>(
   {
     subscriptions: [subscriptionSchema],
     tokens: { default: 0, required: true, type: Number },
@@ -26,4 +30,4 @@ const userCreditsSchema: Schema<IUserCredits> = new Schema<IUserCredits>(
   { timestamps: true },
 );
 
-export default mongoose.model("IUserCredits", userCreditsSchema);
+export default mongoose.model<IUserCredits>("IUserCredits", userCreditsSchema);

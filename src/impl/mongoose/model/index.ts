@@ -1,11 +1,11 @@
-import mongoose, { Model } from "mongoose";
+import mongoose, {Model} from "mongoose";
 
-import offerSchema from "./Offer";
-import orderSchema from "./Order";
-import userCreditsSchema from "./UserCredits";
-import { IOffer } from "../../../db/model/IOffer";
-import { IOrder } from "../../../db/model/IOrder";
-import { IUserCredits } from "../../../db/model/IUserCredits";
+import offerModel from "./Offer";
+import orderModel from "./Order";
+import userCreditsModel from "./UserCredits";
+import {IOffer} from "../../../db/model/IOffer";
+import {IOrder} from "../../../db/model/IOrder";
+import {IUserCredits} from "../../../db/model/IUserCredits";
 
 export class UserCreditsModels {
   private offer: Model<IOffer>;
@@ -13,12 +13,9 @@ export class UserCreditsModels {
   private userCredits: Model<IUserCredits>;
 
   constructor() {
-    // @ts-ignore
-    this.offer = mongoose.model("IOffer", offerSchema);
-    // @ts-ignore
-    this.order = mongoose.model("IOrder", orderSchema);
-    // @ts-ignore
-    this.userCredits = mongoose.model("IUserCredits", userCreditsSchema);
+    this.offer = offerModel;
+    this.order = orderModel;
+    this.userCredits = userCreditsModel;
   }
 
   async init(uri: string, dbName: string) {
@@ -31,15 +28,15 @@ export class UserCreditsModels {
     });
   }
 
-  getOffer(): Model<IOffer> {
+  offerDao(): Model<IOffer> {
     return this.offer;
   }
 
-  getOrder(): Model<IOrder> {
+  orderDao(): Model<IOrder> {
     return this.order;
   }
 
-  getUserCredits(): Model<IUserCredits> {
+  userCreditsDao(): Model<IUserCredits> {
     return this.userCredits;
   }
 }
