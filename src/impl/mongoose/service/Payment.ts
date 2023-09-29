@@ -30,8 +30,8 @@ export class Payment implements IPayment<ObjectId> {
   }
 
   async createOrder(
-    offerId: ObjectId,
-    userId: ObjectId,
+    offerId: unknown,
+    userId: unknown,
   ): Promise<OrderDocument> {
     const order: OrderDocument = await this.orderDao.create({
       offerId: offerId,
@@ -52,7 +52,7 @@ export class Payment implements IPayment<ObjectId> {
   }
 
   async orderStatusChanged(
-    orderId: ObjectId,
+    orderId: unknown,
     status: "pending" | "paid" | "refused",
   ): Promise<IOrder<ObjectId>> {
     const order: null | OrderDocument = await this.orderDao.findById(orderId);

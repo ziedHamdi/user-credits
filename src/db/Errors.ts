@@ -1,6 +1,6 @@
 export namespace AppErrors {
   export class EntityNotFoundError extends Error {
-    constructor(name: string, query: string) {
+    constructor(name: string, query: unknown) {
       super(name + " - query (" + query + ")");
     }
   }
