@@ -5,7 +5,7 @@ export interface OrderStatus {
 }
 
 export interface IOrder<K extends object> {
-  // history: [OrderStatus];
+  history: [OrderStatus];
   offerId: K;
   status: "pending" | "paid" | "refused";
   tokenCount: number;

@@ -1,5 +1,3 @@
-import { IOffer } from "./IOffer";
-
 export interface ISubscription {
   expires: Date;
   offerId: unknown;

@@ -11,7 +11,7 @@ const offerSchema: Schema<IOffer> = new Schema<IOffer>({
   },
   name: { required: true, type: String },
   price: { required: true, type: Number },
-  tokensCount: { required: true, type: Number },
+  tokenCount: { required: true, type: Number },
 });
 
 export default mongoose.model<IOffer>("IOffer", offerSchema);
