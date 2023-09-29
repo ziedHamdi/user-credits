@@ -2,13 +2,16 @@ import { IOffer } from "../db/model/IOffer";
 import { IOrder } from "../db/model/IOrder";
 import { IUserCredits } from "../db/model/IUserCredits";
 
-export interface IPayment<T extends object> {
-  createOrder(offerId: unknown, userId: unknown): Promise<IOrder<T>>;
-  execute(order: IOrder<T>): Promise<IUserCredits>;
-  loadOffers(userId: unknown): IOffer[];
+/**
+ * @param K the type of foreign keys (is used for all foreign keys type)
+ */
+export interface IPayment<K extends object> {
+  createOrder(offerId: unknown, userId: unknown): Promise<IOrder<K>>;
+  execute(order: IOrder<K>): Promise<IUserCredits<K>>;
+  loadOffers(userId: unknown): Promise<IOffer<K>[]>;
   orderStatusChanged(
     orderId: unknown,
     status: "pending" | "paid" | "refused",
-  ): Promise<IOrder<T>>;
-  remainingTokens(userId: unknown): Promise<IUserCredits>;
+  ): Promise<IOrder<K>>;
+  remainingTokens(userId: unknown): Promise<IUserCredits<K>>;
 }

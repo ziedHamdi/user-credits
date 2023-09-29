@@ -1,12 +1,15 @@
-export interface ISubscription {
+/**
+ * @param K the type of foreign keys (is used for all foreign keys type)
+ */
+export interface ISubscription<K extends object> {
   expires: Date;
-  offerId: unknown;
+  offerId: K;
   starts: Date;
   status: "pending" | "paid" | "refused";
 }
 
-export interface IUserCredits {
-  subscriptions: (unknown extends ISubscription ? unknown : never)[];
+export interface IUserCredits<K extends object> {
+  subscriptions: (unknown extends ISubscription<K> ? unknown : never)[];
   tokens: number;
-  userId: unknown;
+  userId: K;
 }

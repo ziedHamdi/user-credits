@@ -1,8 +1,8 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { ObjectId, Schema } from "mongoose";
 
 import { ITokenTimetable } from "../../../db/model/ITokenTimetable";
 
-const tokenTimetableSchema: Schema<ITokenTimetable> = new Schema<ITokenTimetable>(
+const tokenTimetableSchema = new Schema<ITokenTimetable<ObjectId>>(
   {
     tokens: { default: 0, required: true, type: Number },
     userId: {
@@ -14,4 +14,7 @@ const tokenTimetableSchema: Schema<ITokenTimetable> = new Schema<ITokenTimetable
   { timestamps: { createdAt: true, updatedAt: false } },
 );
 
-export default mongoose.model<ITokenTimetable>("ITokenTimetable", tokenTimetableSchema);
+export default mongoose.model<ITokenTimetable<ObjectId>>(
+  "ITokenTimetable",
+  tokenTimetableSchema,
+);

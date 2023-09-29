@@ -1,21 +1,37 @@
-import mongoose, {Model, ObjectId} from "mongoose";
+import mongoose, { Model, ObjectId } from "mongoose";
 
+import { IOffer } from "../../../db/model/IOffer";
+import { IOrder } from "../../../db/model/IOrder";
+import { IUserCredits } from "../../../db/model/IUserCredits";
 import offerModel from "./Offer";
 import orderModel from "./Order";
 import userCreditsModel from "./UserCredits";
-import {IOffer} from "../../../db/model/IOffer";
-import {IOrder} from "../../../db/model/IOrder";
-import {IUserCredits} from "../../../db/model/IUserCredits";
 
 export class UserCreditsModels {
-  private offer: Model<IOffer>;
+  private offer: Model<IOffer<ObjectId>>;
   private order: Model<IOrder<ObjectId>>;
-  private userCredits: Model<IUserCredits>;
+  private userCredits: Model<IUserCredits<ObjectId>>;
+  private static instance: UserCreditsModels | null = null; // Static instance variable
+  private static ready: boolean;
 
-  constructor() {
+  private constructor() {
     this.offer = offerModel;
     this.order = orderModel;
     this.userCredits = userCreditsModel;
+  }
+
+  static getInstance(uri: string, dbName: string): UserCreditsModels {
+    if (UserCreditsModels.instance === null) {
+      UserCreditsModels.instance = new UserCreditsModels();
+      UserCreditsModels.instance
+        .init(uri, dbName)
+        .then(() => (UserCreditsModels.ready = true))
+        .catch((err) => {
+          console.error("Error initializing singleton ", err);
+          UserCreditsModels.instance = null;
+        });
+    }
+    return UserCreditsModels.instance;
   }
 
   async init(uri: string, dbName: string) {
@@ -28,7 +44,7 @@ export class UserCreditsModels {
     });
   }
 
-  offerDao(): Model<IOffer> {
+  offerDao(): Model<IOffer<ObjectId>> {
     return this.offer;
   }
 
@@ -36,7 +52,7 @@ export class UserCreditsModels {
     return this.order;
   }
 
-  userCreditsDao(): Model<IUserCredits> {
+  userCreditsDao(): Model<IUserCredits<ObjectId>> {
     return this.userCredits;
   }
 }

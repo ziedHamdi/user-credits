@@ -1,8 +1,11 @@
-import mongoose, { Schema, Model } from "mongoose";
+import mongoose, { Model, ObjectId, Schema } from "mongoose";
 
 import { ISubscription, IUserCredits } from "../../../db/model/IUserCredits";
 
-const subscriptionSchema = new Schema<ISubscription, Model<ISubscription>>({
+const subscriptionSchema = new Schema<
+  ISubscription<ObjectId>,
+  Model<ISubscription<ObjectId>>
+>({
   expires: Date,
   offerId: {
     ref: "IOffer",
@@ -17,7 +20,10 @@ const subscriptionSchema = new Schema<ISubscription, Model<ISubscription>>({
   },
 });
 
-const userCreditsSchema = new Schema<IUserCredits, Model<IUserCredits>>(
+const userCreditsSchema = new Schema<
+  IUserCredits<ObjectId>,
+  Model<IUserCredits<ObjectId>>
+>(
   {
     subscriptions: [subscriptionSchema],
     tokens: { default: 0, required: true, type: Number },
@@ -30,4 +36,7 @@ const userCreditsSchema = new Schema<IUserCredits, Model<IUserCredits>>(
   { timestamps: true },
 );
 
-export default mongoose.model<IUserCredits>("IUserCredits", userCreditsSchema);
+export default mongoose.model<IUserCredits<ObjectId>>(
+  "IUserCredits",
+  userCreditsSchema,
+);

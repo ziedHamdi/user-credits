@@ -1,10 +1,10 @@
-import mongoose, {ObjectId, Schema} from "mongoose";
+import mongoose, { ObjectId, Schema } from "mongoose";
 
 import { IOrder, OrderStatus } from "../../../db/model/IOrder";
 
-type MongooseOrder = IOrder<ObjectId>
+type MongooseOrder = IOrder<ObjectId>;
 
-const orderStatusSchema: Schema<OrderStatus> = new Schema<OrderStatus>({
+const orderStatusSchema = new Schema<OrderStatus>({
   date: Date,
   message: String,
   status: {
@@ -16,7 +16,7 @@ const orderStatusSchema: Schema<OrderStatus> = new Schema<OrderStatus>({
 
 const orderSchema = new Schema<MongooseOrder>(
   {
-    // history: [orderStatusSchema],
+    history: [orderStatusSchema],
     offerId: {
       ref: "IOffer",
       required: true,
