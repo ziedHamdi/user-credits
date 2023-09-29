@@ -11,5 +11,5 @@ export interface ISubscriptionDAO<K extends object> extends TypicalDAO<K> {}
 
 export interface TypicalDAO<K extends object> {
   find(query: unknown): Promise<IOffer<K>[]>;
-  findById(id: K): Promise<IUserCredits<K>>;
+  findById(id: unknown): Promise<IUserCredits<K>>;
 }
