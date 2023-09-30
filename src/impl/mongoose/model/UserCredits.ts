@@ -2,6 +2,8 @@ import mongoose, { Model, ObjectId, Schema } from "mongoose";
 
 import { ISubscription, IUserCredits } from "../../../db/model/IUserCredits";
 
+export type MongooseUserCredits = IUserCredits<ObjectId>;
+
 const subscriptionSchema = new Schema<
   ISubscription<ObjectId>,
   Model<ISubscription<ObjectId>>
@@ -20,10 +22,7 @@ const subscriptionSchema = new Schema<
   },
 });
 
-const userCreditsSchema = new Schema<
-  IUserCredits<ObjectId>,
-  Model<IUserCredits<ObjectId>>
->(
+const userCreditsSchema = new Schema<MongooseUserCredits>(
   {
     subscriptions: [subscriptionSchema],
     tokens: { default: 0, required: true, type: Number },
@@ -36,7 +35,4 @@ const userCreditsSchema = new Schema<
   { timestamps: true },
 );
 
-export default mongoose.model<IUserCredits<ObjectId>>(
-  "IUserCredits",
-  userCreditsSchema,
-);
+export default mongoose.model("user_credits", userCreditsSchema) as Model<MongooseUserCredits>;

@@ -3,33 +3,33 @@ import { Document, Model } from "mongoose";
 /**
  * Delegates all calls to mongoose in the constructor passed model property. This is an adapter to allow subclasses to implement local interfaces
  */
-export class BaseMongooseDao<K extends Document> {
-  model: Model<K>;
+export class BaseMongooseDao<D extends Document> {
+  model: Model<D>;
 
-  constructor(model: Model<K>) {
+  constructor(model: Model<D>) {
     this.model = model;
   }
 
   // Find document by ID
-  async findById(userId: string): Promise<K | null> {
+  async findById(userId: string): Promise<D | null> {
     const result = await this.model.findById(userId).exec();
     return result ? result.toObject() : null;
   }
 
   // Find documents that match a query
-  async find(query: any): Promise<K[]> {
+  async find(query: object): Promise<D[]> {
     const results = await this.model.find(query).exec();
     return results.map((result) => result.toObject());
   }
 
   // Create a new document
-  async create(data: Partial<K>): Promise<K> {
+  async create(data: Partial<D>): Promise<D> {
     const result = await this.model.create(data);
     return result.toObject();
   }
 
   // Update a document by ID
-  async updateById(userId: string, update: Partial<K>): Promise<K | null> {
+  async updateById(userId: string, update: Partial<D>): Promise<D | null> {
     const result = await this.model
       .findByIdAndUpdate(userId, update, { new: true })
       .exec();
@@ -43,7 +43,7 @@ export class BaseMongooseDao<K extends Document> {
   }
 
   // Count documents that match a query
-  async count(query: any): Promise<number> {
+  async count(query: object): Promise<number> {
     const count = await this.model.countDocuments(query).exec();
     return count;
   }

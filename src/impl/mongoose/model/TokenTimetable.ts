@@ -14,7 +14,4 @@ const tokenTimetableSchema = new Schema<ITokenTimetable<ObjectId>>(
   { timestamps: { createdAt: true, updatedAt: false } },
 );
 
-export default mongoose.model<ITokenTimetable<ObjectId>>(
-  "ITokenTimetable",
-  tokenTimetableSchema,
-);
+export default mongoose.model("ITokenTimetable", tokenTimetableSchema);

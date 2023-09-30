@@ -3,21 +3,21 @@ import mongoose, { Model, ObjectId } from "mongoose";
 import { IOffer } from "../../../db/model/IOffer";
 import { IOrder } from "../../../db/model/IOrder";
 import { IUserCredits } from "../../../db/model/IUserCredits";
-import offerModel from "./Offer";
-import orderModel from "./Order";
-import userCreditsModel from "./UserCredits";
+import offerModel, { MongooseOffer } from "./Offer";
+import orderModel, { MongooseOrder } from "./Order";
+import userCreditsModel, { MongooseUserCredits } from "./UserCredits";
 
 export class UserCreditsModels {
-  private offer: Model<IOffer<ObjectId>>;
-  private order: Model<IOrder<ObjectId>>;
-  private userCredits: Model<IUserCredits<ObjectId>>;
+  private offer: Model<MongooseOffer>;
+  private order: Model<MongooseOrder>;
+  private userCredits: Model<MongooseUserCredits>;
   private static instance: UserCreditsModels | null = null; // Static instance variable
   private static ready: boolean;
 
   private constructor() {
-    this.offer = offerModel;
-    this.order = orderModel;
-    this.userCredits = userCreditsModel;
+    this.offer = offerModel as Model<MongooseOffer>;
+    this.order = orderModel as Model<MongooseOrder>;
+    this.userCredits = userCreditsModel as Model<MongooseUserCredits>;
   }
 
   static getInstance(uri: string, dbName: string): UserCreditsModels {
