@@ -10,6 +10,6 @@ export interface IOfferDAO<K extends object> extends TypicalDAO<K> {}
 export interface ISubscriptionDAO<K extends object> extends TypicalDAO<K> {}
 
 export interface TypicalDAO<K extends object> {
-  find(query: unknown): Promise<IOffer<K>[]>;
-  findById(id: unknown): Promise<IUserCredits<K>>;
+  find(query: object): Promise<IOffer<K>[]>;
+  findById(id: object): Promise<IUserCredits<K>>;
 }

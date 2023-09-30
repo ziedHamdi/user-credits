@@ -7,11 +7,11 @@ import offerModel, { MongooseOffer } from "./Offer";
 import orderModel, { MongooseOrder } from "./Order";
 import userCreditsModel, { MongooseUserCredits } from "./UserCredits";
 
-export class UserCreditsModels {
+export class MongooseModels {
   private offer: Model<MongooseOffer>;
   private order: Model<MongooseOrder>;
   private userCredits: Model<MongooseUserCredits>;
-  private static instance: UserCreditsModels | null = null; // Static instance variable
+  private static instance: MongooseModels | null = null; // Static instance variable
   private static ready: boolean;
 
   private constructor() {
@@ -20,18 +20,18 @@ export class UserCreditsModels {
     this.userCredits = userCreditsModel as Model<MongooseUserCredits>;
   }
 
-  static getInstance(uri: string, dbName: string): UserCreditsModels {
-    if (UserCreditsModels.instance === null) {
-      UserCreditsModels.instance = new UserCreditsModels();
-      UserCreditsModels.instance
+  static getInstance(uri: string, dbName: string): MongooseModels {
+    if (MongooseModels.instance === null) {
+      MongooseModels.instance = new MongooseModels();
+      MongooseModels.instance
         .init(uri, dbName)
-        .then(() => (UserCreditsModels.ready = true))
+        .then(() => (MongooseModels.ready = true))
         .catch((err) => {
           console.error("Error initializing singleton ", err);
-          UserCreditsModels.instance = null;
+          MongooseModels.instance = null;
         });
     }
-    return UserCreditsModels.instance;
+    return MongooseModels.instance;
   }
 
   async init(uri: string, dbName: string) {
@@ -52,7 +52,7 @@ export class UserCreditsModels {
     return this.order;
   }
 
-  userCreditsDao(): Model<IUserCredits<ObjectId>> {
+  userCreditsDao(): Model<MongooseUserCredits> {
     return this.userCredits;
   }
 }

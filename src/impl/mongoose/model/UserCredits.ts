@@ -1,8 +1,8 @@
-import mongoose, { Model, ObjectId, Schema } from "mongoose";
+import mongoose, { Document, Model, ObjectId, Schema} from "mongoose";
 
 import { ISubscription, IUserCredits } from "../../../db/model/IUserCredits";
 
-export type MongooseUserCredits = IUserCredits<ObjectId>;
+export type MongooseUserCredits = IUserCredits<ObjectId> & Document;
 
 const subscriptionSchema = new Schema<
   ISubscription<ObjectId>,
@@ -35,4 +35,7 @@ const userCreditsSchema = new Schema<MongooseUserCredits>(
   { timestamps: true },
 );
 
-export default mongoose.model("user_credits", userCreditsSchema) as Model<MongooseUserCredits>;
+export default mongoose.model(
+  "user_credits",
+  userCreditsSchema,
+) as Model<MongooseUserCredits>;

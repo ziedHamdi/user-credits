@@ -5,7 +5,7 @@ import { IOrder } from "../../../db/model/IOrder";
 import { IUserCredits } from "../../../db/model/IUserCredits";
 import { EntityNotFoundError } from "../../../errors/EntityNotFoundError";
 import { IPayment } from "../../../service/IPayment";
-import { UserCreditsModels } from "../model";
+import { MongooseModels } from "../model";
 import {BaseService} from "../../../service/BaseService";
 
 type OrderDocument = HydratedDocument<IOrder<ObjectId>>;
@@ -14,7 +14,7 @@ type UserCreditsDocument = HydratedDocument<IUserCredits<ObjectId>>;
 export class Payment extends BaseService<ObjectId> {
   private readonly uri: string;
   private readonly dbName: string;
-  private daoFactory: UserCreditsModels;
+  private daoFactory: MongooseModels;
   private offerDao: Model<IOffer<ObjectId>>;
   private orderDao: Model<IOrder<ObjectId>>;
   private userCreditsDao: Model<IUserCredits<ObjectId>>;
@@ -22,7 +22,7 @@ export class Payment extends BaseService<ObjectId> {
   constructor(uri: string, dbName: string) {
     this.uri = uri;
     this.dbName = dbName;
-    this.daoFactory = new UserCreditsModels();
+    this.daoFactory = new MongooseModels();
     this.orderDao = this.daoFactory.orderDao();
     this.userCreditsDao = this.daoFactory.userCreditsDao();
   }
