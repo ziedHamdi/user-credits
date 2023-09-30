@@ -1,10 +1,10 @@
-import mongoose, {Model, ObjectId, Schema} from "mongoose";
+import mongoose, { Document, Model, ObjectId, Schema} from "mongoose";
 
 import { IOffer } from "../../../db/model/IOffer";
 
-export type MongooseOffer = IOffer<ObjectId>;
+export type IMongooseOffer = IOffer<ObjectId> & Document;
 
-const offerSchema = new Schema<MongooseOffer>({
+const offerSchema = new Schema<IMongooseOffer>({
   cycle: { enum: ["once", "monthly", "yearly"], type: String },
   hasSubOffers: { type: Boolean },
   kind: {
@@ -23,4 +23,4 @@ const offerSchema = new Schema<MongooseOffer>({
   tokenCount: { required: true, type: Number },
 });
 
-export default mongoose.model("offer", offerSchema) as Model<MongooseOffer>;
+export default mongoose.model("offer", offerSchema) as Model<IMongooseOffer>;

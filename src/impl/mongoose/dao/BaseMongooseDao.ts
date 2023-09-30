@@ -1,9 +1,11 @@
 import { Document, Model } from "mongoose";
 
+import { BaseDAO } from "../../../db/dao";
+
 /**
  * Delegates all calls to mongoose in the constructor passed model property. This is an adapter to allow subclasses to implement local interfaces
  */
-export class BaseMongooseDao<D extends Document> {
+export class BaseMongooseDao<D extends Document> implements BaseDAO<D> {
   model: Model<D>;
 
   constructor(model: Model<D>) {

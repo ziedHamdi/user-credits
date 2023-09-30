@@ -1,15 +1,35 @@
 import { IOffer } from "../model/IOffer";
+import { IOrder } from "../model/IOrder";
 import { ISubscription, IUserCredits } from "../model/IUserCredits";
 
-export interface IUserCreditsDAO<K extends object> extends TypicalDAO<K> {
+export interface IUserCreditsDao<K extends object, D extends IUserCredits<K>>
+  extends BaseDAO<D> {
   findByUserId(userId: K): Promise<ISubscription<K>[]>;
 }
 
-export interface IOfferDAO<K extends object> extends TypicalDAO<K> {}
+export interface IOfferDao<K extends object, D extends IOffer<K>>
+  extends BaseDAO<D> {}
 
-export interface ISubscriptionDAO<K extends object> extends TypicalDAO<K> {}
+export interface IOrderDao<K extends object, D extends IOrder<K>>
+  extends BaseDAO<D> {}
 
-export interface TypicalDAO<K extends object> {
-  find(query: object): Promise<IOffer<K>[]>;
-  findById(id: object): Promise<IUserCredits<K>>;
+export interface ISubscriptionDao<K extends object> extends BaseDAO<K> {}
+
+export interface BaseDAO<D extends object> {
+  // Count documents that match a query
+  count(query: object): Promise<number>;
+
+  // Create a new document
+  create(data: Partial<D>): Promise<D>;
+
+  // Delete a document by ID
+  deleteById(userId: string): Promise<boolean>;
+
+  // Find documents that match a query
+  find(query: object): Promise<D[]>;
+
+  findById(userId: string): Promise<D | null>;
+
+  // Update a document by ID
+  updateById(userId: string, update: Partial<D>): Promise<D | null>;
 }

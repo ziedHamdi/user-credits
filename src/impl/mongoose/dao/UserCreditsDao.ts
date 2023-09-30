@@ -1,14 +1,14 @@
 import { ObjectId } from "mongoose";
 
-import { IUserCreditsDAO } from "../../../db/dao";
+import { IUserCreditsDao } from "../../../db/dao";
 import { ISubscription } from "../../../db/model/IUserCredits";
 import { MongooseModels } from "../model";
-import { MongooseUserCredits } from "../model/UserCredits";
+import { IMongooseUserCredits } from "../model/UserCredits";
 import { BaseMongooseDao } from "./BaseMongooseDao";
 
-class UserCreditsDAO
-  extends BaseMongooseDao<MongooseUserCredits>
-  implements IUserCreditsDAO<ObjectId>
+export class UserCreditsDao
+  extends BaseMongooseDao<IMongooseUserCredits>
+  implements IUserCreditsDao<ObjectId, IMongooseUserCredits>
 {
   constructor(uri: string, dbName: string) {
     super(MongooseModels.getInstance(uri, dbName).userCreditsDao());
@@ -17,5 +17,3 @@ class UserCreditsDAO
     return (await super.find({ userId })) as Promise<ISubscription<ObjectId>[]>;
   }
 }
-
-export { UserCreditsDAO };
