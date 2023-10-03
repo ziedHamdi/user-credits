@@ -1,12 +1,14 @@
-import mongoose, { Model} from "mongoose";
+import mongoose, { Model } from "mongoose";
 
 import offerModel, { IMongooseOffer } from "./Offer";
 import orderModel, { IMongooseOrder } from "./Order";
+import tokenTimetableModel, { IMongooseTokenTimetable } from "./TokenTimetable";
 import userCreditsModel, { IMongooseUserCredits } from "./UserCredits";
 
 export class MongooseModels {
   private readonly offer: Model<IMongooseOffer>;
   private readonly order: Model<IMongooseOrder>;
+  private readonly tokenTimetable: Model<IMongooseTokenTimetable>;
   private readonly userCredits: Model<IMongooseUserCredits>;
   private static instance: MongooseModels | null = null; // Static instance variable
   private static ready: boolean;
@@ -14,6 +16,7 @@ export class MongooseModels {
   private constructor() {
     this.offer = offerModel as Model<IMongooseOffer>;
     this.order = orderModel as Model<IMongooseOrder>;
+    this.tokenTimetable = tokenTimetableModel as Model<IMongooseTokenTimetable>;
     this.userCredits = userCreditsModel as Model<IMongooseUserCredits>;
   }
 
@@ -47,6 +50,10 @@ export class MongooseModels {
 
   orderDao(): Model<IMongooseOrder> {
     return this.order;
+  }
+
+  tokenTimetableDao(): Model<IMongooseTokenTimetable> {
+    return this.tokenTimetable;
   }
 
   userCreditsDao(): Model<IMongooseUserCredits> {

@@ -1,6 +1,8 @@
-import mongoose, { ObjectId, Schema } from "mongoose";
+import mongoose, { Document, ObjectId, Schema } from "mongoose";
 
 import { ITokenTimetable } from "../../../db/model/ITokenTimetable";
+
+export type IMongooseTokenTimetable = ITokenTimetable<ObjectId> & Document;
 
 const tokenTimetableSchema = new Schema<ITokenTimetable<ObjectId>>(
   {

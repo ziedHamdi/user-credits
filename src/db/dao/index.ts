@@ -28,7 +28,7 @@ export interface BaseDAO<D extends object> {
   // Find documents that match a query
   find(query: object): Promise<D[]>;
 
-  findById(userId: string): Promise<D | null>;
+  findById(userId: object): Promise<D | null>;
 
   // Update a document by ID
   updateById(userId: string, update: Partial<D>): Promise<D | null>;

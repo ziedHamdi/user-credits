@@ -1,12 +1,13 @@
+import { IOfferDao, ISubscriptionDao, IUserCreditsDao } from "../db/dao";
 import { IOffer } from "../db/model/IOffer";
 import { IOrder } from "../db/model/IOrder";
 import { ISubscription, IUserCredits } from "../db/model/IUserCredits";
 import { IPayment } from "./IPayment";
 
 export class BaseService<K extends object> implements IPayment<K> {
-  private readonly userCreditsDAO: UserCreditsDAO<K>;
-  private readonly offerDAO: OfferDAO<K>;
-  private readonly subscriptionDAO: SubscriptionDAO<K>;
+  private readonly userCreditsDAO: IUserCreditsDao<K, IUserCredits<K>>;
+  private readonly offerDAO: IOfferDao<K, IOffer<K>>;
+  private readonly subscriptionDAO: ISubscriptionDao<K>;
 
   constructor({ offerDAO, subscriptionDAO, userCreditsDAO }) {
     this.userCreditsDAO = userCreditsDAO;
@@ -40,7 +41,7 @@ export class BaseService<K extends object> implements IPayment<K> {
    */
   async getActiveSubscriptions(userId: K): Promise<ISubscription<K>[]> {
     const userCredits = await this.userCreditsDAO.findById(userId);
-    return userCredits.subscriptions.filter(
+    return (userCredits ?? null).subscriptions.filter(
       (subscription) => subscription.status === "paid",
     );
   }
