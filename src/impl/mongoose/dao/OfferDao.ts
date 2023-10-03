@@ -1,6 +1,6 @@
 import { ObjectId } from "mongoose";
 
-import { IOfferDao } from "../../../db/dao";
+import { IOfferDao } from "../../../db/dao/IOfferDao";
 import { MongooseModels } from "../model";
 import { IMongooseOffer } from "../model/Offer";
 import { BaseMongooseDao } from "./BaseMongooseDao";

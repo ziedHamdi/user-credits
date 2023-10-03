@@ -1,11 +1,11 @@
 import { Document, Model } from "mongoose";
 
-import { BaseDAO } from "../../../db/dao";
+import { IBaseDAO } from "../../../db/dao/IBaseDAO";
 
 /**
  * Delegates all calls to mongoose in the constructor passed model property. This is an adapter to allow subclasses to implement local interfaces
  */
-export class BaseMongooseDao<D extends Document> implements BaseDAO<D> {
+export class BaseMongooseDao<D extends Document> implements IBaseDAO<D> {
   model: Model<D>;
 
   constructor(model: Model<D>) {
@@ -13,7 +13,7 @@ export class BaseMongooseDao<D extends Document> implements BaseDAO<D> {
   }
 
   // Find document by ID
-  async findById(userId: string): Promise<D | null> {
+  async findById(userId: object): Promise<D | null> {
     const result = await this.model.findById(userId).exec();
     return result ? result.toObject() : null;
   }

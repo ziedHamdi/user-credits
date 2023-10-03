@@ -1,8 +1,10 @@
-import { IOfferDao, ISubscriptionDao, IUserCreditsDao } from "../db/dao";
+import { ISubscriptionDao} from "../db/dao";
 import { IOffer } from "../db/model/IOffer";
 import { IOrder } from "../db/model/IOrder";
 import { ISubscription, IUserCredits } from "../db/model/IUserCredits";
 import { IPayment } from "./IPayment";
+import {IOfferDao} from "../db/dao/IOfferDao";
+import {IUserCreditsDao} from "../db/dao/IUserCreditsDao";
 
 export class BaseService<K extends object> implements IPayment<K> {
   private readonly userCreditsDAO: IUserCreditsDao<K, IUserCredits<K>>;

@@ -1,10 +1,10 @@
 import { ObjectId } from "mongoose";
 
-import { IUserCreditsDao } from "../../../db/dao";
 import { ISubscription } from "../../../db/model/IUserCredits";
 import { MongooseModels } from "../model";
 import { IMongooseUserCredits } from "../model/UserCredits";
 import { BaseMongooseDao } from "./BaseMongooseDao";
+import {IUserCreditsDao} from "../../../db/dao/IUserCreditsDao";
 
 export class UserCreditsDao
   extends BaseMongooseDao<IMongooseUserCredits>

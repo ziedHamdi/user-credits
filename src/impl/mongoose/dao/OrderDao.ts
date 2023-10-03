@@ -1,11 +1,11 @@
 import { ObjectId } from "mongoose";
 
-import { IOrderDao } from "../../../db/dao";
 import { MongooseModels } from "../model";
 import { IMongooseOrder } from "../model/Order";
 import { BaseMongooseDao } from "./BaseMongooseDao";
+import {IOrderDao} from "../../../db/dao/IOrderDao";
 
-export class OfferDao
+export class OrderDao
   extends BaseMongooseDao<IMongooseOrder>
   implements IOrderDao<ObjectId, IMongooseOrder>
 {
