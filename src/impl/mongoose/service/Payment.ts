@@ -1,9 +1,7 @@
 import { ObjectId } from "mongoose";
 
 import { IDaoFactory } from "../../../db/dao";
-import { IOffer } from "../../../db/model/IOffer";
-import { IOrder } from "../../../db/model/IOrder";
-import { IUserCredits } from "../../../db/model/IUserCredits";
+import { IOffer, IOrder, IUserCredits } from "../../../db/model";
 import { EntityNotFoundError } from "../../../errors/EntityNotFoundError";
 import { BaseService } from "../../../service/BaseService";
 import { IMongooseOrder } from "../model/Order";
