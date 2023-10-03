@@ -1,16 +1,13 @@
-import mongoose, { Model, ObjectId } from "mongoose";
+import mongoose, { Model} from "mongoose";
 
-import { IOffer } from "../../../db/model/IOffer";
-import { IOrder } from "../../../db/model/IOrder";
-import { IUserCredits } from "../../../db/model/IUserCredits";
 import offerModel, { IMongooseOffer } from "./Offer";
 import orderModel, { IMongooseOrder } from "./Order";
 import userCreditsModel, { IMongooseUserCredits } from "./UserCredits";
 
 export class MongooseModels {
-  private offer: Model<IMongooseOffer>;
-  private order: Model<IMongooseOrder>;
-  private userCredits: Model<IMongooseUserCredits>;
+  private readonly offer: Model<IMongooseOffer>;
+  private readonly order: Model<IMongooseOrder>;
+  private readonly userCredits: Model<IMongooseUserCredits>;
   private static instance: MongooseModels | null = null; // Static instance variable
   private static ready: boolean;
 
