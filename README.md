@@ -26,15 +26,15 @@ UserCredits is built with a modular architecture that separates core business lo
 
 ## Get Started
 
-To start using UserCredits in your project, follow the installation and usage instructions in the [documentation](link-to-documentation).
+To start using UserCredits in your project, follow the installation and usage instructions in the [blog series](https://dev.to/zhamdi/architecting-pay-as-you-go-magic-usercredits-winning-formula-4ace).
 
 ## Contributing
 
-UserCredits is an open-source project, and we welcome contributions from the community. Whether you want to add new features, improve documentation, or report issues, your help is valuable. Check out our [contribution guidelines](link-to-contributing-guide) to get started.
+UserCredits is an open-source project, and we welcome contributions from the community. Whether you want to add new features, improve documentation, or report issues, your help is valuable. Feel free to [contact me](https://twitter.com/zhamdi) or to fork the project.
 
 ## License
 
-UserCredits is released under the [MIT License](link-to-license-file). Feel free to use it in your projects, commercial or otherwise.
+UserCredits is released under the [MIT License](#). Feel free to use it in your projects, commercial or otherwise.
 
 ---
 
