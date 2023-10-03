@@ -1,8 +1,8 @@
-import mongoose, { Model, ObjectId, Schema } from "mongoose";
+import mongoose, { Document, Model, ObjectId, Schema } from "mongoose";
 
 import { IOrder, OrderStatus } from "../../../db/model/IOrder";
 
-export type IMongooseOrder = IOrder<ObjectId>;
+export type IMongooseOrder = IOrder<ObjectId> & Document;
 
 const orderStatusSchema = new Schema<OrderStatus>({
   date: Date,

@@ -1,10 +1,9 @@
 import { ObjectId } from "mongoose";
 
-import {IOfferDao, IOrderDao} from "../../../db/dao";
+import { IOrderDao } from "../../../db/dao";
 import { MongooseModels } from "../model";
-import { IMongooseOffer } from "../model/Offer";
+import { IMongooseOrder } from "../model/Order";
 import { BaseMongooseDao } from "./BaseMongooseDao";
-import {IMongooseOrder} from "../model/Order";
 
 export class OfferDao
   extends BaseMongooseDao<IMongooseOrder>
