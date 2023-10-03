@@ -1,17 +1,30 @@
-import { IOffer } from "../db/model/IOffer";
-import { IOrder } from "../db/model/IOrder";
-import { ISubscription, IUserCredits } from "../db/model/IUserCredits";
-import { IPayment } from "./IPayment";
-import { IDaoFactory, IOfferDao, IOrderDao, ITokenTimetableDao, IUserCreditsDao } from "../db/dao";
 import { ObjectId } from "mongoose";
-import { ITokenTimetable } from "../db/model";
+
+import {
+  IDaoFactory,
+  IOfferDao,
+  IOrderDao,
+  ITokenTimetableDao,
+  IUserCreditsDao,
+} from "../db/dao";
+import {
+  IOffer,
+  IOrder,
+  ISubscription,
+  ITokenTimetable,
+  IUserCredits,
+} from "../db/model";
+import { IPayment } from "./IPayment";
 
 export class BaseService<K extends object> implements IPayment<K> {
   protected daoFactory: IDaoFactory<ObjectId>;
 
   protected readonly offerDao: IOfferDao<K, IOffer<K>>;
   protected readonly orderDao: IOrderDao<K, IOrder<K>>;
-  protected readonly tokenTimetableDao: ITokenTimetableDao<K, ITokenTimetable<K>>;
+  protected readonly tokenTimetableDao: ITokenTimetableDao<
+    K,
+    ITokenTimetable<K>
+  >;
   protected readonly userCreditsDao: IUserCreditsDao<K, IUserCredits<K>>;
 
   constructor(daoFactory) {
