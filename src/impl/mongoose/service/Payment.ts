@@ -4,40 +4,32 @@ import { IOffer } from "../../../db/model/IOffer";
 import { IOrder } from "../../../db/model/IOrder";
 import { IUserCredits } from "../../../db/model/IUserCredits";
 import { EntityNotFoundError } from "../../../errors/EntityNotFoundError";
-import { IPayment } from "../../../service/IPayment";
-import { MongooseModels } from "../model";
-import {BaseService} from "../../../service/BaseService";
+import { BaseService } from "../../../service/BaseService";
+import { IDaoFactory, IOfferDao, IOrderDao, IUserCreditsDao } from "../../../db/dao";
+import UserCredits, { IMongooseUserCredits } from "../model/UserCredits";
+import { IMongooseOrder } from "../model/Order";
+import { IMongooseOffer } from "../model/Offer";
 
 type OrderDocument = HydratedDocument<IOrder<ObjectId>>;
 type UserCreditsDocument = HydratedDocument<IUserCredits<ObjectId>>;
 
 export class Payment extends BaseService<ObjectId> {
-  private readonly uri: string;
-  private readonly dbName: string;
-  private daoFactory: MongooseModels;
-  private offerDao: Model<IOffer<ObjectId>>;
-  private orderDao: Model<IOrder<ObjectId>>;
-  private userCreditsDao: Model<IUserCredits<ObjectId>>;
 
-  constructor(uri: string, dbName: string) {
-    this.uri = uri;
-    this.dbName = dbName;
-    this.daoFactory = new MongooseModels();
-    this.orderDao = this.daoFactory.orderDao();
-    this.userCreditsDao = this.daoFactory.userCreditsDao();
-  }
-  async init(): Promise<Payment> {
-    await this.daoFactory.init(this.uri, this.dbName);
-    return this;
+  constructor(daoFactory: IDaoFactory<ObjectId>) {
+    super(daoFactory);
   }
 
-  async createOrder(offerId: unknown, userId: unknown): Promise<OrderDocument> {
-    const order: OrderDocument = await this.orderDao.create({
+  async createOrder(
+    offerId: unknown,
+    userId: unknown,
+  ): Promise<IMongooseOrder> {
+    const order: IMongooseOrder = await this.orderDao.create({
+      history: [],
       offerId: offerId,
       status: "pending",
       tokenCount: 100,
-      userId: userId,
-    });
+      userId: userId
+    }) as IMongooseOrder;
     return order;
   }
 
@@ -111,7 +103,10 @@ export class Payment extends BaseService<ObjectId> {
         if (overridingSuboffers) {
           // Apply overriding logic here (e.g., update prices, etc.)
           // Merge the overriding suboffers with the regular offer
-          mergedOffer.subOffers = [...(mergedOffer.subOffers || []), ...overridingSuboffers];
+          mergedOffer.subOffers = [
+            ...(mergedOffer.subOffers || []),
+            ...overridingSuboffers,
+          ];
         }
       }
 

@@ -1,6 +1,6 @@
-import mongoose, { Document, Model, ObjectId, Schema} from "mongoose";
+import mongoose, { Document, Model, ObjectId, Schema } from "mongoose";
 
-import { IOffer } from "../../../db/model/IOffer";
+import { IOffer } from "../../../db/model";
 
 export type IMongooseOffer = IOffer<ObjectId> & Document;
 

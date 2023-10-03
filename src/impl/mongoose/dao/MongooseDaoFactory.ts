@@ -1,4 +1,4 @@
-import { ObjectId } from "mongoose";
+import mongoose, { ObjectId } from "mongoose";
 
 import {
   IDaoFactory,
@@ -25,10 +25,20 @@ export class MongooseDaoFactory implements IDaoFactory<ObjectId> {
     private uri: string,
     private dbName: string,
   ) {
-    this.offerDao = new OfferDao(uri, dbName);
-    this.orderDao = new OrderDao(uri, dbName);
-    this.tokenTimetableDao = new TokenTimetableDao(uri, dbName);
-    this.userCreditsDao = new UserCreditsDao(uri, dbName);
+    this.offerDao = new OfferDao();
+    this.orderDao = new OrderDao();
+    this.tokenTimetableDao = new TokenTimetableDao();
+    this.userCreditsDao = new UserCreditsDao();
+  }
+
+  async init() {
+    if (!this.uri || !this.dbName) {
+      throw new Error("Please please specify db uri and/or name");
+    }
+
+    await mongoose.connect(this.uri, {
+      dbName: this.dbName,
+    });
   }
 
   getOfferDao(): IOfferDao<ObjectId, IOffer<ObjectId>> {

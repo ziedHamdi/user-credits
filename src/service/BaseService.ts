@@ -1,20 +1,26 @@
-import { ISubscriptionDao} from "../db/dao";
 import { IOffer } from "../db/model/IOffer";
 import { IOrder } from "../db/model/IOrder";
 import { ISubscription, IUserCredits } from "../db/model/IUserCredits";
 import { IPayment } from "./IPayment";
-import {IOfferDao} from "../db/dao/IOfferDao";
-import {IUserCreditsDao} from "../db/dao/IUserCreditsDao";
+import { IDaoFactory, IOfferDao, IOrderDao, ITokenTimetableDao, IUserCreditsDao } from "../db/dao";
+import { ObjectId } from "mongoose";
+import { ITokenTimetable } from "../db/model";
 
 export class BaseService<K extends object> implements IPayment<K> {
-  private readonly userCreditsDAO: IUserCreditsDao<K, IUserCredits<K>>;
-  private readonly offerDAO: IOfferDao<K, IOffer<K>>;
-  private readonly subscriptionDAO: ISubscriptionDao<K>;
+  protected daoFactory: IDaoFactory<ObjectId>;
 
-  constructor({ offerDAO, subscriptionDAO, userCreditsDAO }) {
-    this.userCreditsDAO = userCreditsDAO;
-    this.offerDAO = offerDAO;
-    this.subscriptionDAO = subscriptionDAO;
+  protected readonly offerDAO: IOfferDao<K, IOffer<K>>;
+  protected readonly orderDao: IOrderDao<K, IOrder<K>>;
+  protected readonly tokenTimetableDao: ITokenTimetableDao<K, ITokenTimetable<K>>;
+  protected readonly userCreditsDAO: IUserCreditsDao<K, IUserCredits<K>>;
+
+  constructor(daoFactory) {
+    this.daoFactory = daoFactory;
+
+    this.offerDAO = daoFactory.getOfferDao();
+    this.orderDao = daoFactory.getOrderDao();
+    this.tokenTimetableDao = daoFactory.getTokenTimetableDao();
+    this.userCreditsDAO = daoFactory.getUserCreditsDao();
   }
 
   /**
