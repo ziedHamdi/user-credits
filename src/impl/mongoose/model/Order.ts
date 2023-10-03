@@ -2,7 +2,7 @@ import mongoose, { Model, ObjectId, Schema } from "mongoose";
 
 import { IOrder, OrderStatus } from "../../../db/model/IOrder";
 
-export type MongooseOrder = IOrder<ObjectId>;
+export type IMongooseOrder = IOrder<ObjectId>;
 
 const orderStatusSchema = new Schema<OrderStatus>({
   date: Date,
@@ -14,7 +14,7 @@ const orderStatusSchema = new Schema<OrderStatus>({
   },
 });
 
-const orderSchema = new Schema<MongooseOrder>(
+const orderSchema = new Schema<IMongooseOrder>(
   {
     history: [orderStatusSchema],
     offerId: {
@@ -37,4 +37,4 @@ const orderSchema = new Schema<MongooseOrder>(
   { timestamps: true },
 );
 
-export default mongoose.model("order", orderSchema) as Model<MongooseOrder>;
+export default mongoose.model("order", orderSchema) as Model<IMongooseOrder>;

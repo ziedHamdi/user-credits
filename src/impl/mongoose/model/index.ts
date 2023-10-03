@@ -4,19 +4,19 @@ import { IOffer } from "../../../db/model/IOffer";
 import { IOrder } from "../../../db/model/IOrder";
 import { IUserCredits } from "../../../db/model/IUserCredits";
 import offerModel, { IMongooseOffer } from "./Offer";
-import orderModel, { MongooseOrder } from "./Order";
+import orderModel, { IMongooseOrder } from "./Order";
 import userCreditsModel, { IMongooseUserCredits } from "./UserCredits";
 
 export class MongooseModels {
   private offer: Model<IMongooseOffer>;
-  private order: Model<MongooseOrder>;
+  private order: Model<IMongooseOrder>;
   private userCredits: Model<IMongooseUserCredits>;
   private static instance: MongooseModels | null = null; // Static instance variable
   private static ready: boolean;
 
   private constructor() {
     this.offer = offerModel as Model<IMongooseOffer>;
-    this.order = orderModel as Model<MongooseOrder>;
+    this.order = orderModel as Model<IMongooseOrder>;
     this.userCredits = userCreditsModel as Model<IMongooseUserCredits>;
   }
 
@@ -48,7 +48,7 @@ export class MongooseModels {
     return this.offer;
   }
 
-  orderDao(): Model<IOrder<ObjectId>> {
+  orderDao(): Model<IMongooseOrder> {
     return this.order;
   }
 
