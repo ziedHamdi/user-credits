@@ -11,6 +11,8 @@ export interface IBaseDAO<D extends object> {
   // Find documents that match a query
   find(query: object): Promise<D[]>;
 
+  findOne(query: object): Promise<D>;
+
   findById(userId: object): Promise<D | null>;
 
   // Update a document by ID

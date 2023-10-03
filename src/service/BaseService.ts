@@ -9,18 +9,18 @@ import { ITokenTimetable } from "../db/model";
 export class BaseService<K extends object> implements IPayment<K> {
   protected daoFactory: IDaoFactory<ObjectId>;
 
-  protected readonly offerDAO: IOfferDao<K, IOffer<K>>;
+  protected readonly offerDao: IOfferDao<K, IOffer<K>>;
   protected readonly orderDao: IOrderDao<K, IOrder<K>>;
   protected readonly tokenTimetableDao: ITokenTimetableDao<K, ITokenTimetable<K>>;
-  protected readonly userCreditsDAO: IUserCreditsDao<K, IUserCredits<K>>;
+  protected readonly userCreditsDao: IUserCreditsDao<K, IUserCredits<K>>;
 
   constructor(daoFactory) {
     this.daoFactory = daoFactory;
 
-    this.offerDAO = daoFactory.getOfferDao();
+    this.offerDao = daoFactory.getOfferDao();
     this.orderDao = daoFactory.getOrderDao();
     this.tokenTimetableDao = daoFactory.getTokenTimetableDao();
-    this.userCreditsDAO = daoFactory.getUserCreditsDao();
+    this.userCreditsDao = daoFactory.getUserCreditsDao();
   }
 
   /**
@@ -30,7 +30,7 @@ export class BaseService<K extends object> implements IPayment<K> {
    */
   async loadOffers(userId: K): Promise<IOffer<K>[]> {
     if (!userId) {
-      return this.offerDAO.find({ parentOfferId: null });
+      return this.offerDao.find({ parentOfferId: null });
     }
 
     const activeSubscriptions = await this.getActiveSubscriptions(userId);
@@ -48,7 +48,7 @@ export class BaseService<K extends object> implements IPayment<K> {
    * @returns A promise that resolves to an array of active subscriptions.
    */
   async getActiveSubscriptions(userId: K): Promise<ISubscription<K>[]> {
-    const userCredits = await this.userCreditsDAO.findById(userId);
+    const userCredits = await this.userCreditsDao.findById(userId);
     return (userCredits ?? null).subscriptions.filter(
       (subscription) => subscription.status === "paid",
     );
@@ -63,7 +63,7 @@ export class BaseService<K extends object> implements IPayment<K> {
     const uniqueOfferIds = [
       ...new Set(subscriptions.map((sub) => sub.offerId)),
     ];
-    return this.offerDAO.find({
+    return this.offerDao.find({
       hasSubOffers: false,
       parentOfferId: { $in: uniqueOfferIds },
     });
@@ -74,7 +74,7 @@ export class BaseService<K extends object> implements IPayment<K> {
    * @returns A promise that resolves to an array of "regular" offers.
    */
   async getRegularOffers(): Promise<IOffer<K>[]> {
-    return this.offerDAO.find({
+    return this.offerDao.find({
       hasSubOffers: false,
       overridingKey: { $exists: false },
     });

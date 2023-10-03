@@ -1,7 +1,9 @@
+import { BaseEntity } from "./BaseEntity";
+
 /**
  * @param K the type of foreign keys (is used for all foreign keys type)
  */
-export interface IOffer<K extends object> {
+export interface IOffer<K extends object> extends BaseEntity<K> {
   cycle: "once" | "weekly" | "monthly" | "yearly";
   /**indicates information about exclusive offers. Designed to be a boolean*/
   hasSubOffers: unknown;

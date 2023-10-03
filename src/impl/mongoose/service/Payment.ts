@@ -1,35 +1,29 @@
-import { HydratedDocument, Model, ObjectId } from "mongoose";
+import { ObjectId } from "mongoose";
 
+import { IDaoFactory } from "../../../db/dao";
 import { IOffer } from "../../../db/model/IOffer";
 import { IOrder } from "../../../db/model/IOrder";
 import { IUserCredits } from "../../../db/model/IUserCredits";
 import { EntityNotFoundError } from "../../../errors/EntityNotFoundError";
 import { BaseService } from "../../../service/BaseService";
-import { IDaoFactory, IOfferDao, IOrderDao, IUserCreditsDao } from "../../../db/dao";
-import UserCredits, { IMongooseUserCredits } from "../model/UserCredits";
 import { IMongooseOrder } from "../model/Order";
-import { IMongooseOffer } from "../model/Offer";
-
-type OrderDocument = HydratedDocument<IOrder<ObjectId>>;
-type UserCreditsDocument = HydratedDocument<IUserCredits<ObjectId>>;
 
 export class Payment extends BaseService<ObjectId> {
-
   constructor(daoFactory: IDaoFactory<ObjectId>) {
     super(daoFactory);
   }
 
   async createOrder(
-    offerId: unknown,
-    userId: unknown,
+    offerId: ObjectId,
+    userId: ObjectId,
   ): Promise<IMongooseOrder> {
-    const order: IMongooseOrder = await this.orderDao.create({
+    const order: IMongooseOrder = (await this.orderDao.create({
       history: [],
       offerId: offerId,
       status: "pending",
       tokenCount: 100,
-      userId: userId
-    }) as IMongooseOrder;
+      userId: userId,
+    })) as IMongooseOrder;
     return order;
   }
 
@@ -43,10 +37,11 @@ export class Payment extends BaseService<ObjectId> {
   }
 
   async orderStatusChanged(
-    orderId: unknown,
+    orderId: ObjectId,
     status: "pending" | "paid" | "refused",
   ): Promise<IOrder<ObjectId>> {
-    const order: null | OrderDocument = await this.orderDao.findById(orderId);
+    const order: null | IOrder<ObjectId> =
+      await this.orderDao.findById(orderId);
     if (!order) throw new EntityNotFoundError("IOrder", orderId);
     order.status = status;
     await order.save();
@@ -54,7 +49,7 @@ export class Payment extends BaseService<ObjectId> {
   }
 
   async remainingTokens(userId: ObjectId): Promise<IUserCredits<ObjectId>> {
-    const userCredits: null | UserCreditsDocument =
+    const userCredits: null | IUserCredits<ObjectId> =
       await this.userCreditsDao.findOne({ userId });
     if (!userCredits) throw new EntityNotFoundError("IUserCredits", userId);
     return userCredits;

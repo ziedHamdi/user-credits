@@ -1,3 +1,5 @@
+import { BaseEntity } from "./BaseEntity";
+
 export interface OrderStatus {
   date: Date;
   message: string;
@@ -7,7 +9,7 @@ export interface OrderStatus {
 /**
  * @param K the type of foreign keys (is used for all foreign keys type)
  */
-export interface IOrder<K extends object> {
+export interface IOrder<K extends object> extends BaseEntity<K> {
   history: [OrderStatus] | null;
   offerId: K;
   status: "pending" | "paid" | "refused";
