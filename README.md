@@ -1,6 +1,3 @@
-Certainly! Here's a revised description for your GitHub project's README.md file:
-
-```markdown
 # UserCredits
 
 UserCredits is an open-source library designed to simplify the implementation of pay-as-you-go features in your web or mobile applications. Whether you're building a subscription-based service, a digital marketplace, or an e-commerce platform, UserCredits provides a flexible and technology-agnostic solution to manage user credits and token-based payments.
@@ -42,6 +39,3 @@ UserCredits is released under the [MIT License](link-to-license-file). Feel free
 ---
 
 [![GitHub stars](https://img.shields.io/github/stars/ziedHamdi/UserCredits?style=social)](https://github.com/ziedHamdi/UserCredits/stargazers)
-```
-
-This description provides an overview of UserCredits' features, architecture, and how to get started with the library. It also encourages contributions and highlights the project's open-source nature. Please replace `link-to-documentation`, `link-to-contributing-guide`, and `link-to-license-file` with the actual links in your GitHub repository.
