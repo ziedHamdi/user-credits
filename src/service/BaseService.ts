@@ -1,5 +1,3 @@
-import { ObjectId } from "mongoose";
-
 import {
   IDaoFactory,
   IOfferDao,
@@ -17,7 +15,7 @@ import {
 import { IPayment } from "./IPayment";
 
 export class BaseService<K extends object> implements IPayment<K> {
-  protected daoFactory: IDaoFactory<ObjectId>;
+  protected daoFactory: IDaoFactory<K>;
 
   protected readonly offerDao: IOfferDao<K, IOffer<K>>;
   protected readonly orderDao: IOrderDao<K, IOrder<K>>;
@@ -27,7 +25,7 @@ export class BaseService<K extends object> implements IPayment<K> {
   >;
   protected readonly userCreditsDao: IUserCreditsDao<K, IUserCredits<K>>;
 
-  constructor(daoFactory) {
+  constructor(daoFactory: IDaoFactory<K>) {
     this.daoFactory = daoFactory;
 
     this.offerDao = daoFactory.getOfferDao();
@@ -62,8 +60,10 @@ export class BaseService<K extends object> implements IPayment<K> {
    */
   async getActiveSubscriptions(userId: K): Promise<ISubscription<K>[]> {
     const userCredits = await this.userCreditsDao.findById(userId);
-    return (userCredits ?? null).subscriptions.filter(
-      (subscription) => subscription.status === "paid",
+    return (
+      (userCredits?.subscriptions as ISubscription<K>[]).filter(
+        (subscription) => subscription.status === "paid",
+      ) || []
     );
   }
 
@@ -105,15 +105,15 @@ export class BaseService<K extends object> implements IPayment<K> {
     return regularOffers.map((offer) => {
       const mergedOffer = { ...offer };
 
-      if (offer.overridingKey) {
-        const overridingSubOffers = subOffersMap[offer.overridingKey];
-        if (overridingSubOffers) {
-          mergedOffer.subOffers = [
-            ...(mergedOffer.subOffers || []),
-            ...overridingSubOffers,
-          ];
-        }
-      }
+      // if (offer.overridingKey) {
+      //   const overridingSubOffers = subOffersMap[offer.overridingKey];
+      //   if (overridingSubOffers) {
+      //     mergedOffer.subOffers = [
+      //       ...(mergedOffer.subOffers || []),
+      //       ...overridingSubOffers,
+      //     ];
+      //   }
+      // }
 
       return mergedOffer;
     });
@@ -135,24 +135,5 @@ export class BaseService<K extends object> implements IPayment<K> {
       },
       {} as Record<string, IOffer<K>[]>,
     );
-  }
-
-  createOrder(offerId: unknown, userId: unknown): Promise<IOrder<K>> {
-    return Promise.resolve(undefined);
-  }
-
-  execute(order: IOrder<K>): Promise<IUserCredits<K>> {
-    return Promise.resolve(undefined);
-  }
-
-  orderStatusChanged(
-    orderId: unknown,
-    status: "pending" | "paid" | "refused",
-  ): Promise<IOrder<K>> {
-    return Promise.resolve(undefined);
-  }
-
-  remainingTokens(userId: unknown): Promise<IUserCredits<K>> {
-    return Promise.resolve(undefined);
   }
 }

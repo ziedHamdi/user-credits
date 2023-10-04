@@ -1,4 +1,4 @@
-import { ObjectId } from "mongoose";
+import { ObjectId } from "bson";
 
 import { TokenTimetable } from "../model";
 import { IMongooseTokenTimetable } from "../model/TokenTimetable";

@@ -32,6 +32,7 @@
   },
   "dependencies": {
     "awilix": "^8.0.1",
+    "bson": "^6.1.0",
     "mongoose": "^7.5.3"
   }
 }

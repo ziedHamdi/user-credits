@@ -1,4 +1,4 @@
-import { ObjectId } from "mongoose";
+import { ObjectId } from "bson";
 
 import { IUserCreditsDao } from "../../../db/dao/IUserCreditsDao";
 import { ISubscription } from "../../../db/model/IUserCredits";

@@ -1,4 +1,4 @@
-import { ObjectId } from "mongoose";
+import { ObjectId } from "bson";
 
 import { IOfferDao } from "../../../db/dao/IOfferDao";
 import { Offer } from "../model";
