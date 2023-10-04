@@ -1,29 +1,22 @@
 import { ObjectId } from "bson";
 
 import { IDaoFactory } from "../../src/db/dao"; // Import the actual path
-import { IOffer, IOrder, ISubscription, ITokenTimetable, IUserCredits } from "../../src/db/model"; // Import the actual path
+import {
+  IOffer,
+  IOrder,
+  ISubscription,
+  ITokenTimetable,
+  IUserCredits,
+} from "../../src/db/model"; // Import the actual path
 import { BaseService } from "../../src/service/BaseService";
-import { MockUserCreditsDao } from "../db/dao/MockUserCreditsDao";
-import { MockOfferDao } from "../db/dao/MockOfferDao";
-import { MockOrderDao } from "../db/dao/MockOrderDao";
-import { MockTokenTimetableDao } from "../db/dao/MockTokenTimetableDao";
+import testContainer from "../testContainer";
 
 function newObjectId(): ObjectId {
   return new ObjectId();
 }
 
 // Sample data for testing
-const sampleUserId: ObjectId = newObjectId();
-const sampleUserCredits = {
-  subscriptions: [],
-  tokens: 0,
-  userId: sampleUserId,
-} as IUserCredits<ObjectId>;
-// Mock for IUserCreditsDao
-const offerDaoMock = new MockOfferDao({} as IOffer<ObjectId>, null);
-const orderDaoMock = new MockOrderDao({} as IOrder<ObjectId>, null);
-const tokenTimetableMock = new MockTokenTimetableDao({} as ITokenTimetable<ObjectId>, null);
-const userCreditsDaoMock = new MockUserCreditsDao(sampleUserCredits, null);
+const sampleUserId: ObjectId = testContainer.resolve("sampleUserId");
 
 const subscriptionPaid1: ISubscription<ObjectId> = {
   expires: new Date(),
@@ -70,7 +63,6 @@ const offerRoot2: IOffer<ObjectId> = {
   tokenCount: 0,
 } as IOffer<ObjectId>;
 
-
 const offerChild1: IOffer<ObjectId> = {
   _id: newObjectId(),
   cycle: "once",
@@ -95,12 +87,8 @@ const offerChild2: IOffer<ObjectId> = {
   tokenCount: 100,
 } as IOffer<ObjectId>;
 
-const daoFactoryMock: IDaoFactory<ObjectId> = {
-  getOfferDao: () => offerDaoMock,
-  getOrderDao: () => orderDaoMock,
-  getTokenTimetableDao: () => tokenTimetableMock,
-  getUserCreditsDao: () => userCreditsDaoMock,
-};
+const daoFactoryMock: IDaoFactory<ObjectId> =
+  testContainer.resolve("daoFactory");
 
 describe("BaseService.getActiveSubscriptions", () => {
   const sampleUserCredits: IUserCredits<ObjectId> = {
@@ -116,21 +104,23 @@ describe("BaseService.getActiveSubscriptions", () => {
     service = new BaseService<ObjectId>(daoFactoryMock);
 
     // Reset the mock function before each test
-    (userCreditsDaoMock.findById as jest.Mock).mockReset();
+    (daoFactoryMock.getUserCreditsDao().findById as jest.Mock).mockReset();
   });
 
   it("should return active subscriptions when user has paid subscriptions", async () => {
     // Mock the userCreditsDao.findById method to return sampleUserCredits
-    (userCreditsDaoMock.findById as jest.Mock).mockResolvedValue(
-      sampleUserCredits,
-    );
+    (
+      daoFactoryMock.getUserCreditsDao().findById as jest.Mock
+    ).mockResolvedValue(sampleUserCredits);
 
     // Call the getActiveSubscriptions method
     const activeSubscriptions =
       await service.getActiveSubscriptions(sampleUserId);
 
     // Assert that userCreditsDao.findById was called with the correct userId
-    expect(userCreditsDaoMock.findById).toHaveBeenCalledWith(sampleUserId);
+    expect(daoFactoryMock.getUserCreditsDao().findById).toHaveBeenCalledWith(
+      sampleUserId,
+    );
 
     // Assert that activeSubscriptions contain only paid subscriptions
     expect(activeSubscriptions).toEqual([
@@ -146,16 +136,16 @@ describe("BaseService.getActiveSubscriptions", () => {
     } as IUserCredits<ObjectId>;
 
     // Mock the userCreditsDao.findById method to return the modified userCredits
-    (userCreditsDaoMock.findById as jest.Mock).mockResolvedValue(
-      noPaidSubscriptionsUserCredits,
-    );
+    (
+      daoFactoryMock.getUserCreditsDao().findById as jest.Mock
+    ).mockResolvedValue(noPaidSubscriptionsUserCredits);
 
     // Call the getActiveSubscriptions method
     const activeSubscriptions =
       await service.getActiveSubscriptions(sampleUserId);
 
     // Assert that userCreditsDao.findById was called with the correct userId
-    expect(userCreditsDaoMock.findById).toHaveBeenCalledWith(sampleUserId);
+    expect(daoFactoryMock.getUserCreditsDao().findById).toHaveBeenCalledWith(sampleUserId);
 
     // Assert that activeSubscriptions is an empty array
     expect(activeSubscriptions).toEqual([]);
@@ -169,16 +159,19 @@ describe("mergeOffers", () => {
     service = new BaseService<ObjectId>(daoFactoryMock);
   });
   it("should merge sub-offers that match overridingKey with root offers", () => {
-    const mergedOffers = service.mergeOffers([offerRoot1, offerRoot2], [offerChild1, offerChild2]);
-    expect(mergedOffers).toEqual(expect.arrayContaining([
-      offerRoot2,
-      offerChild1,
-      offerChild2,
-    ]));
+    const mergedOffers = service.mergeOffers(
+      [offerRoot1, offerRoot2],
+      [offerChild1, offerChild2],
+    );
+    expect(mergedOffers).toEqual(
+      expect.arrayContaining([offerRoot2, offerChild1, offerChild2]),
+    );
   });
   it("should return a union array if no key matches are found", () => {
     const mergedOffers = service.mergeOffers([offerRoot1], [offerChild1]);
-    expect(mergedOffers).toEqual(expect.arrayContaining([offerRoot1, offerChild1]));
+    expect(mergedOffers).toEqual(
+      expect.arrayContaining([offerRoot1, offerChild1]),
+    );
   });
 
   it("should handle empty input arrays", () => {
@@ -186,9 +179,3 @@ describe("mergeOffers", () => {
     expect(mergedOffers).toEqual([]);
   });
 });
-
-
-
-
-
-
