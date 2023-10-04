@@ -1,6 +1,8 @@
 import { IBaseDao } from "../../../src/db/dao";
 
-export class MockBaseDao<D extends object, I extends IBaseDao<D>> implements IBaseDao<D> {
+export class MockBaseDao<D extends object, I extends IBaseDao<D>>
+  implements IBaseDao<D>
+{
   protected readonly mockFunctions: I;
 
   // Declare the functions as public fields
@@ -26,17 +28,5 @@ export class MockBaseDao<D extends object, I extends IBaseDao<D>> implements IBa
       updateById: this.updateById,
       ...(overrides ? { ...overrides } : {}),
     } as I;
-  }
-
-  // Rest of the class methods
-
-  // Reset the mock function for the specified method
-  resetMockfn(name: keyof I): void {
-    (this.mockFunctions[name] as jest.Mock).mockReset();
-  }
-
-  // Mock the resolved value for the specified method
-  mockResolveFnValue(name: keyof I, value: unknown): void {
-    (this.mockFunctions[name] as jest.Mock).mockResolvedValue(value);
   }
 }

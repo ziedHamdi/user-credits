@@ -95,28 +95,31 @@ export class BaseService<K extends object> implements IPayment<K> {
 
   /**
    * Merge "regular" offers with suboffers, applying overriding logic.
+   *
+   * Suboffers that have the same overridingKey as a root offer override them (keeping only the promotional exclusive offers).
+   * So the method returns an intersection of regularOffers and subOffers that intersect on the value of overridingKey
    * @param regularOffers An array of "regular" offers.
    * @param subOffers An array of suboffers.
    * @returns An array of merged offers.
    */
   mergeOffers(regularOffers: IOffer<K>[], subOffers: IOffer<K>[]): IOffer<K>[] {
-    const subOffersMap = this.groupSubOffersByParent(subOffers);
+    // Create a Map to store subOffers by their overridingKey
+    const subOffersMap = new Map<string, IOffer<K>>();
 
-    return regularOffers.map((offer) => {
-      const mergedOffer = { ...offer };
+    // Populate the subOffersMap with subOffers, overriding duplicates
+    for (const subOffer of subOffers) {
+      subOffersMap.set(subOffer.overridingKey, subOffer);
+    }
 
-      // if (offer.overridingKey) {
-      //   const overridingSubOffers = subOffersMap[offer.overridingKey];
-      //   if (overridingSubOffers) {
-      //     mergedOffer.subOffers = [
-      //       ...(mergedOffer.subOffers || []),
-      //       ...overridingSubOffers,
-      //     ];
-      //   }
-      // }
-
-      return mergedOffer;
+    // Filter regularOffers to keep only those that are not overridden by subOffers
+    const mergedOffers = regularOffers.filter((regularOffer) => {
+      const subOffer = subOffersMap.get(regularOffer.overridingKey);
+      return !subOffer || subOffer.kind !== "subscription"; // Exclude promotional exclusive offers
     });
+
+    mergedOffers.push(...subOffers);
+
+    return mergedOffers;
   }
 
   /**

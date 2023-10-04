@@ -46,6 +46,55 @@ const subscriptionRefused1: ISubscription<ObjectId> = {
   status: "refused",
 } as ISubscription<ObjectId>;
 
+const offerRoot1: IOffer<ObjectId> = {
+  _id: newObjectId(),
+  cycle: "once",
+  hasSubOffers: false, // This offer has no sub-offers
+  kind: "tokens",
+  name: "100 tokens for 100$",
+  overridingKey: "100tokens",
+  parentOfferId: null as any, // To be updated below
+  price: 100,
+  tokenCount: 100,
+} as IOffer<ObjectId>;
+
+const offerRoot2: IOffer<ObjectId> = {
+  _id: newObjectId(),
+  cycle: "monthly",
+  hasSubOffers: true, // This offer has sub-offers
+  kind: "subscription",
+  name: "Starter",
+  overridingKey: "100tokens",
+  parentOfferId: null as any, // To be updated below
+  price: 50,
+  tokenCount: 0,
+} as IOffer<ObjectId>;
+
+
+const offerChild1: IOffer<ObjectId> = {
+  _id: newObjectId(),
+  cycle: "once",
+  hasSubOffers: false, // This offer has no sub-offers
+  kind: "tokens",
+  name: "20% off on 50 tokens",
+  overridingKey: "50tokens",
+  parentOfferId: offerRoot2._id, // is a sub-offer of Starter offer
+  price: 40,
+  tokenCount: 50,
+} as IOffer<ObjectId>;
+
+const offerChild2: IOffer<ObjectId> = {
+  _id: newObjectId(),
+  cycle: "once",
+  hasSubOffers: false, // This offer has no sub-offers
+  kind: "tokens",
+  name: "30% off on 100 tokens",
+  overridingKey: "100tokens",
+  parentOfferId: offerRoot2._id, // is a sub-offer of Starter offer overrides the 100tokens offer
+  price: 70,
+  tokenCount: 100,
+} as IOffer<ObjectId>;
+
 const daoFactoryMock: IDaoFactory<ObjectId> = {
   getOfferDao: () => offerDaoMock,
   getOrderDao: () => orderDaoMock,
@@ -67,12 +116,14 @@ describe("BaseService.getActiveSubscriptions", () => {
     service = new BaseService<ObjectId>(daoFactoryMock);
 
     // Reset the mock function before each test
-    userCreditsDaoMock.resetMockfn("findById");
+    (userCreditsDaoMock.findById as jest.Mock).mockReset();
   });
 
   it("should return active subscriptions when user has paid subscriptions", async () => {
     // Mock the userCreditsDao.findById method to return sampleUserCredits
-    userCreditsDaoMock.mockResolveFnValue("findById", sampleUserCredits);
+    (userCreditsDaoMock.findById as jest.Mock).mockResolvedValue(
+      sampleUserCredits,
+    );
 
     // Call the getActiveSubscriptions method
     const activeSubscriptions =
@@ -95,8 +146,7 @@ describe("BaseService.getActiveSubscriptions", () => {
     } as IUserCredits<ObjectId>;
 
     // Mock the userCreditsDao.findById method to return the modified userCredits
-    userCreditsDaoMock.mockResolveFnValue(
-      "findById",
+    (userCreditsDaoMock.findById as jest.Mock).mockResolvedValue(
       noPaidSubscriptionsUserCredits,
     );
 
@@ -111,3 +161,34 @@ describe("BaseService.getActiveSubscriptions", () => {
     expect(activeSubscriptions).toEqual([]);
   });
 });
+
+describe("mergeOffers", () => {
+  let service: BaseService<ObjectId>;
+  beforeEach(() => {
+    // Create a new instance of BaseService with the mock userCreditsDao
+    service = new BaseService<ObjectId>(daoFactoryMock);
+  });
+  it("should merge sub-offers that match overridingKey with root offers", () => {
+    const mergedOffers = service.mergeOffers([offerRoot1, offerRoot2], [offerChild1, offerChild2]);
+    expect(mergedOffers).toEqual(expect.arrayContaining([
+      offerRoot2,
+      offerChild1,
+      offerChild2,
+    ]));
+  });
+  it("should return a union array if no key matches are found", () => {
+    const mergedOffers = service.mergeOffers([offerRoot1], [offerChild1]);
+    expect(mergedOffers).toEqual(expect.arrayContaining([offerRoot1, offerChild1]));
+  });
+
+  it("should handle empty input arrays", () => {
+    const mergedOffers = service.mergeOffers([], []);
+    expect(mergedOffers).toEqual([]);
+  });
+});
+
+
+
+
+
+
