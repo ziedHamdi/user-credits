@@ -1,7 +1,7 @@
 import { IOffer } from "../model";
-import { IBaseDAO } from "./IBaseDAO";
+import { IBaseDao } from "./IBaseDao";
 
 export interface IOfferDao<K extends object, D extends IOffer<K>>
-  extends IBaseDAO<D> {
+  extends IBaseDao<D> {
   loadSubOffers(parentOfferId: K): Promise<D[]>;
 }

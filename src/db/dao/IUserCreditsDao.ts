@@ -1,7 +1,7 @@
 import {ISubscription, IUserCredits} from "../model/IUserCredits";
-import {IBaseDAO} from "./IBaseDAO";
+import {IBaseDao} from "./IBaseDao";
 
 export interface IUserCreditsDao<K extends object, D extends IUserCredits<K>>
-    extends IBaseDAO<D> {
+    extends IBaseDao<D> {
   findByUserId(userId: K): Promise<ISubscription<K>[]>;
 }

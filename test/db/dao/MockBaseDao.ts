@@ -1,58 +1,41 @@
-import { IBaseDAO } from "../../../src/db/dao/IBaseDAO";
+import { IBaseDao } from "../../../src/db/dao";
 
-export class MockBaseDao<D extends object, I extends IBaseDAO<D>>
-  implements IBaseDAO<D>
-{
+export class MockBaseDao<D extends object, I extends IBaseDao<D>> implements IBaseDao<D> {
   protected readonly mockFunctions: I;
+
+  // Declare the functions as public fields
+  public count = jest.fn(async () => 0);
+  public create = jest.fn(async () => this.sampleDTO);
+  public deleteById = jest.fn(async () => false);
+  public find = jest.fn(async () => []);
+  public findById = jest.fn(async () => this.sampleDTO);
+  public findOne = jest.fn(async () => this.sampleDTO);
+  public updateById = jest.fn(async () => this.sampleDTO);
 
   constructor(
     private readonly sampleDTO: D,
     overrides: Partial<I> | null,
   ) {
     this.mockFunctions = {
-      count: jest.fn(async () => 0),
-      create: jest.fn(async () => this.sampleDTO),
-      deleteById: jest.fn(async () => false),
-      find: jest.fn(async () => []),
-      findById: jest.fn(async () => this.sampleDTO),
-      findOne: jest.fn(async () => this.sampleDTO),
-      updateById: jest.fn(async () => this.sampleDTO),
+      count: this.count,
+      create: this.create,
+      deleteById: this.deleteById,
+      find: this.find,
+      findById: this.findById,
+      findOne: this.findOne,
+      updateById: this.updateById,
       ...(overrides ? { ...overrides } : {}),
     } as I;
   }
 
-  async count(query: object): Promise<number> {
-    return this.mockFunctions.count(query);
-  }
+  // Rest of the class methods
 
-  async create(data: Partial<D>): Promise<D> {
-    return this.mockFunctions.create(data);
-  }
-
-  async deleteById(userId: string): Promise<boolean> {
-    return this.mockFunctions.deleteById(userId);
-  }
-
-  async find(query: object): Promise<D[]> {
-    return this.mockFunctions.find(query);
-  }
-
-  async findOne(query: object): Promise<D> {
-    return this.mockFunctions.findOne(query);
-  }
-
-  async findById(userId: object): Promise<D | null> {
-    return this.mockFunctions.findById(userId);
-  }
-
-  async updateById(userId: string, update: Partial<D>): Promise<D | null> {
-    return this.mockFunctions.updateById(userId, update);
-  }
-
+  // Reset the mock function for the specified method
   resetMockfn(name: keyof I): void {
     (this.mockFunctions[name] as jest.Mock).mockReset();
   }
 
+  // Mock the resolved value for the specified method
   mockResolveFnValue(name: keyof I, value: unknown): void {
     (this.mockFunctions[name] as jest.Mock).mockResolvedValue(value);
   }

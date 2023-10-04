@@ -23,7 +23,7 @@ const sampleUserCredits = {
 const offerDaoMock = new MockOfferDao({} as IOffer<ObjectId>, null);
 const orderDaoMock = new MockOrderDao({} as IOrder<ObjectId>, null);
 const tokenTimetableMock = new MockTokenTimetableDao({} as ITokenTimetable<ObjectId>, null);
-const userCreditsDaoMock = new MockUserCreditsDao(sampleUserCredits);
+const userCreditsDaoMock = new MockUserCreditsDao(sampleUserCredits, null);
 
 const subscriptionPaid1: ISubscription<ObjectId> = {
   expires: new Date(),

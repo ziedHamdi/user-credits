@@ -1,4 +1,5 @@
 import { ObjectId } from "bson";
+
 import { IUserCreditsDao } from "../../../src/db/dao";
 import { ISubscription, IUserCredits } from "../../../src/db/model";
 import { MockBaseDao } from "./MockBaseDao";
@@ -9,7 +10,7 @@ export class MockUserCreditsDao
 {
   constructor(
     sampleDTO: IUserCredits<ObjectId>,
-    overrides: Partial<IUserCreditsDao<ObjectId, IUserCredits<ObjectId>>> = {}
+    overrides: Partial<MockUserCreditsDao> | null,
   ) {
     super(sampleDTO, overrides);
   }
@@ -22,4 +23,3 @@ export class MockUserCreditsDao
     throw new Error("findByUserId not implemented in mock.");
   }
 }
-

@@ -10,7 +10,7 @@ export class MockOrderDao
 {
   constructor(
     sampleDTO: IOrder<ObjectId>,
-    overrides: Partial<IOrderDao<ObjectId, IOrder<ObjectId>>> | null,
+    overrides: Partial<MockOrderDao> | null,
   ) {
     super(sampleDTO, overrides);
   }

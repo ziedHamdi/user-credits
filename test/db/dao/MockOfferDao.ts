@@ -10,7 +10,7 @@ export class MockOfferDao
 {
   constructor(
     sampleDTO: IOffer<ObjectId>,
-    overrides: Partial<IOfferDao<ObjectId, IOffer<ObjectId>>> | null,
+    overrides: Partial<MockOfferDao> | null,
   ) {
     super(sampleDTO, overrides);
   }

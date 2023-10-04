@@ -1,7 +1,7 @@
 import { ITokenTimetable } from "../model/ITokenTimetable";
-import {IBaseDAO} from "./IBaseDAO";
+import {IBaseDao} from "./IBaseDao";
 
 export interface ITokenTimetableDao<
   K extends object,
   D extends ITokenTimetable<K>,
-> extends IBaseDAO<D> {}
+> extends IBaseDao<D> {}
