@@ -1,5 +1,6 @@
 {
   "name": "typescript-bootstrap",
+  "type": "module",
   "version": "1.0.0",
   "description": "An opinionated TypeScript bootstrap template.",
   "main": "./dist/index.js",

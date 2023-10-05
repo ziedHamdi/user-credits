@@ -41,3 +41,4 @@ testContainer.register({
 });
 
 export default testContainer;
+export { testContainer };

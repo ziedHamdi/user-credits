@@ -28,6 +28,10 @@ UserCredits is built with a modular architecture that separates core business lo
 
 To start using UserCredits in your project, follow the installation and usage instructions in the [blog series](https://dev.to/zhamdi/architecting-pay-as-you-go-magic-usercredits-winning-formula-4ace).
 
+## Testing
+### Prerequisites
+Jest must be launched with the node option `--experimental-vm-modules`to enable ecma6 syntax in config files
+
 ## Contributing
 
 UserCredits is an open-source project, and we welcome contributions from the community. Whether you want to add new features, improve documentation, or report issues, your help is valuable. Feel free to [contact me](https://twitter.com/zhamdi) or to fork the project.
