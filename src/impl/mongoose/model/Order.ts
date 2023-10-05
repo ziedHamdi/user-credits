@@ -1,4 +1,5 @@
-import mongoose, { Document, Model, ObjectId, Schema } from "mongoose";
+import { ObjectId } from "bson";
+import mongoose, { Document, Model, Schema } from "mongoose";
 
 import { IOrder, OrderStatus } from "../../../db/model/IOrder";
 
@@ -20,7 +21,7 @@ const orderSchema = new Schema<IMongooseOrder>(
     offerId: {
       ref: "IOffer",
       required: true,
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
     },
     status: {
       enum: ["pending", "paid", "refused"],
@@ -31,7 +32,7 @@ const orderSchema = new Schema<IMongooseOrder>(
     userId: {
       ref: "User",
       required: true,
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
     },
   },
   { timestamps: true },

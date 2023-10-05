@@ -1,4 +1,5 @@
-import mongoose, { Document, ObjectId, Schema } from "mongoose";
+import { ObjectId } from "bson";
+import mongoose, { Document, Schema } from "mongoose";
 
 import { ITokenTimetable } from "../../../db/model/ITokenTimetable";
 
@@ -10,7 +11,7 @@ const tokenTimetableSchema = new Schema<ITokenTimetable<ObjectId>>(
     userId: {
       ref: "User",
       required: true,
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
     },
   },
   { timestamps: { createdAt: true, updatedAt: false } },

@@ -17,4 +17,6 @@ export class OfferDao
     // Use find() to get sub-offers based on the parentOfferId
     return this.find({ parentOfferId });
   }
+
+
 }

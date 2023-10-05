@@ -22,7 +22,7 @@ const sampleUserCredits = {
 } as IUserCredits<ObjectId>;
 
 testContainer.register({
-  daoFactory: asFunction(() => {
+  daoFactoryMock: asFunction(() => {
     const offerDaoMock = new MockOfferDao({} as IOffer<ObjectId>);
     const orderDaoMock = new MockOrderDao({} as IOrder<ObjectId>);
     const tokenTimetableMock = new MockTokenTimetableDao(

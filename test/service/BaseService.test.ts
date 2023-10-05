@@ -88,7 +88,9 @@ const offerChild2: IOffer<ObjectId> = {
 } as IOffer<ObjectId>;
 
 const daoFactoryMock: IDaoFactory<ObjectId> =
-  testContainer.resolve("daoFactory");
+  testContainer.resolve("daoFactoryMock");
+const mongooseDaoFactory: IDaoFactory<ObjectId> =
+  testContainer.resolve("mongooseDaoFactory");
 
 describe("BaseService.getActiveSubscriptions", () => {
   const sampleUserCredits: IUserCredits<ObjectId> = {
@@ -145,14 +147,16 @@ describe("BaseService.getActiveSubscriptions", () => {
       await service.getActiveSubscriptions(sampleUserId);
 
     // Assert that userCreditsDao.findById was called with the correct userId
-    expect(daoFactoryMock.getUserCreditsDao().findById).toHaveBeenCalledWith(sampleUserId);
+    expect(daoFactoryMock.getUserCreditsDao().findById).toHaveBeenCalledWith(
+      sampleUserId,
+    );
 
     // Assert that activeSubscriptions is an empty array
     expect(activeSubscriptions).toEqual([]);
   });
 });
 
-describe("mergeOffers", () => {
+describe("mergeOffers tests", () => {
   let service: BaseService<ObjectId>;
   beforeEach(() => {
     // Create a new instance of BaseService with the mock userCreditsDao
@@ -177,5 +181,30 @@ describe("mergeOffers", () => {
   it("should handle empty input arrays", () => {
     const mergedOffers = service.mergeOffers([], []);
     expect(mergedOffers).toEqual([]);
+  });
+});
+
+describe("offer creation", () => {
+  let service: BaseService<ObjectId>;
+  beforeEach(() => {
+    // Create a new instance of BaseService with the mock userCreditsDao
+    service = new BaseService<ObjectId>(mongooseDaoFactory);
+  });
+
+  it("should create offer then retrieve it", async () => {
+    const offerDao = service.getDaoFactory().getOfferDao();
+    const createdOffer = await offerDao.create(offerRoot1);
+
+    // Expect that the createdOffer is not null
+    expect(createdOffer).toBeTruthy();
+
+    // Retrieve the offer by its ID
+    const retrievedOffer = await offerDao.findById(createdOffer._id);
+
+    // Expect that the retrievedOffer is not null and has the same properties as the sampleOffer
+    expect(retrievedOffer).toBeTruthy();
+    expect(retrievedOffer?._id).toEqual(sampleOffer._id);
+    expect(retrievedOffer?.cycle).toEqual(sampleOffer.cycle);
+    expect(retrievedOffer?.kind).toEqual(sampleOffer.kind);
   });
 });

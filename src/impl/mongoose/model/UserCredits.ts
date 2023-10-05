@@ -1,4 +1,5 @@
-import mongoose, { Document, Model, ObjectId, Schema} from "mongoose";
+import { ObjectId } from "bson";
+import mongoose, { Document, Model, Schema} from "mongoose";
 
 import { ISubscription, IUserCredits } from "../../../db/model/IUserCredits";
 
@@ -12,7 +13,7 @@ const subscriptionSchema = new Schema<
   offerId: {
     ref: "IOffer",
     required: true,
-    type: mongoose.Schema.Types.ObjectId,
+    type: Schema.Types.ObjectId,
   },
   starts: Date,
   status: {
@@ -29,7 +30,7 @@ const userCreditsSchema = new Schema<IMongooseUserCredits>(
     userId: {
       ref: "User",
       required: true,
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
     },
   },
   { timestamps: true },

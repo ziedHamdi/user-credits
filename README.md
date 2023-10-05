@@ -29,8 +29,11 @@ UserCredits is built with a modular architecture that separates core business lo
 To start using UserCredits in your project, follow the installation and usage instructions in the [blog series](https://dev.to/zhamdi/architecting-pay-as-you-go-magic-usercredits-winning-formula-4ace).
 
 ## Testing
+We are using the project mongodb-memory-server to run an in memory mongodb for tests. Which generates the following warning
+
+`(node:36336) ExperimentalWarning: VM Modules is an experimental feature and might change at any time`
 ### Prerequisites
-Jest must be launched with the node option `--experimental-vm-modules`to enable ecma6 syntax in config files
+Jest must be launched with the node option `--experimental-vm-modules` also to enable ecma6 syntax in config files
 
 ## Contributing
 

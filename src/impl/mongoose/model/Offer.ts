@@ -1,4 +1,5 @@
-import mongoose, { Document, Model, ObjectId, Schema } from "mongoose";
+import { ObjectId } from "bson";
+import mongoose, { Document, Model, Schema } from "mongoose";
 
 import { IOffer } from "../../../db/model";
 
@@ -17,7 +18,7 @@ const offerSchema = new Schema<IMongooseOffer>({
   parentOfferId: {
     ref: "IOffer",
     required: true,
-    type: mongoose.Schema.Types.ObjectId,
+    type: Schema.Types.ObjectId,
   },
   price: { required: true, type: Number },
   tokenCount: { required: true, type: Number },

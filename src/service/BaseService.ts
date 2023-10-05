@@ -34,6 +34,10 @@ export class BaseService<K extends object> implements IPayment<K> {
     this.userCreditsDao = daoFactory.getUserCreditsDao();
   }
 
+  getDaoFactory(): IDaoFactory<K> {
+    return this.daoFactory;
+  }
+
   /**
    * Load offers based on user ID, applying overriding logic for subOffers.
    * @param userId The user's ID.
@@ -139,4 +143,6 @@ export class BaseService<K extends object> implements IPayment<K> {
       {} as Record<string, IOffer<K>[]>,
     );
   }
+
+
 }

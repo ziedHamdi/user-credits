@@ -13,7 +13,7 @@ export interface IBaseDao<D extends object> {
 
   findById(userId: object): Promise<D | null>;
 
-  findOne(query: object): Promise<D>;
+  // findOne(query: object): Promise<D>;
 
   // Update a document by ID
   updateById(userId: string, update: Partial<D>): Promise<D | null>;
