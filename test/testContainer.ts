@@ -23,13 +23,12 @@ const sampleUserCredits = {
 
 testContainer.register({
   daoFactory: asFunction(() => {
-    const offerDaoMock = new MockOfferDao({} as IOffer<ObjectId>, null);
-    const orderDaoMock = new MockOrderDao({} as IOrder<ObjectId>, null);
+    const offerDaoMock = new MockOfferDao({} as IOffer<ObjectId>);
+    const orderDaoMock = new MockOrderDao({} as IOrder<ObjectId>);
     const tokenTimetableMock = new MockTokenTimetableDao(
       {} as ITokenTimetable<ObjectId>,
-      null,
     );
-    const userCreditsDaoMock = new MockUserCreditsDao(sampleUserCredits, null);
+    const userCreditsDaoMock = new MockUserCreditsDao(sampleUserCredits);
 
     const daoFactoryMock: IDaoFactory<ObjectId> = {
       getOfferDao: () => offerDaoMock,

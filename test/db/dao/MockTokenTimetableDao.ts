@@ -10,8 +10,7 @@ export class MockTokenTimetableDao
 {
   constructor(
     sampleDTO: ITokenTimetable<ObjectId>,
-    overrides: Partial<MockTokenTimetableDao | null>,
   ) {
-    super(sampleDTO, overrides);
+    super(sampleDTO);
   }
 }

@@ -10,16 +10,10 @@ export class MockOfferDao
 {
   constructor(
     sampleDTO: IOffer<ObjectId>,
-    overrides: Partial<MockOfferDao> | null,
   ) {
-    super(sampleDTO, overrides);
+    super(sampleDTO);
   }
-
-  async loadSubOffers(parentOfferId: ObjectId): Promise<IOffer<ObjectId>[]> {
-    if (this.mockFunctions.loadSubOffers) {
-      return this.mockFunctions.loadSubOffers(parentOfferId);
-    }
-    // Provide a default implementation or throw an error if needed
-    throw new Error("loadSubOffers not implemented in mock.");
-  }
+  public loadSubOffers = jest.fn(
+    (): Promise<IOffer<ObjectId>[]> => Promise.resolve([]),
+  );
 }
