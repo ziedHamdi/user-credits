@@ -4,7 +4,7 @@ export default {
   // Other Jest configuration options...
   preset: "ts-jest",
   // Specify your global setup file
-  setupFilesAfterEnv: ["<rootDir>/config/jest/setup.js"],
+  setupFilesAfterEnv: ["<rootDir>/config/jest/setupBeforeAll.js"],
   testEnvironment: "node",
   transform: {},
 };

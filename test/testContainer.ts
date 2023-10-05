@@ -1,5 +1,6 @@
 import { asFunction, asValue, createContainer } from "awilix";
-import { ObjectId } from "bson";
+import { Types } from "mongoose";
+type ObjectId = Types.ObjectId;
 
 import { IDaoFactory } from "../src/db/dao";
 import { IOffer, IOrder, ITokenTimetable, IUserCredits } from "../src/db/model";
@@ -10,7 +11,7 @@ import { MockUserCreditsDao } from "./db/dao/MockUserCreditsDao";
 
 const testContainer = createContainer();
 
-const sampleUserId = new ObjectId();
+const sampleUserId = new Types.ObjectId();
 testContainer.register({
   sampleUserId: asValue(sampleUserId),
 });

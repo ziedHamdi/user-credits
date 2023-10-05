@@ -1,11 +1,12 @@
-import { ObjectId } from "bson";
+import { Model, Types } from "mongoose";
+type ObjectId = Types.ObjectId;
 import mongoose, { Document, Schema } from "mongoose";
 
 import { ITokenTimetable } from "../../../db/model/ITokenTimetable";
 
 export type IMongooseTokenTimetable = ITokenTimetable<ObjectId> & Document;
 
-const tokenTimetableSchema = new Schema<ITokenTimetable<ObjectId>>(
+const tokenTimetableSchema = new Schema<IMongooseTokenTimetable>(
   {
     tokens: { default: 0, required: true, type: Number },
     userId: {
@@ -17,4 +18,4 @@ const tokenTimetableSchema = new Schema<ITokenTimetable<ObjectId>>(
   { timestamps: { createdAt: true, updatedAt: false } },
 );
 
-export default mongoose.model("ITokenTimetable", tokenTimetableSchema);
+export default mongoose.model("ITokenTimetable", tokenTimetableSchema) as Model<IMongooseTokenTimetable>;

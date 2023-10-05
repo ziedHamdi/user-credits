@@ -1,4 +1,4 @@
-import { ObjectId } from "bson";
+import { Types } from "mongoose"; type ObjectId = Types.ObjectId;
 
 import { TokenTimetable } from "../model";
 import { IMongooseTokenTimetable } from "../model/TokenTimetable";

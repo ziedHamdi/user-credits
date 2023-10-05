@@ -1,4 +1,5 @@
-import mongoose, { ObjectId } from "mongoose";
+import mongoose, { Types } from "mongoose";
+type ObjectId = Types.ObjectId;
 
 import {
   IDaoFactory,

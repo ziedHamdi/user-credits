@@ -1,4 +1,4 @@
-import { ObjectId } from "bson";
+import { Types } from "mongoose"; type ObjectId = Types.ObjectId;
 
 import { IDaoFactory } from "../../../db/dao";
 import { IOffer, IOrder, IUserCredits } from "../../../db/model";

@@ -1,4 +1,4 @@
-import { ObjectId } from "bson";
+import { Types } from "mongoose"; type ObjectId = Types.ObjectId;
 
 import { IOfferDao } from "../../../db/dao/IOfferDao";
 import { Offer } from "../model";

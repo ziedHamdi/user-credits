@@ -1,4 +1,4 @@
-import { ObjectId } from "bson";
+import { Types } from "mongoose"; type ObjectId = Types.ObjectId;
 import mongoose, { Document, Model, Schema } from "mongoose";
 
 import { IOrder, OrderStatus } from "../../../db/model/IOrder";

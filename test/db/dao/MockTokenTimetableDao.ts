@@ -1,4 +1,4 @@
-import { ObjectId } from "bson";
+import { Types } from "mongoose"; type ObjectId = Types.ObjectId;
 
 import { ITokenTimetableDao } from "../../../src/db/dao";
 import { ITokenTimetable } from "../../../src/db/model";

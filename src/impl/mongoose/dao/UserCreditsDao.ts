@@ -1,7 +1,7 @@
-import { ObjectId } from "bson";
+import { Types } from "mongoose"; type ObjectId = Types.ObjectId;
 
 import { IUserCreditsDao } from "../../../db/dao/IUserCreditsDao";
-import { ISubscription } from "../../../db/model/IUserCredits";
+import { IUserCredits } from "../../../db/model/IUserCredits";
 import { UserCredits } from "../model";
 import { IMongooseUserCredits } from "../model/UserCredits";
 import { BaseMongooseDao } from "./BaseMongooseDao";
@@ -13,7 +13,8 @@ export class UserCreditsDao
   constructor() {
     super(UserCredits);
   }
-  async findByUserId(userId: ObjectId): Promise<ISubscription<ObjectId>[]> {
-    return (await super.find({ userId })) as Promise<ISubscription<ObjectId>[]>;
+
+  findByUserId(userId: ObjectId): Promise<IUserCredits<ObjectId>[]> {
+    return super.find({ userId }) as Promise<IUserCredits<ObjectId>[]>;
   }
 }

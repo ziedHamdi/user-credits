@@ -1,4 +1,5 @@
-import { ObjectId } from "bson";
+import { Types } from "mongoose";
+type ObjectId = Types.ObjectId;
 
 import { IDaoFactory } from "../../src/db/dao"; // Import the actual path
 import {
@@ -12,7 +13,7 @@ import { BaseService } from "../../src/service/BaseService";
 import testContainer from "../testContainer";
 
 function newObjectId(): ObjectId {
-  return new ObjectId();
+  return new Types.ObjectId();
 }
 
 // Sample data for testing
@@ -203,8 +204,8 @@ describe("offer creation", () => {
 
     // Expect that the retrievedOffer is not null and has the same properties as the sampleOffer
     expect(retrievedOffer).toBeTruthy();
-    expect(retrievedOffer?._id).toEqual(sampleOffer._id);
-    expect(retrievedOffer?.cycle).toEqual(sampleOffer.cycle);
-    expect(retrievedOffer?.kind).toEqual(sampleOffer.kind);
+    expect(retrievedOffer?._id).toEqual(createdOffer._id);
+    expect(retrievedOffer?.cycle).toEqual(createdOffer.cycle);
+    expect(retrievedOffer?.kind).toEqual(createdOffer.kind);
   });
 });

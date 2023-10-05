@@ -1,5 +1,5 @@
 /* global beforeAll, console, afterAll, expect */
-// setup.js
+// setupBeforeAll.js
 import { asValue } from "awilix";
 import { MongoMemoryServer } from "mongodb-memory-server";
 
@@ -11,7 +11,7 @@ let mongoServer;
 beforeAll(async () => {
   mongoServer = await MongoMemoryServer.create();
   const uri = mongoServer.getUri();
-  console.log("URI for mongodb: ", uri);
+  console.error("URI for mongodb: ", uri);
   testContainer.register({
     mongoUri: asValue(uri), // Register it as a value dependency
   });
@@ -24,7 +24,7 @@ beforeAll(async () => {
 
 afterAll(async () => {
   // FIXME uncomment the following line: it's commented to allow us to connect and check the db for now
-  // await mongoServer.stop();
+  await mongoServer.stop();
 });
 
 // Define a Jest utility function to compare objects field by field
