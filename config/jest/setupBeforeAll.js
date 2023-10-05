@@ -9,22 +9,12 @@ import { testContainer } from "../../test/testContainer";
 let mongoServer;
 
 beforeAll(async () => {
-  mongoServer = await MongoMemoryServer.create();
-  const uri = mongoServer.getUri();
-  console.error("URI for mongodb: ", uri);
-  testContainer.register({
-    mongoUri: asValue(uri), // Register it as a value dependency
-  });
-  const mongooseDaoFactory = new MongooseDaoFactory(uri, "userCredits");
-  testContainer.register({ mongooseDaoFactory: asValue(mongooseDaoFactory) });
 
-  // Use `uri` and `dbName` in your Awilix container setup.
-  // Register them as constants or inject them as needed.
 });
 
 afterAll(async () => {
   // FIXME uncomment the following line: it's commented to allow us to connect and check the db for now
-  await mongoServer.stop();
+  // await mongoServer.stop();
 });
 
 // Define a Jest utility function to compare objects field by field
