@@ -17,7 +17,7 @@ const offerSchema = new Schema<IMongooseOffer>({
   overridingKey: String,
   parentOfferId: {
     ref: "IOffer",
-    required: true,
+    required: false,
     type: Schema.Types.ObjectId,
   },
   price: { required: true, type: Number },

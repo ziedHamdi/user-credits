@@ -1,12 +1,5 @@
 /* global beforeAll, console, afterAll, expect */
 // setupBeforeAll.js
-import { asValue } from "awilix";
-import { MongoMemoryServer } from "mongodb-memory-server";
-
-import { MongooseDaoFactory } from "../../src/impl/mongoose/dao/MongooseDaoFactory";
-import { testContainer } from "../../test/testContainer";
-
-let mongoServer;
 
 beforeAll(async () => {
 

@@ -11,6 +11,7 @@ import { MockOfferDao } from "./db/dao/MockOfferDao";
 import { MockOrderDao } from "./db/dao/MockOrderDao";
 import { MockTokenTimetableDao } from "./db/dao/MockTokenTimetableDao";
 import { MockUserCreditsDao } from "./db/dao/MockUserCreditsDao";
+import { connectToDb } from "../src/impl/mongoose/connection";
 
 const testContainer = createContainer();
 
@@ -44,10 +45,12 @@ testContainer.register({
   }),
 });
 
+
 async function initializeMongoServer() {
   const mongoServer = await MongoMemoryServer.create();
   const uri = mongoServer.getUri();
-  console.log("URI for mongodb: ", uri);
+  await connectToDb(uri, "UserCreditsTests")
+  console.log("Mongoose connected to test mongodb: ", uri);
   return mongoServer; // Return the value you want to register
 }
 
@@ -55,14 +58,7 @@ testContainer.register({
   mongoServer: asFunction(initializeMongoServer).singleton(),
 });
 
-const mongoServer = testContainer.resolve("mongoServer");
-
-const uri = mongoServer.getUri();
-testContainer.register({
-  mongoUri: asValue(uri),
-});
-const mongooseDaoFactory = new MongooseDaoFactory(uri, "userCredits");
-testContainer.register({ mongooseDaoFactory: asValue(mongooseDaoFactory) });
+testContainer.register({ mongooseDaoFactory: asFunction(()=>new MongooseDaoFactory()).singleton() });
 
 export default testContainer;
 export { testContainer };

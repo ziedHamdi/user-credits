@@ -1,6 +1,7 @@
 // container.js
 import { asFunction, createContainer } from "awilix";
 
+import { connectToDb } from "../src/impl/mongoose/connection";
 import { MongooseDaoFactory } from "../src/impl/mongoose/dao/MongooseDaoFactory";
 
 // Configuration parameters
@@ -12,8 +13,8 @@ const container = createContainer();
 // Register MongooseModels as a transient value
 container.register({
   daoFactory: asFunction(async () => {
-    const db = new MongooseDaoFactory(uri, dbName);
-    return await db.init();
+    await connectToDb(uri, dbName);
+    return new MongooseDaoFactory();
   }),
 });
 

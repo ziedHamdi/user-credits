@@ -22,24 +22,11 @@ export class MongooseDaoFactory implements IDaoFactory<ObjectId> {
   private readonly tokenTimetableDao;
   private readonly userCreditsDao;
 
-  constructor(
-    private uri: string,
-    private dbName: string,
-  ) {
+  constructor() {
     this.offerDao = new OfferDao();
     this.orderDao = new OrderDao();
     this.tokenTimetableDao = new TokenTimetableDao();
     this.userCreditsDao = new UserCreditsDao();
-  }
-
-  async init() {
-    if (!this.uri || !this.dbName) {
-      throw new Error("Please please specify db uri and/or name");
-    }
-
-    await mongoose.connect(this.uri, {
-      dbName: this.dbName,
-    });
   }
 
   getOfferDao(): IOfferDao<ObjectId, IOffer<ObjectId>> {
