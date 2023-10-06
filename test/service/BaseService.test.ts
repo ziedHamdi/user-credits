@@ -4,6 +4,9 @@ import { BaseService } from "../../src/service/BaseService";
 import { describe, expect } from "@jest/globals";
 import { initMocks, ObjectId } from "./BaseService.mocks";
 
+// eslint-disable-next-line no-unused-vars
+import {toHaveSameFields} from "../extend/sameObjects"
+
 describe("BaseService.getActiveSubscriptions", () => {
   let daoFactoryMock: IDaoFactory<ObjectId>;
   let sampleUserId: ObjectId;
