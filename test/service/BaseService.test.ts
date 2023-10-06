@@ -13,6 +13,8 @@ import {
 } from "../../src/db/model"; // Import the actual path
 import { BaseService } from "../../src/service/BaseService";
 import { TestContainerSingleton } from "../testContainer";
+import {toHaveSameFields} from "../extend/sameObjects"
+import { expect, describe } from "@jest/globals";
 
 function newObjectId(): ObjectId {
   return new Types.ObjectId();
@@ -274,8 +276,9 @@ describe("offer creation", () => {
 
     // Expect that the retrievedOffer is not null and has the same properties as the sampleOffer
     expect(retrievedOffer).toBeTruthy();
-    expect(retrievedOffer?._id).toEqual(createdOffer._id);
-    expect(retrievedOffer?.cycle).toEqual(createdOffer.cycle);
-    expect(retrievedOffer?.kind).toEqual(createdOffer.kind);
+    expect(retrievedOffer).toHaveSameFields(createdOffer);
+    // expect(retrievedOffer?._id).toEqual(createdOffer._id);
+    // expect(retrievedOffer?.cycle).toEqual(createdOffer.cycle);
+    // expect(retrievedOffer?.kind).toEqual(createdOffer.kind);
   });
 });
