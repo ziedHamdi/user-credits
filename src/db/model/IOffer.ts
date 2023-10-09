@@ -14,4 +14,5 @@ export interface IOffer<K extends object> extends BaseEntity<K> {
   parentOfferId: K;
   price: number;
   tokenCount: number;
+  weight: number;
 }

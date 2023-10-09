@@ -1,4 +1,5 @@
-import { Types } from "mongoose"; type ObjectId = Types.ObjectId;
+import { Types } from "mongoose";
+type ObjectId = Types.ObjectId;
 import mongoose, { Document, Model, Schema } from "mongoose";
 
 import { IOffer } from "../../../db/model";
@@ -22,6 +23,7 @@ const offerSchema = new Schema<IMongooseOffer>({
   },
   price: { required: true, type: Number },
   tokenCount: { required: true, type: Number },
+  weight: Number,
 });
 
 export default mongoose.model("offer", offerSchema) as Model<IMongooseOffer>;

@@ -3,14 +3,14 @@ import {
   IOfferDao,
   IOrderDao,
   ITokenTimetableDao,
-  IUserCreditsDao
+  IUserCreditsDao,
 } from "../db/dao";
 import {
   IOffer,
   IOrder,
   ISubscription,
   ITokenTimetable,
-  IUserCredits
+  IUserCredits,
 } from "../db/model";
 import { IPayment } from "./IPayment";
 
@@ -19,8 +19,10 @@ export class BaseService<K extends object> implements IPayment<K> {
 
   protected readonly offerDao: IOfferDao<K, IOffer<K>>;
   protected readonly orderDao: IOrderDao<K, IOrder<K>>;
-  protected readonly tokenTimetableDao: ITokenTimetableDao<K,
-    ITokenTimetable<K>>;
+  protected readonly tokenTimetableDao: ITokenTimetableDao<
+    K,
+    ITokenTimetable<K>
+  >;
   protected readonly userCreditsDao: IUserCreditsDao<K, IUserCredits<K>>;
 
   constructor(daoFactory: IDaoFactory<K>) {
@@ -65,7 +67,7 @@ export class BaseService<K extends object> implements IPayment<K> {
       await this.userCreditsDao.findByUserId(userId);
     return (
       (userCredits?.subscriptions as ISubscription<K>[]).filter(
-        (subscription) => subscription.status === "paid"
+        (subscription) => subscription.status === "paid",
       ) || []
     );
   }
@@ -77,11 +79,11 @@ export class BaseService<K extends object> implements IPayment<K> {
    */
   async getSubOffers(subscriptions: ISubscription<K>[]): Promise<IOffer<K>[]> {
     const uniqueOfferIds = [
-      ...new Set(subscriptions.map((sub) => sub.offerId))
+      ...new Set(subscriptions.map((sub) => sub.offerId)),
     ];
     return this.offerDao.find({
       hasSubOffers: false,
-      parentOfferId: { $in: uniqueOfferIds }
+      parentOfferId: { $in: uniqueOfferIds },
     });
   }
 
@@ -97,7 +99,9 @@ export class BaseService<K extends object> implements IPayment<K> {
    * Merge "regular" offers with suboffers, applying overriding logic.
    *
    * Suboffers that have the same overridingKey as a root offer override them (keeping only the promotional exclusive offers).
-   * So the method returns an intersection of regularOffers and subOffers that intersect on the value of overridingKey
+   * So the method returns an intersection of regularOffers and subOffers that intersect on the value of overridingKey.
+   *
+   * Exclusive offers have a weight, in case two sub offers conflict, the one with the highest weight overrides the others.
    * @param regularOffers An array of "regular" offers.
    * @param subOffers An array of suboffers.
    * @returns An array of merged offers.
@@ -108,15 +112,23 @@ export class BaseService<K extends object> implements IPayment<K> {
 
     // Populate the subOffersMap with subOffers, overriding duplicates
     for (const subOffer of subOffers) {
-      subOffersMap.set(subOffer.overridingKey, subOffer);
+      const existingSubOffer = subOffersMap.get(subOffer.overridingKey);
+      if (
+        !existingSubOffer ||
+        subOffer.weight > (existingSubOffer.weight || 0)
+      ) {
+        subOffersMap.set(subOffer.overridingKey, subOffer);
+      }
     }
 
     // Filter regularOffers to keep only those that are not overridden by subOffers
     const mergedOffers = regularOffers.filter((regularOffer) => {
       const subOffer = subOffersMap.get(regularOffer.overridingKey);
-      return !subOffer; // Exclude promotional exclusive offers
+      return !subOffer; // Exclude offers overridden by suboffers
     });
-    mergedOffers.push(...subOffers);
+
+    // Add the subOffers to the mergedOffers
+    mergedOffers.push(...Array.from(subOffersMap.values()));
 
     return mergedOffers;
   }
@@ -135,7 +147,7 @@ export class BaseService<K extends object> implements IPayment<K> {
         acc[subOffer.parentOfferId.toString()].push(subOffer);
         return acc;
       },
-      {} as Record<string, IOffer<K>[]>
+      {} as Record<string, IOffer<K>[]>,
     );
   }
 }
