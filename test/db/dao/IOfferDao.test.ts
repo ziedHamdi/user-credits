@@ -12,9 +12,10 @@ import {
   initMocks,
   InitMocksResult,
   newObjectId,
-  ObjectId,
+  ObjectId
 } from "../../service/BaseService.mocks";
-import { addProp, clearDatabase, copyId } from "../../util";
+import { addProp, addVersion0, clearDatabase, copyId } from "../../util";
+import { add } from "../../../dist";
 
 /**
  * This file is now testing MongoDb adapter (mongooseDaoFactory) only, but the same test should run on any implementation.
@@ -56,7 +57,7 @@ async function insertOffers(
   offerRoot1: IOffer<ObjectId>,
   offerRoot2: IOffer<ObjectId>,
   offerChild1: IOffer<ObjectId>,
-  offerChild2: IOffer<ObjectId>,
+  offerChild2: IOffer<ObjectId>
 ) {
   const offerDao = service.getDaoFactory().getOfferDao();
   const createdOffer1 = await offerDao.create(offerRoot1);
@@ -88,14 +89,14 @@ describe("Offer Database Integration Test", () => {
       offerRoot2,
       subscriptionPaid1,
       subscriptionPending1,
-      subscriptionRefused1,
+      subscriptionRefused1
     } = mocks);
 
     // Use the actual MongoDB connection for the service
     service = new BaseService<ObjectId>(mongooseDaoFactory);
   });
 
-  // afterEach(clearDatabase);
+  afterEach(clearDatabase);
 
   it("should insert all offers and retrieve only root offers from the database for a null userId", async () => {
     const { createdChild1, createdChild2, createdOffer1, createdOffer2 } =
@@ -104,7 +105,7 @@ describe("Offer Database Integration Test", () => {
         offerRoot1,
         offerRoot2,
         offerChild1,
-        offerChild2,
+        offerChild2
       );
 
     const userId = null;
@@ -124,7 +125,7 @@ describe("Offer Database Integration Test", () => {
       offerRoot1,
       offerRoot2,
       offerChild1,
-      offerChild2,
+      offerChild2
     );
     // Create active and unpaid subscriptions
 
@@ -134,10 +135,10 @@ describe("Offer Database Integration Test", () => {
       subscriptions: [
         subscriptionPaid1,
         subscriptionPending1,
-        subscriptionRefused1,
+        subscriptionRefused1
       ],
       tokens: 100,
-      userId,
+      userId
     } as IUserCredits<ObjectId>;
 
     const createdUserCredits: IUserCredits<ObjectId> = await service
@@ -147,7 +148,7 @@ describe("Offer Database Integration Test", () => {
 
     // Test the first step: Get active subscriptions
     const step1ActiveSubscriptions = await service.getActiveSubscriptions(
-      createdUserCredits.userId,
+      createdUserCredits.userId
     );
 
     copyId(step1ActiveSubscriptions[0], subscriptionPaid1);
@@ -157,36 +158,29 @@ describe("Offer Database Integration Test", () => {
     // Test the second step: Get subOffers based on active subscriptions
     const step2SubOffers = await service.getSubOffers(step1ActiveSubscriptions);
 
-    console.log(
-      "dbUri: ",
-      dbUri,
-      " step1ActiveSubscriptions: ",
-      step2SubOffers,
-    );
-
     addProp("__v", 0, offerChild1);
     addProp("__v", 0, offerChild2);
     // Expect that step2SubOffers contain the created suboffers
-    expect(step2SubOffers).toContainEqual(offerChild1);
-    expect(step2SubOffers).toContainEqual(offerChild2);
+    expect(step2SubOffers).toContainEqual(addVersion0(offerChild1));
+    expect(step2SubOffers).toContainEqual(addVersion0(offerChild2));
     expect(step2SubOffers.length).toEqual(2);
 
     // Test the third step: Get regular offers
     const step3RegularOffers = await service.getRegularOffers();
 
     // Expect that step3RegularOffers contain the root offers
-    expect(step3RegularOffers).toContainEqual(offerRoot1);
-    expect(step3RegularOffers).toContainEqual(offerRoot2);
+    expect(step3RegularOffers).toContainEqual(addVersion0(offerRoot1));
+    expect(step3RegularOffers).toContainEqual(addVersion0(offerRoot2));
+    expect(step3RegularOffers.length).toEqual(2);
 
+    //All the steps above + merge
     const loadedOffers = await service.loadOffers(createdUserCredits.userId);
-
-    console.log("User is subscribed to ", loadedOffers);
     // Expect that loadedOffers contain the created root offers
-    expect(loadedOffers).not.toContainEqual(offerRoot1);
-    expect(loadedOffers).toContainEqual(offerRoot2);
-
+    expect(loadedOffers).not.toContainEqual(addVersion0(offerRoot1));
+    expect(loadedOffers).toContainEqual(addVersion0(offerRoot2));
     // Expect that loadedOffers do not contain unpaid suboffers but contain active suboffers
-    expect(loadedOffers).toContainEqual(offerChild1);
-    expect(loadedOffers).toContainEqual(offerChild2);
+    expect(loadedOffers).toContainEqual(addVersion0(offerChild1));
+    expect(loadedOffers).toContainEqual(addVersion0(offerChild2));
+    expect(loadedOffers.length).toEqual(3);
   });
 });

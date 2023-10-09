@@ -26,11 +26,21 @@ export function copyProp<K extends Record<string, any>>(
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function addProp(
+export function addProp<K extends Record<string, any>>(
   prop: string,
   value: unknown,
-  to: Record<string, any>,
-): void {
+  to: K,
+): K {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (to as any)[prop] = value;
+  return to;
 }
+
+/**
+ * Adds a __v mongoose version field with a value of 0 to be able to use jest functions like toContainEqual() and toEqual()
+ * @param to the object to enrich with the property "__v"
+ */
+export function addVersion0<K extends Record<string, any>>(to: K): K {
+  return addProp("__v", 0, to);
+}
+

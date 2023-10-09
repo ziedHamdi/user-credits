@@ -3,14 +3,14 @@ import {
   IOfferDao,
   IOrderDao,
   ITokenTimetableDao,
-  IUserCreditsDao,
+  IUserCreditsDao
 } from "../db/dao";
 import {
   IOffer,
   IOrder,
   ISubscription,
   ITokenTimetable,
-  IUserCredits,
+  IUserCredits
 } from "../db/model";
 import { IPayment } from "./IPayment";
 
@@ -19,10 +19,8 @@ export class BaseService<K extends object> implements IPayment<K> {
 
   protected readonly offerDao: IOfferDao<K, IOffer<K>>;
   protected readonly orderDao: IOrderDao<K, IOrder<K>>;
-  protected readonly tokenTimetableDao: ITokenTimetableDao<
-    K,
-    ITokenTimetable<K>
-  >;
+  protected readonly tokenTimetableDao: ITokenTimetableDao<K,
+    ITokenTimetable<K>>;
   protected readonly userCreditsDao: IUserCreditsDao<K, IUserCredits<K>>;
 
   constructor(daoFactory: IDaoFactory<K>) {
@@ -45,7 +43,7 @@ export class BaseService<K extends object> implements IPayment<K> {
    */
   async loadOffers(userId: K | null): Promise<IOffer<K>[]> {
     if (!userId) {
-      return this.offerDao.find({ parentOfferId: null });
+      return this.getRegularOffers();
     }
 
     const activeSubscriptions = await this.getActiveSubscriptions(userId);
@@ -53,8 +51,6 @@ export class BaseService<K extends object> implements IPayment<K> {
     const regularOffers = await this.getRegularOffers();
 
     const mergedOffers = this.mergeOffers(regularOffers, subOffers);
-
-    console.log("Merged offers ", mergedOffers);
 
     return mergedOffers;
   }
@@ -65,10 +61,11 @@ export class BaseService<K extends object> implements IPayment<K> {
    * @returns A promise that resolves to an array of active subscriptions.
    */
   async getActiveSubscriptions(userId: K): Promise<ISubscription<K>[]> {
-    const userCredits: IUserCredits<K> = await this.userCreditsDao.findByUserId(userId);
+    const userCredits: IUserCredits<K> =
+      await this.userCreditsDao.findByUserId(userId);
     return (
       (userCredits?.subscriptions as ISubscription<K>[]).filter(
-        (subscription) => subscription.status === "paid",
+        (subscription) => subscription.status === "paid"
       ) || []
     );
   }
@@ -80,11 +77,11 @@ export class BaseService<K extends object> implements IPayment<K> {
    */
   async getSubOffers(subscriptions: ISubscription<K>[]): Promise<IOffer<K>[]> {
     const uniqueOfferIds = [
-      ...new Set(subscriptions.map((sub) => sub.offerId)),
+      ...new Set(subscriptions.map((sub) => sub.offerId))
     ];
     return this.offerDao.find({
       hasSubOffers: false,
-      parentOfferId: { $in: uniqueOfferIds },
+      parentOfferId: { $in: uniqueOfferIds }
     });
   }
 
@@ -93,10 +90,7 @@ export class BaseService<K extends object> implements IPayment<K> {
    * @returns A promise that resolves to an array of "regular" offers.
    */
   async getRegularOffers(): Promise<IOffer<K>[]> {
-    return this.offerDao.find({
-      hasSubOffers: false,
-      overridingKey: { $exists: false },
-    });
+    return this.offerDao.find({ parentOfferId: null });
   }
 
   /**
@@ -120,9 +114,8 @@ export class BaseService<K extends object> implements IPayment<K> {
     // Filter regularOffers to keep only those that are not overridden by subOffers
     const mergedOffers = regularOffers.filter((regularOffer) => {
       const subOffer = subOffersMap.get(regularOffer.overridingKey);
-      return !subOffer || subOffer.kind !== "subscription"; // Exclude promotional exclusive offers
+      return !subOffer; // Exclude promotional exclusive offers
     });
-
     mergedOffers.push(...subOffers);
 
     return mergedOffers;
@@ -142,9 +135,7 @@ export class BaseService<K extends object> implements IPayment<K> {
         acc[subOffer.parentOfferId.toString()].push(subOffer);
         return acc;
       },
-      {} as Record<string, IOffer<K>[]>,
+      {} as Record<string, IOffer<K>[]>
     );
   }
-
-
 }

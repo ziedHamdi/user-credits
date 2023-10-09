@@ -41,13 +41,13 @@ describe("BaseService.getActiveSubscriptions", () => {
     service = new BaseService<ObjectId>(daoFactoryMock);
 
     // Reset the mock function before each test
-    (daoFactoryMock.getUserCreditsDao().findById as jest.Mock).mockReset();
+    (daoFactoryMock.getUserCreditsDao().findByUserId as jest.Mock).mockReset();
   });
 
   it("should return active subscriptions when user has paid subscriptions", async () => {
     // Mock the userCreditsDao.findById method to return sampleUserCredits
     (
-      daoFactoryMock.getUserCreditsDao().findById as jest.Mock
+      daoFactoryMock.getUserCreditsDao().findByUserId as jest.Mock
     ).mockResolvedValue(sampleUserCredits);
 
     // Call the getActiveSubscriptions method
@@ -55,7 +55,7 @@ describe("BaseService.getActiveSubscriptions", () => {
       await service.getActiveSubscriptions(sampleUserId);
 
     // Assert that userCreditsDao.findById was called with the correct userId
-    expect(daoFactoryMock.getUserCreditsDao().findById).toHaveBeenCalledWith(
+    expect(daoFactoryMock.getUserCreditsDao().findByUserId).toHaveBeenCalledWith(
       sampleUserId,
     );
 
@@ -74,7 +74,7 @@ describe("BaseService.getActiveSubscriptions", () => {
 
     // Mock the userCreditsDao.findById method to return the modified userCredits
     (
-      daoFactoryMock.getUserCreditsDao().findById as jest.Mock
+      daoFactoryMock.getUserCreditsDao().findByUserId as jest.Mock
     ).mockResolvedValue(noPaidSubscriptionsUserCredits);
 
     // Call the getActiveSubscriptions method
@@ -82,16 +82,16 @@ describe("BaseService.getActiveSubscriptions", () => {
       await service.getActiveSubscriptions(sampleUserId);
 
     // Assert that userCreditsDao.findById was called with the correct userId
-    expect(daoFactoryMock.getUserCreditsDao().findById).toHaveBeenCalledWith(
-      sampleUserId,
-    );
+    expect(
+      daoFactoryMock.getUserCreditsDao().findByUserId,
+    ).toHaveBeenCalledWith(sampleUserId);
 
     // Assert that activeSubscriptions is an empty array
     expect(activeSubscriptions).toEqual([]);
   });
 });
 
-describe("mergeOffers tests", () => {
+describe("MergeOffers tests", () => {
   let offerChild1: IOffer<ObjectId>;
   let offerChild2: IOffer<ObjectId>;
   let offerRoot1: IOffer<ObjectId>;
