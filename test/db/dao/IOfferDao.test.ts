@@ -1,5 +1,5 @@
 //NODE: these imports are a temporary workaround to avoid the warning: "Corresponding file is not included in tsconfig.json"
-import { beforeAll, beforeEach, describe, it } from "@jest/globals";
+import { afterAll, afterEach, beforeAll, describe, it } from "@jest/globals";
 import expect from "expect";
 
 import { IDaoFactory } from "../../../src/db/dao";
@@ -14,7 +14,7 @@ import {
   newObjectId,
   ObjectId,
 } from "../../service/BaseService.mocks";
-import { copyId } from "../../util";
+import { addProp, clearDatabase, copyId } from "../../util";
 
 /**
  * This file is now testing MongoDb adapter (mongooseDaoFactory) only, but the same test should run on any implementation.
@@ -29,11 +29,11 @@ describe("offer creation", () => {
     // Initialize mocks and dependencies here.
     const mocks = await initMocks();
     ({ mongooseDaoFactory, offerRoot1 } = mocks);
-  });
-  beforeEach(() => {
     // Create a new instance of BaseService with the mock userCreditsDao
     service = new BaseService<ObjectId>(mongooseDaoFactory);
   });
+
+  afterAll(clearDatabase);
 
   it("should create offer then retrieve it", async () => {
     const offerDao = service.getDaoFactory().getOfferDao();
@@ -73,16 +73,29 @@ describe("Offer Database Integration Test", () => {
   let offerChild1: IOffer<ObjectId>;
   let offerChild2: IOffer<ObjectId>;
   let service: BaseService<ObjectId>;
+  let subscriptionPaid1: ISubscription<ObjectId>;
+  let subscriptionPending1: ISubscription<ObjectId>;
+  let subscriptionRefused1: ISubscription<ObjectId>;
 
   beforeAll(async () => {
     // Initialize your mocks and dependencies here.
     const mocks: InitMocksResult = await initMocks();
-    ({ mongooseDaoFactory, offerChild1, offerChild2, offerRoot1, offerRoot2 } =
-      mocks);
+    ({
+      mongooseDaoFactory,
+      offerChild1,
+      offerChild2,
+      offerRoot1,
+      offerRoot2,
+      subscriptionPaid1,
+      subscriptionPending1,
+      subscriptionRefused1,
+    } = mocks);
 
     // Use the actual MongoDB connection for the service
     service = new BaseService<ObjectId>(mongooseDaoFactory);
   });
+
+  // afterEach(clearDatabase);
 
   it("should insert all offers and retrieve only root offers from the database for a null userId", async () => {
     const { createdChild1, createdChild2, createdOffer1, createdOffer2 } =
@@ -114,20 +127,15 @@ describe("Offer Database Integration Test", () => {
       offerChild2,
     );
     // Create active and unpaid subscriptions
-    const activeSubscription = {
-      offerId: offerRoot1._id,
-      status: "paid",
-    } as ISubscription<ObjectId>;
-
-    const unpaidSubscription = {
-      offerId: offerChild1._id,
-      status: "pending",
-    } as ISubscription<ObjectId>;
 
     const userId = newObjectId();
     // Create the userCredits document with active and unpaid subscriptions
     const userCredits: IUserCredits<ObjectId> = {
-      subscriptions: [activeSubscription, unpaidSubscription],
+      subscriptions: [
+        subscriptionPaid1,
+        subscriptionPending1,
+        subscriptionRefused1,
+      ],
       tokens: 100,
       userId,
     } as IUserCredits<ObjectId>;
@@ -142,18 +150,26 @@ describe("Offer Database Integration Test", () => {
       createdUserCredits.userId,
     );
 
-    copyId(step1ActiveSubscriptions[0], activeSubscription);
+    copyId(step1ActiveSubscriptions[0], subscriptionPaid1);
     // Expect that step1ActiveSubscriptions contain the active subscription
-    expect(step1ActiveSubscriptions).toContainEqual(activeSubscription);
+    expect(step1ActiveSubscriptions).toContainEqual(subscriptionPaid1);
 
     // Test the second step: Get subOffers based on active subscriptions
     const step2SubOffers = await service.getSubOffers(step1ActiveSubscriptions);
 
-    console.log("dbUri: ", dbUri);
+    console.log(
+      "dbUri: ",
+      dbUri,
+      " step1ActiveSubscriptions: ",
+      step2SubOffers,
+    );
 
+    addProp("__v", 0, offerChild1);
+    addProp("__v", 0, offerChild2);
     // Expect that step2SubOffers contain the created suboffers
     expect(step2SubOffers).toContainEqual(offerChild1);
     expect(step2SubOffers).toContainEqual(offerChild2);
+    expect(step2SubOffers.length).toEqual(2);
 
     // Test the third step: Get regular offers
     const step3RegularOffers = await service.getRegularOffers();

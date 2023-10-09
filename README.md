@@ -37,7 +37,8 @@ We are using the project mongodb-memory-server to run an in memory mongodb for t
 Jest must be launched with the node option `--experimental-vm-modules` also to enable ecma6 syntax in config files
 #### From the console:
 here's an example of how to add that param from console:
-`node --experimental-vm-modules node_modules/jest/bin/jest.js test/db/dao/IOfferDao.test.ts`
+`node --experimental-vm-modules node_modules/jest/bin/jest.js test/db/dao/IOfferDao.test.ts --testNamePattern="it() test name"
+`
 
 ## Contributing
 
