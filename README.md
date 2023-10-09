@@ -32,8 +32,12 @@ To start using UserCredits in your project, follow the installation and usage in
 We are using the project mongodb-memory-server to run an in memory mongodb for tests. Which generates the following warning
 
 `(node:36336) ExperimentalWarning: VM Modules is an experimental feature and might change at any time`
+
 ### Prerequisites
 Jest must be launched with the node option `--experimental-vm-modules` also to enable ecma6 syntax in config files
+#### From the console:
+here's an example of how to add that param from console:
+`node --experimental-vm-modules node_modules/jest/bin/jest.js test/db/dao/IOfferDao.test.ts`
 
 ## Contributing
 

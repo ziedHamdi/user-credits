@@ -18,6 +18,11 @@ export class BaseMongooseDao<D extends Document> implements IBaseDao<D> {
     return result ? result.toObject() : null;
   }
 
+  async findOne(query: object): Promise<D | null> {
+    const result = await this.model.findOne( query ).exec();
+    return result ? result.toObject() : null;
+  }
+
   // Find documents that match a query
   async find(query: object): Promise<D[]> {
     const results = await this.model.find(query).exec();

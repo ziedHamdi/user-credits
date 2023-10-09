@@ -11,10 +11,12 @@ export interface IBaseDao<D extends object> {
   // Find documents that match a query
   find(query: object): Promise<D[]>;
 
-  findById(userId: object): Promise<D | null>;
+  findById(id: object): Promise<D | null>;
+
+  findOne(query: object): Promise<D | null>;
 
   // findOne(query: object): Promise<D>;
 
   // Update a document by ID
-  updateById(userId: string, update: Partial<D>): Promise<D | null>;
+  updateById(id: string, update: Partial<D>): Promise<D | null>;
 }

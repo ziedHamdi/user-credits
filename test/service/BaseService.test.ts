@@ -1,11 +1,13 @@
+//NODE: these imports are a temporary workaround to avoid the warning: "Corresponding file is not included in tsconfig.json"
+import { beforeAll, beforeEach, describe, it } from "@jest/globals";
+import expect from "expect";
+
 import { IDaoFactory } from "../../src/db/dao"; // Import the actual path
 import { IOffer, ISubscription, IUserCredits } from "../../src/db/model"; // Import the actual path
 import { BaseService } from "../../src/service/BaseService";
-import { describe, expect } from "@jest/globals";
+// eslint-disable-next-line no-unused-vars,@typescript-eslint/no-unused-vars
+import { toHaveSameFields } from "../extend/sameObjects";
 import { initMocks, ObjectId } from "./BaseService.mocks";
-
-// eslint-disable-next-line no-unused-vars
-import {toHaveSameFields} from "../extend/sameObjects"
 
 describe("BaseService.getActiveSubscriptions", () => {
   let daoFactoryMock: IDaoFactory<ObjectId>;
@@ -125,38 +127,5 @@ describe("mergeOffers tests", () => {
   it("should handle empty input arrays", () => {
     const mergedOffers = service.mergeOffers([], []);
     expect(mergedOffers).toEqual([]);
-  });
-});
-
-describe("offer creation", () => {
-  let mongooseDaoFactory: IDaoFactory<ObjectId>;
-  let offerRoot1: IOffer<ObjectId>;
-  let service: BaseService<ObjectId>;
-  beforeAll(async () => {
-    // Initialize your mocks and dependencies here.
-    const mocks = await initMocks();
-    ({ mongooseDaoFactory, offerRoot1 } = mocks);
-  });
-  beforeEach(() => {
-    // Create a new instance of BaseService with the mock userCreditsDao
-    service = new BaseService<ObjectId>(mongooseDaoFactory);
-  });
-
-  it("should create offer then retrieve it", async () => {
-    const offerDao = service.getDaoFactory().getOfferDao();
-    const createdOffer = await offerDao.create(offerRoot1);
-
-    // Expect that the createdOffer is not null
-    expect(createdOffer).toBeTruthy();
-
-    // Retrieve the offer by its ID
-    const retrievedOffer = await offerDao.findById(createdOffer._id);
-
-    // Expect that the retrievedOffer is not null and has the same properties as the sampleOffer
-    expect(retrievedOffer).toBeTruthy();
-    expect(retrievedOffer).toHaveSameFields(createdOffer);
-    // expect(retrievedOffer?._id).toEqual(createdOffer._id);
-    // expect(retrievedOffer?.cycle).toEqual(createdOffer.cycle);
-    // expect(retrievedOffer?.kind).toEqual(createdOffer.kind);
   });
 });

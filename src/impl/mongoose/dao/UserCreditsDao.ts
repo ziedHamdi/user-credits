@@ -14,7 +14,7 @@ export class UserCreditsDao
     super(UserCredits);
   }
 
-  findByUserId(userId: ObjectId): Promise<IUserCredits<ObjectId>[]> {
-    return super.find({ userId }) as Promise<IUserCredits<ObjectId>[]>;
+  findByUserId(userId: ObjectId): Promise<IUserCredits<ObjectId>> {
+    return super.findOne({ userId }) as Promise<IUserCredits<ObjectId>>;
   }
 }

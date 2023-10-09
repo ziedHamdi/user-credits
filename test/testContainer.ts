@@ -55,7 +55,7 @@ export class TestContainerSingleton {
           getOrderDao: () => orderDaoMock,
           getTokenTimetableDao: () => tokenTimetableMock,
           getUserCreditsDao: () => userCreditsDaoMock,
-        } as IDaoFactory<ObjectId>;
+        } as unknown as IDaoFactory<ObjectId>;
         return daoFactoryMock;
       }),
     });

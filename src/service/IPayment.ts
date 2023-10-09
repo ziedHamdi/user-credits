@@ -6,7 +6,7 @@ import { IDaoFactory } from "../db/dao";
 /**
  * @param K the type of foreign keys (is used for all foreign keys type)
  */
-export interface IPayment<K extends object> {
+export interface IPayment<K extends object | null> {
   getDaoFactory(): IDaoFactory<K>;
   // createOrder(offerId: unknown, userId: unknown): Promise<IOrder<K>>;
   // execute(order: IOrder<K>): Promise<IUserCredits<K>>;

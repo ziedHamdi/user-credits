@@ -8,7 +8,7 @@ export class MockUserCreditsDao
   extends MockBaseDao<IUserCredits<ObjectId>, MockUserCreditsDao>
   implements IUserCreditsDao<ObjectId, IUserCredits<ObjectId>>
 {
-  public findByUserId = jest.fn(async () => [this.sampleDTO]);
+  public findByUserId = jest.fn(async () => this.sampleDTO);
 
   constructor(
     sampleDTO: IUserCredits<ObjectId>,

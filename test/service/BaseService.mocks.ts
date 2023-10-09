@@ -6,11 +6,11 @@ import { TestContainerSingleton } from "../testContainer";
 
 export type ObjectId = Types.ObjectId;
 
-function newObjectId(): ObjectId {
+export function newObjectId(): ObjectId {
   return new Types.ObjectId();
 }
 
-type InitMocksResult = {
+export type InitMocksResult = {
   daoFactoryMock: IDaoFactory<ObjectId>;
   dbUri: string;
   mongooseDaoFactory: IDaoFactory<ObjectId>;
@@ -28,27 +28,6 @@ export async function initMocks(): Promise<InitMocksResult> {
   const testContainer = await TestContainerSingleton.getInstance();
   // Sample data for testing
   const sampleUserId: ObjectId = testContainer.resolve("sampleUserId");
-
-  const subscriptionPaid1: ISubscription<ObjectId> = {
-    expires: new Date(),
-    offerId: newObjectId(),
-    starts: new Date(),
-    status: "paid",
-  } as ISubscription<ObjectId>;
-
-  const subscriptionPending1: ISubscription<ObjectId> = {
-    expires: new Date(),
-    offerId: newObjectId(),
-    starts: new Date(),
-    status: "pending",
-  } as ISubscription<ObjectId>;
-
-  const subscriptionRefused1: ISubscription<ObjectId> = {
-    expires: new Date(),
-    offerId: newObjectId(),
-    starts: new Date(),
-    status: "refused",
-  } as ISubscription<ObjectId>;
 
   const offerRoot1: IOffer<ObjectId> = {
     _id: newObjectId(),
@@ -68,7 +47,7 @@ export async function initMocks(): Promise<InitMocksResult> {
     hasSubOffers: true, // This offer has sub-offers
     kind: "subscription",
     name: "Starter",
-    overridingKey: "100tokens",
+    overridingKey: "monthlySubscription",
     parentOfferId: null as any, // To be updated below
     price: 50,
     tokenCount: 0,
@@ -97,6 +76,27 @@ export async function initMocks(): Promise<InitMocksResult> {
     price: 70,
     tokenCount: 100,
   } as IOffer<ObjectId>;
+
+  const subscriptionPaid1: ISubscription<ObjectId> = {
+    expires: new Date(),
+    offerId: offerRoot2._id,
+    starts: new Date(),
+    status: "paid",
+  } as ISubscription<ObjectId>;
+
+  const subscriptionPending1: ISubscription<ObjectId> = {
+    expires: new Date(),
+    offerId: offerRoot1._id,
+    starts: new Date(),
+    status: "pending",
+  } as ISubscription<ObjectId>;
+
+  const subscriptionRefused1: ISubscription<ObjectId> = {
+    expires: new Date(),
+    offerId: offerChild1._id,
+    starts: new Date(),
+    status: "refused",
+  } as ISubscription<ObjectId>;
 
   const daoFactoryMock: IDaoFactory<ObjectId> =
     testContainer.resolve("daoFactoryMock");

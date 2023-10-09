@@ -1,0 +1,1 @@
+export { EntityNotFoundError } from "./EntityNotFoundError";

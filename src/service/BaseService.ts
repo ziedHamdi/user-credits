@@ -43,7 +43,7 @@ export class BaseService<K extends object> implements IPayment<K> {
    * @param userId The user's ID.
    * @returns A promise that resolves to an array of merged offers.
    */
-  async loadOffers(userId: K): Promise<IOffer<K>[]> {
+  async loadOffers(userId: K | null): Promise<IOffer<K>[]> {
     if (!userId) {
       return this.offerDao.find({ parentOfferId: null });
     }
@@ -54,6 +54,8 @@ export class BaseService<K extends object> implements IPayment<K> {
 
     const mergedOffers = this.mergeOffers(regularOffers, subOffers);
 
+    console.log("Merged offers ", mergedOffers);
+
     return mergedOffers;
   }
 
@@ -63,7 +65,7 @@ export class BaseService<K extends object> implements IPayment<K> {
    * @returns A promise that resolves to an array of active subscriptions.
    */
   async getActiveSubscriptions(userId: K): Promise<ISubscription<K>[]> {
-    const userCredits = await this.userCreditsDao.findById(userId);
+    const userCredits: IUserCredits<K> = await this.userCreditsDao.findByUserId(userId);
     return (
       (userCredits?.subscriptions as ISubscription<K>[]).filter(
         (subscription) => subscription.status === "paid",
