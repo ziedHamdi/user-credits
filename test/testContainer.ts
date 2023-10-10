@@ -21,13 +21,14 @@ import { MockUserCreditsDao } from "./db/dao/MockUserCreditsDao";
 
 export class TestContainerSingleton {
   private static container: AwilixContainer<object>;
+  private static active: boolean = false;
 
   private constructor() {
     // Private constructor to prevent external instantiation
   }
   public static async getInstance(): Promise<AwilixContainer<object>> {
-    if (TestContainerSingleton.container) return this.container;
-
+    if (TestContainerSingleton.active) return this.container;
+    this.active = true;
     this.container = createContainer();
 
     const sampleUserId = new Types.ObjectId();
@@ -82,8 +83,7 @@ export class TestContainerSingleton {
   }
 
   public static async stop() {
-    const mongoServer = TestContainerSingleton.container.resolve("mongoServer");
-    await mongoServer.stop();
-    TestContainerSingleton.container = null;
+    const mongoServer: MongoMemoryServer = TestContainerSingleton.container.resolve("mongoServer") as MongoMemoryServer;
+    TestContainerSingleton.active = await mongoServer.stop(true);
   }
 }
