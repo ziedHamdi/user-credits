@@ -195,6 +195,41 @@ describe("createOrder", () => {
     // If no error was thrown, fail the test
     fail("Expected InvalidOrderError to be thrown");
   });
+  it("should create an order with quantity 1 if quantity parameter is not provided", async () => {
+    // Arrange
+    const offerId = offerRoot1._id;
+    const userId = sampleUserId;
 
-  // Other test cases...
+    // Act
+    const order = await service.createOrder(offerId, userId);
+
+    // Assert
+    expect(order.quantity).toBeUndefined();
+    expect(order.total).toEqual(offerRoot1.price);
+  });
+
+  it("should create an order with tokenCount when the offer kind is 'tokens'", async () => {
+    // Arrange
+    const offerId = offerRoot1._id; // Use the tokens offer
+    const userId = sampleUserId;
+    const quantity = 5; // Any quantity, as this test focuses on tokenCount
+
+    // Act
+    const order = await service.createOrder(offerId, userId, quantity);
+
+    // Assert
+    expect(order.tokenCount).toEqual(offerRoot1.tokenCount);
+  });
+
+  it("should create an order with the same total as the offer price when quantity is not provided", async () => {
+    // Arrange
+    const offerId = offerRoot1._id; // Use an offer with quantity limit
+    const userId = sampleUserId;
+
+    // Act
+    const order = await service.createOrder(offerId, userId);
+
+    // Assert
+    expect(order.total).toEqual(offerRoot1.price);
+  });
 });
