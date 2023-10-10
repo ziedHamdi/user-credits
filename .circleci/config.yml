@@ -2,7 +2,7 @@
 version: 2.1
 
 jobs:
-  jest-test: # this can be any name you choose
+  build: # this can be any name you choose
     docker:
       - image: node:18
     resource_class: large
