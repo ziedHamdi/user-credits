@@ -8,5 +8,6 @@ export default {
 
   testEnvironment: "node",
   testMatch: ["**/test/**/*.ts?(x)", "**/?(*.)+(spec|test).ts?(x)"],
+  testPathIgnorePatterns: ["/extend/", "/mock/"],
   transform: {},
 };

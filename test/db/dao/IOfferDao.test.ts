@@ -12,7 +12,7 @@ import {
   InitMocksResult,
   newObjectId,
   ObjectId,
-} from "../../service/BaseService.mocks";
+} from "../../service/mocks/BaseService.mocks";
 import { addVersion0, clearDatabase, copyId } from "../../util";
 
 /**

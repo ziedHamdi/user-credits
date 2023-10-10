@@ -1,4 +1,4 @@
-import { IBaseDao } from "../../../src/db/dao";
+import { IBaseDao } from "../../../../src/db/dao";
 
 export class MockBaseDao<D extends object, I extends IBaseDao<D>>
   implements IBaseDao<D>

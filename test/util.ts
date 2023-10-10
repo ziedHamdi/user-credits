@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { kill } from "./service/BaseService.mocks";
+import { kill } from "./service/mocks/BaseService.mocks";
 
 export async function clearDatabase() {
   const collections = mongoose.connection.collections;

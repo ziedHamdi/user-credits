@@ -1,7 +1,7 @@
 import { Types } from "mongoose"; type ObjectId = Types.ObjectId;
 
-import { IOfferDao } from "../../../src/db/dao";
-import { IOffer } from "../../../src/db/model";
+import { IOfferDao } from "../../../../src/db/dao";
+import { IOffer } from "../../../../src/db/model";
 import { MockBaseDao } from "./MockBaseDao";
 
 export class MockOfferDao

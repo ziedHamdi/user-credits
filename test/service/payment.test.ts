@@ -1,6 +1,6 @@
 import { IPayment } from "../../src/service/IPayment";
 
-export function testPayment(paymentService: IPayment) {
+export function testPayment<K extends object>(paymentService: IPayment<K>) {
   // describe("IPayment implementation should be able to create an order, execute it, get notified of updates and tell the user token credit status", () => {
   //   it("createOrder should return an IOrder object", () => {
   //     const offerId = "123";

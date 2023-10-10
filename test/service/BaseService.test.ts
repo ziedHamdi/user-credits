@@ -7,7 +7,7 @@ import { IOffer, ISubscription, IUserCredits } from "../../src/db/model"; // Imp
 import { BaseService } from "../../src/service/BaseService";
 // eslint-disable-next-line no-unused-vars,@typescript-eslint/no-unused-vars
 import { toHaveSameFields } from "../extend/sameObjects";
-import { initMocks, kill, ObjectId } from "./BaseService.mocks";
+import { initMocks, kill, ObjectId } from "./mocks/BaseService.mocks";
 
 describe("BaseService.getActiveSubscriptions", () => {
   let daoFactoryMock: IDaoFactory<ObjectId>;

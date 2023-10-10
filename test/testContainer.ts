@@ -14,10 +14,10 @@ import type {
 } from "../src/db/model";
 import { connectToDb } from "../src/impl/mongoose/connection";
 import { MongooseDaoFactory } from "../src/impl/mongoose/dao/MongooseDaoFactory";
-import { MockOfferDao } from "./db/dao/MockOfferDao";
-import { MockOrderDao } from "./db/dao/MockOrderDao";
-import { MockTokenTimetableDao } from "./db/dao/MockTokenTimetableDao";
-import { MockUserCreditsDao } from "./db/dao/MockUserCreditsDao";
+import { MockOfferDao } from "./db/dao/mocks/MockOfferDao";
+import { MockOrderDao } from "./db/dao/mocks/MockOrderDao";
+import { MockTokenTimetableDao } from "./db/dao/mocks/MockTokenTimetableDao";
+import { MockUserCreditsDao } from "./db/dao/mocks/MockUserCreditsDao";
 
 export class TestContainerSingleton {
   private static container: AwilixContainer<object>;
