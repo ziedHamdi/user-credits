@@ -1,7 +1,9 @@
-import { Types } from "mongoose"; type ObjectId = Types.ObjectId;
+import { Types } from "mongoose";
+type ObjectId = Types.ObjectId;
 
 import { IDaoFactory } from "../../../db/dao";
 import { IOffer, IOrder, IUserCredits } from "../../../db/model";
+import { OrderStatus } from "../../../db/model/IOrder";
 import { EntityNotFoundError } from "../../../errors/EntityNotFoundError";
 import { BaseService } from "../../../service/BaseService";
 import { IMongooseOrder } from "../model/Order";
@@ -16,7 +18,6 @@ export class Payment extends BaseService<ObjectId> {
     userId: ObjectId,
   ): Promise<IMongooseOrder> {
     const order: IMongooseOrder = (await this.orderDao.create({
-      history: [],
       offerId: offerId,
       status: "pending",
       tokenCount: 100,
@@ -53,61 +54,4 @@ export class Payment extends BaseService<ObjectId> {
     return userCredits;
   }
 
-  async loadOffers(userId: unknown): Promise<IOffer<ObjectId>[]> {
-    if (!userId) return this.offerDao.find({ parentOfferId: null });
-    const userCredits = await this.userCreditsDao.findById(userId);
-    // Filter active subscriptions (status is 'paid')
-    const activeSubscriptions = userCredits.subscriptions.filter(
-      (subscription) => subscription.status === "paid",
-    );
-
-    // Get unique offerIds from active subscriptions
-    const uniqueOfferIds = [
-      ...new Set(activeSubscriptions.map((sub) => sub.offerId)),
-    ];
-
-    // Find suboffers of the offers with 'hasSubOffers' set to true and their parentOfferId is in uniqueOfferIds
-    const suboffers = await this.offerDao.find({
-      hasSubOffers: false,
-      parentOfferId: { $in: uniqueOfferIds },
-    });
-
-    // Find "regular" offers that don't have suboffers
-    const regularOffers = await this.offerDao.find({
-      hasSubOffers: false,
-      overridingKey: { $exists: false },
-    });
-
-    // Create a map of suboffers with parentOfferId as the key
-    const suboffersMap = suboffers.reduce((acc, suboffer) => {
-      if (!acc[suboffer.parentOfferId]) {
-        acc[suboffer.parentOfferId] = [];
-      }
-      acc[suboffer.parentOfferId].push(suboffer);
-      return acc;
-    }, {});
-
-    // Merge suboffers with regular offers, applying overriding logic
-    const mergedOffers = regularOffers.map((offer) => {
-      const mergedOffer = { ...offer };
-
-      if (offer.overridingKey) {
-        const overridingSuboffers = suboffersMap[offer.overridingKey];
-        if (overridingSuboffers) {
-          // Apply overriding logic here (e.g., update prices, etc.)
-          // Merge the overriding suboffers with the regular offer
-          mergedOffer.subOffers = [
-            ...(mergedOffer.subOffers || []),
-            ...overridingSuboffers,
-          ];
-        }
-      }
-
-      return mergedOffer;
-    });
-
-    return mergedOffers;
-
-    return offersWithSubOffers;
-  }
 }

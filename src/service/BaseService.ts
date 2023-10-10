@@ -14,7 +14,7 @@ import {
 } from "../db/model";
 import { IPayment } from "./IPayment";
 
-export class BaseService<K extends object> implements IPayment<K> {
+export abstract class BaseService<K extends object> implements IPayment<K> {
   protected daoFactory: IDaoFactory<K>;
 
   protected readonly offerDao: IOfferDao<K, IOffer<K>>;
@@ -150,4 +150,6 @@ export class BaseService<K extends object> implements IPayment<K> {
       {} as Record<string, IOffer<K>[]>,
     );
   }
+
+  abstract createOrder(offerId: unknown, userId: unknown): Promise<IOrder<K>>;
 }

@@ -4,10 +4,11 @@ import expect from "expect";
 
 import { IDaoFactory } from "../../src/db/dao"; // Import the actual path
 import { IOffer, ISubscription, IUserCredits } from "../../src/db/model"; // Import the actual path
-import { BaseService } from "../../src/service/BaseService";
 // eslint-disable-next-line no-unused-vars,@typescript-eslint/no-unused-vars
 import { toHaveSameFields } from "../extend/sameObjects";
 import { initMocks, kill, ObjectId } from "./mocks/BaseService.mocks";
+import { Payment } from "../../src/impl/mongoose/service/Payment";
+import { BaseService } from "../../src/service/BaseService"; //IMPROVEMENT Should use { IPayment } and add a secondary interface instead
 
 describe("BaseService.getActiveSubscriptions", () => {
   let daoFactoryMock: IDaoFactory<ObjectId>;
@@ -42,7 +43,7 @@ describe("BaseService.getActiveSubscriptions", () => {
 
   beforeEach(() => {
     // Create a new instance of BaseService with the mock userCreditsDao
-    service = new BaseService<ObjectId>(daoFactoryMock);
+    service = new Payment(daoFactoryMock);
 
     // Reset the mock function before each test
     (daoFactoryMock.getUserCreditsDao().findByUserId as jest.Mock).mockReset();
@@ -109,7 +110,7 @@ describe("MergeOffers tests", () => {
     ({ daoFactoryMock, offerChild1, offerChild2, offerRoot1, offerRoot2 } =
       mocks);
 
-    service = new BaseService<ObjectId>(daoFactoryMock);
+    service = new Payment(daoFactoryMock);
   });
 
   afterAll(async () => {
