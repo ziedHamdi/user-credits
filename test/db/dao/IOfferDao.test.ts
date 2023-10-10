@@ -2,10 +2,8 @@
 import { afterAll, afterEach, beforeAll, describe, it } from "@jest/globals";
 import expect from "expect";
 
-import { add } from "../../../dist";
 import { IDaoFactory } from "../../../src/db/dao";
 import { IOffer, ISubscription, IUserCredits } from "../../../src/db/model";
-import { dbUri } from "../../../src/impl/mongoose/connection";
 import { BaseService } from "../../../src/service/BaseService";
 // eslint-disable-next-line no-unused-vars,@typescript-eslint/no-unused-vars
 import { toHaveSameFields } from "../../extend/sameObjects";
@@ -15,7 +13,7 @@ import {
   newObjectId,
   ObjectId,
 } from "../../service/BaseService.mocks";
-import { addProp, addVersion0, clearDatabase, copyId } from "../../util";
+import { addVersion0, clearDatabase, copyId } from "../../util";
 
 /**
  * This file is now testing MongoDb adapter (mongooseDaoFactory) only, but the same test should run on any implementation.
@@ -121,11 +119,7 @@ describe("Offer Database Integration Test", () => {
   afterEach(clearDatabase);
 
   it("should insert all offers and retrieve only root offers from the database for a null userId", async () => {
-    const {
-      createdOffer1,
-      createdOffer2,
-      createdOffer3,
-    } = await insertOffers(
+    const { createdOffer1, createdOffer2, createdOffer3 } = await insertOffers(
       service,
       offerRoot1,
       offerRoot2,
