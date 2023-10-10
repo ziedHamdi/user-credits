@@ -16,9 +16,8 @@ jobs:
           install-yarn: true
           node-version: '18.16'
       - run: node --version
-  install-node-and-test:
-    requires:
-      - install-node
+# Orchestrate jobs using workflows
+  test:
     # Specify the execution environment. You can specify an image from Docker Hub or use one of our convenience images from CircleCI's Developer Hub.
     # See: https://circleci.com/docs/configuration-reference/#executor-job
     docker:
@@ -30,7 +29,6 @@ jobs:
       - checkout
       - run: pnpm install
       - run: pnpm test
-# Orchestrate jobs using workflows
 # See: https://circleci.com/docs/configuration-reference/#workflows
 workflows:
   test:
@@ -38,5 +36,5 @@ workflows:
       - node/test:
           test-results-for: jest
     requires:
-      - install-node-and-test
+      - install-node
 
