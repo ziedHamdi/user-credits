@@ -2,7 +2,7 @@
 version: 2.1
 
 jobs:
-  build: # this can be any name you choose
+  jest-test: # this can be any name you choose
     docker:
       - image: node:18
     resource_class: large
@@ -28,3 +28,7 @@ jobs:
           key: pnpm-packages-{{ checksum "pnpm-lock.yaml" }}
           paths:
             - node_modules
+      - run:
+          name: Test with jest
+          command: |
+            node --experimental-vm-modules node_modules/jest/bin/jest.js
