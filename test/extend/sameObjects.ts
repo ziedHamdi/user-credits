@@ -21,7 +21,7 @@ const toHaveSameFields: MatcherFunction<[expected: Record<string, any>]> = (
     return {
       message: () => `Expected objects to have the same number of fields.`,
       pass: false,
-    };
+    } as { message: () => string; pass: boolean };;
   }
 
   const differences: string[] = [];
@@ -51,7 +51,7 @@ const toHaveSameFields: MatcherFunction<[expected: Record<string, any>]> = (
   return {
     message,
     pass,
-  };
+  } as { message: () => string; pass: boolean };;
 };
 
 function deepEquals(a: any, b: any): boolean {
