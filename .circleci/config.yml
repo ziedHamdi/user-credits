@@ -16,7 +16,9 @@ jobs:
           install-yarn: true
           node-version: '18.16'
       - run: node --version
-  build:
+  install-node-and-test:
+    requires:
+      - install-node
     # Specify the execution environment. You can specify an image from Docker Hub or use one of our convenience images from CircleCI's Developer Hub.
     # See: https://circleci.com/docs/configuration-reference/#executor-job
     docker:
@@ -31,14 +33,10 @@ jobs:
 # Orchestrate jobs using workflows
 # See: https://circleci.com/docs/configuration-reference/#workflows
 workflows:
-  install-node-once:
-    jobs:
-      - install-node
-  build-workflow:
-    jobs:
-      - build
   test:
     jobs:
       - node/test:
           test-results-for: jest
+    requires:
+      - install-node-and-test
 
