@@ -2,7 +2,7 @@ import { Types } from "mongoose";
 
 import { IDaoFactory } from "../../../src/db/dao";
 import { IOffer, ISubscription } from "../../../src/db/model";
-import { TestContainerSingleton } from "../../testContainer";
+import { TestContainerSingleton } from "../../config/testContainer";
 
 export type ObjectId = Types.ObjectId;
 

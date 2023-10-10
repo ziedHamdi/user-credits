@@ -5,19 +5,19 @@ import { Types } from "mongoose";
 
 type ObjectId = Types.ObjectId;
 
-import type { IDaoFactory } from "../src/db/dao";
+import type { IDaoFactory } from "../../src/db/dao";
 import type {
   IOffer,
   IOrder,
   ITokenTimetable,
   IUserCredits,
-} from "../src/db/model";
-import { connectToDb } from "../src/impl/mongoose/connection";
-import { MongooseDaoFactory } from "../src/impl/mongoose/dao/MongooseDaoFactory";
-import { MockOfferDao } from "./db/dao/mocks/MockOfferDao";
-import { MockOrderDao } from "./db/dao/mocks/MockOrderDao";
-import { MockTokenTimetableDao } from "./db/dao/mocks/MockTokenTimetableDao";
-import { MockUserCreditsDao } from "./db/dao/mocks/MockUserCreditsDao";
+} from "../../src/db/model";
+import { connectToDb } from "../../src/impl/mongoose/connection";
+import { MongooseDaoFactory } from "../../src/impl/mongoose/dao/MongooseDaoFactory";
+import { MockOfferDao } from "../db/dao/mocks/MockOfferDao";
+import { MockOrderDao } from "../db/dao/mocks/MockOrderDao";
+import { MockTokenTimetableDao } from "../db/dao/mocks/MockTokenTimetableDao";
+import { MockUserCreditsDao } from "../db/dao/mocks/MockUserCreditsDao";
 
 export class TestContainerSingleton {
   private static container: AwilixContainer<object>;

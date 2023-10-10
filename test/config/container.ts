@@ -1,8 +1,8 @@
 // container.js
 import { asFunction, createContainer } from "awilix";
 
-import { connectToDb } from "../src/impl/mongoose/connection";
-import { MongooseDaoFactory } from "../src/impl/mongoose/dao/MongooseDaoFactory";
+import { connectToDb } from "../../src/impl/mongoose/connection";
+import { MongooseDaoFactory } from "../../src/impl/mongoose/dao/MongooseDaoFactory";
 
 // Configuration parameters
 const uri = "mongodb://localhost:27017"; // Replace with your MongoDB URI

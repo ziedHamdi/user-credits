@@ -13,7 +13,7 @@ import {
   newObjectId,
   ObjectId,
 } from "../../service/mocks/BaseService.mocks";
-import { addVersion0, clearDatabase, copyId } from "../../util";
+import { addVersion0, clearDatabase, copyId } from "../../extend/util";
 
 /**
  * This file is now testing MongoDb adapter (mongooseDaoFactory) only, but the same test should run on any implementation.

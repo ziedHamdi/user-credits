@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { kill } from "./service/mocks/BaseService.mocks";
+import { kill } from "../service/mocks/BaseService.mocks";
 
 export async function clearDatabase() {
   const collections = mongoose.connection.collections;
@@ -8,7 +8,7 @@ export async function clearDatabase() {
     const collection = collections[key];
     await collection.deleteMany();
   }
-  await kill();
+  // await kill();
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
