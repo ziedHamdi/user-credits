@@ -33,6 +33,7 @@ jobs:
 workflows:
   test:
     jobs:
+      - install-node
       - node/test:
           test-results-for: jest
 
