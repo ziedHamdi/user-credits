@@ -28,6 +28,10 @@ export type InitMocksResult = {
   subscriptionRefused1: ISubscription<ObjectId>;
 };
 
+export async function kill(): Promise<void> {
+  await TestContainerSingleton.stop();
+}
+
 export async function initMocks(): Promise<InitMocksResult> {
   const testContainer = await TestContainerSingleton.getInstance();
   // Sample data for testing

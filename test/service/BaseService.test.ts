@@ -1,5 +1,5 @@
 //NODE: these imports are a temporary workaround to avoid the warning: "Corresponding file is not included in tsconfig.json"
-import { beforeAll, beforeEach, describe, it } from "@jest/globals";
+import { afterAll, beforeAll, beforeEach, describe, it } from "@jest/globals";
 import expect from "expect";
 
 import { IDaoFactory } from "../../src/db/dao"; // Import the actual path
@@ -7,7 +7,7 @@ import { IOffer, ISubscription, IUserCredits } from "../../src/db/model"; // Imp
 import { BaseService } from "../../src/service/BaseService";
 // eslint-disable-next-line no-unused-vars,@typescript-eslint/no-unused-vars
 import { toHaveSameFields } from "../extend/sameObjects";
-import { initMocks, ObjectId } from "./BaseService.mocks";
+import { initMocks, kill, ObjectId } from "./BaseService.mocks";
 
 describe("BaseService.getActiveSubscriptions", () => {
   let daoFactoryMock: IDaoFactory<ObjectId>;
@@ -34,6 +34,10 @@ describe("BaseService.getActiveSubscriptions", () => {
     } as IUserCredits<ObjectId>;
   });
 
+  afterAll(async () => {
+    await kill();
+  });
+
   let service: BaseService<ObjectId>;
 
   beforeEach(() => {
@@ -55,9 +59,9 @@ describe("BaseService.getActiveSubscriptions", () => {
       await service.getActiveSubscriptions(sampleUserId);
 
     // Assert that userCreditsDao.findById was called with the correct userId
-    expect(daoFactoryMock.getUserCreditsDao().findByUserId).toHaveBeenCalledWith(
-      sampleUserId,
-    );
+    expect(
+      daoFactoryMock.getUserCreditsDao().findByUserId,
+    ).toHaveBeenCalledWith(sampleUserId);
 
     // Assert that activeSubscriptions contain only paid subscriptions
     expect(activeSubscriptions).toEqual([
@@ -106,6 +110,10 @@ describe("MergeOffers tests", () => {
       mocks);
 
     service = new BaseService<ObjectId>(daoFactoryMock);
+  });
+
+  afterAll(async () => {
+    await kill();
   });
 
   it("should merge sub-offers that match overridingKey with root offers", () => {

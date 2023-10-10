@@ -80,4 +80,10 @@ export class TestContainerSingleton {
 
     return this.container;
   }
+
+  public static async stop() {
+    const mongoServer = TestContainerSingleton.container.resolve("mongoServer");
+    await mongoServer.stop();
+    TestContainerSingleton.container = null;
+  }
 }
