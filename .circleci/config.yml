@@ -35,6 +35,5 @@ workflows:
     jobs:
       - node/test:
           test-results-for: jest
-    requires:
-      - install-node
+
 
