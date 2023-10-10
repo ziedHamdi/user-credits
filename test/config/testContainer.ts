@@ -83,7 +83,7 @@ export class TestContainerSingleton {
   }
 
   public static async stop() {
-    const mongoServer: MongoMemoryServer = TestContainerSingleton.container.resolve("mongoServer") as MongoMemoryServer;
-    TestContainerSingleton.active = await mongoServer.stop(true);
+    // const mongoServer: MongoMemoryServer = TestContainerSingleton.container.resolve("mongoServer") as MongoMemoryServer;
+    // TestContainerSingleton.active = await mongoServer.stop(true);
   }
 }

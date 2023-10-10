@@ -4,11 +4,12 @@ import expect from "expect";
 
 import { IDaoFactory } from "../../src/db/dao"; // Import the actual path
 import { IOffer, ISubscription, IUserCredits } from "../../src/db/model"; // Import the actual path
+import { InvalidOrderError } from "../../src/errors";
+import { Payment } from "../../src/impl/mongoose/service/Payment";
+import { BaseService } from "../../src/service/BaseService"; //IMPROVEMENT Should use { IPayment } and add a secondary interface instead
 // eslint-disable-next-line no-unused-vars,@typescript-eslint/no-unused-vars
 import { toHaveSameFields } from "../extend/sameObjects";
 import { initMocks, kill, ObjectId } from "./mocks/BaseService.mocks";
-import { Payment } from "../../src/impl/mongoose/service/Payment";
-import { BaseService } from "../../src/service/BaseService"; //IMPROVEMENT Should use { IPayment } and add a secondary interface instead
 
 describe("BaseService.getActiveSubscriptions", () => {
   let daoFactoryMock: IDaoFactory<ObjectId>;
@@ -137,4 +138,63 @@ describe("MergeOffers tests", () => {
     const mergedOffers = service.mergeOffers([], []);
     expect(mergedOffers).toEqual([]);
   });
+});
+
+describe("createOrder", () => {
+  let sampleUserId: ObjectId;
+  let offerRoot1: IOffer<ObjectId>;
+  let offerRoot2: IOffer<ObjectId>;
+  let service: BaseService<ObjectId>;
+  let mongooseDaoFactory: IDaoFactory<ObjectId>;
+
+  beforeAll(async () => {
+    // Initialize your mocks and dependencies here.
+    const mocks = await initMocks();
+    ({ mongooseDaoFactory, offerRoot1, offerRoot2, sampleUserId } = mocks);
+    await mongooseDaoFactory.getOfferDao().create(offerRoot1);
+    await mongooseDaoFactory.getOfferDao().create(offerRoot2);
+    service = new Payment(mongooseDaoFactory);
+  });
+
+  afterAll(async () => {
+    await kill();
+  });
+
+  it("should create an order with the specified quantity and total", async () => {
+    // Arrange
+    const offerId = offerRoot1._id; // Use the offer with a quantity limit
+    const userId = sampleUserId;
+    const quantity = 150; // Below the maximum allowed quantity
+
+    // Act
+    const order = await service.createOrder(offerId, userId, quantity);
+
+    // Assert
+    expect(order.quantity).toEqual(quantity);
+    expect(order.total).toEqual(order.quantity * offerRoot1.price);
+  });
+
+  it("should throw an InvalidOrderError when quantity exceeds the maximum limit", async () => {
+    // Arrange
+    const offerId = offerRoot2._id; // Use the offer with a quantity limit
+    const userId = sampleUserId;
+    const quantity = 10; // Exceeds the maximum allowed quantity
+
+    // Act
+    try {
+      await service.createOrder(offerId, userId, quantity);
+    } catch (error) {
+      // Assert
+      expect(error).toBeInstanceOf(InvalidOrderError);
+      expect((error as InvalidOrderError).message).toBe(
+        "Requested quantity exceeds the limit",
+      );
+      return; // Exit the test function
+    }
+
+    // If no error was thrown, fail the test
+    fail("Expected InvalidOrderError to be thrown");
+  });
+
+  // Other test cases...
 });
