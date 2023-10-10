@@ -10,8 +10,8 @@ declare module "expect" {
 }
 
 const toHaveSameFields: MatcherFunction<[expected: Record<string, any>]> = (
-  received,
-  expected,
+  received: Record<string, any>,
+  expected: Record<string, any>,
 ) => {
   const receivedKeys = Object.keys(received as Record<string, any>);
   const expectedKeys = Object.keys(expected);
