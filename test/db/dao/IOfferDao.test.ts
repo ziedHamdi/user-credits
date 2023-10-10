@@ -7,13 +7,14 @@ import { IOffer, ISubscription, IUserCredits } from "../../../src/db/model";
 import { BaseService } from "../../../src/service/BaseService";
 // eslint-disable-next-line no-unused-vars,@typescript-eslint/no-unused-vars
 import { toHaveSameFields } from "../../extend/sameObjects";
+import { addVersion0, clearDatabase, copyId } from "../../extend/util";
 import {
   initMocks,
   InitMocksResult,
+  kill,
   newObjectId,
   ObjectId,
 } from "../../service/mocks/BaseService.mocks";
-import { addVersion0, clearDatabase, copyId } from "../../extend/util";
 
 /**
  * This file is now testing MongoDb adapter (mongooseDaoFactory) only, but the same test should run on any implementation.
@@ -32,7 +33,10 @@ describe("offer creation", () => {
     service = new BaseService<ObjectId>(mongooseDaoFactory);
   });
 
-  afterAll(clearDatabase);
+  afterAll(async () => {
+    await clearDatabase;
+    await kill();
+  }, 15000);
 
   it("should create offer then retrieve it", async () => {
     const offerDao = service.getDaoFactory().getOfferDao();
@@ -116,7 +120,9 @@ describe("Offer Database Integration Test", () => {
     service = new BaseService<ObjectId>(mongooseDaoFactory);
   });
 
-  afterEach(clearDatabase);
+  afterAll(async () => await kill(), 15000);
+
+  afterEach(clearDatabase, 15000);
 
   it("should insert all offers and retrieve only root offers from the database for a null userId", async () => {
     const { createdOffer1, createdOffer2, createdOffer3 } = await insertOffers(
@@ -252,5 +258,5 @@ describe("Offer Database Integration Test", () => {
     expect(loadedOffers).toContainEqual(addVersion0(offerChild3_1));
     expect(loadedOffers).toContainEqual(addVersion0(offerChild3_2));
     expect(loadedOffers.length).toEqual(4);
-  });
+  }, 15000);
 });
