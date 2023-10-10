@@ -40,6 +40,10 @@ here's an example of how to add that param from console:
 `node --experimental-vm-modules node_modules/jest/bin/jest.js test/db/dao/IOfferDao.test.ts --testNamePattern="it() test name"
 `
 
+### Timeout bug
+There's a bug in MongoMemoryServer taking too long to execute. See:
+https://github.com/nodkz/mongodb-memory-server/issues/323
+
 ## Contributing
 
 UserCredits is an open-source project, and we welcome contributions from the community. Whether you want to add new features, improve documentation, or report issues, your help is valuable. Feel free to [contact me](https://twitter.com/zhamdi) or to fork the project.
