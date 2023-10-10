@@ -46,7 +46,8 @@ export async function initMocks(): Promise<InitMocksResult> {
     overridingKey: "100tokens",
     parentOfferId: null as any, // To be updated below
     price: 100,
-    tokenCount: 100,
+    quantityLimit: 200,
+    tokenCount: 100, // Maximum allowed quantity
   } as IOffer<ObjectId>;
 
   const offerRoot2: IOffer<ObjectId> = {
@@ -57,7 +58,8 @@ export async function initMocks(): Promise<InitMocksResult> {
     name: "Starter",
     parentOfferId: null as any, // To be updated below
     price: 50,
-    tokenCount: 0,
+    quantityLimit: 5,
+    tokenCount: 0, // Maximum allowed quantity
   } as IOffer<ObjectId>;
 
   const offerRoot3: IOffer<ObjectId> = {
@@ -68,7 +70,8 @@ export async function initMocks(): Promise<InitMocksResult> {
     name: "Supplement",
     parentOfferId: null as any, // To be updated below
     price: 20,
-    tokenCount: 0,
+    quantityLimit: 10,
+    tokenCount: 0, // Maximum allowed quantity
   } as IOffer<ObjectId>;
 
   const offerChild1: IOffer<ObjectId> = {
@@ -81,7 +84,7 @@ export async function initMocks(): Promise<InitMocksResult> {
     parentOfferId: offerRoot2._id, // is a sub-offer of Starter offer
     price: 40,
     tokenCount: 50,
-    weight:1,
+    weight: 1,
   } as IOffer<ObjectId>;
 
   const offerChild2: IOffer<ObjectId> = {
@@ -119,7 +122,7 @@ export async function initMocks(): Promise<InitMocksResult> {
     parentOfferId: offerRoot3._id, // is a sub-offer of Starter offer overrides the 100tokens offer
     price: 60,
     tokenCount: 100,
-    weight:2,
+    weight: 2,
   } as IOffer<ObjectId>;
 
   const subscriptionPaid1: ISubscription<ObjectId> = {

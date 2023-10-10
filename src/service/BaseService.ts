@@ -12,6 +12,8 @@ import {
   ITokenTimetable,
   IUserCredits,
 } from "../db/model";
+import { InvalidOrderError } from "../errors";
+import { IMongooseOrder } from "../impl/mongoose/model/Order";
 import { IPayment } from "./IPayment";
 
 export abstract class BaseService<K extends object> implements IPayment<K> {
@@ -25,7 +27,7 @@ export abstract class BaseService<K extends object> implements IPayment<K> {
   >;
   protected readonly userCreditsDao: IUserCreditsDao<K, IUserCredits<K>>;
 
-  constructor(daoFactory: IDaoFactory<K>) {
+  protected constructor(daoFactory: IDaoFactory<K>) {
     this.daoFactory = daoFactory;
 
     this.offerDao = daoFactory.getOfferDao();
@@ -55,6 +57,46 @@ export abstract class BaseService<K extends object> implements IPayment<K> {
     const mergedOffers = this.mergeOffers(regularOffers, subOffers);
 
     return mergedOffers;
+  }
+
+  async createOrder(
+    offerId: K,
+    userId: K,
+    quantity?: number, // Optional quantity parameter
+  ): Promise<IOrder<K>> {
+    const offer = await this.offerDao.findOne({ _id: offerId });
+
+    if (!offer) {
+      throw new Error("Offer not found"); // Handle this case based on your requirements
+    }
+
+    // Check if the offer's maximum allowed quantity is defined and higher than the requested quantity
+    if (
+      offer.quantityLimit !== null &&
+      quantity !== undefined &&
+      quantity > offer.quantityLimit
+    ) {
+      throw new InvalidOrderError("Requested quantity exceeds the limit");
+    }
+
+    let tokenCount = null;
+    if (offer.kind === "tokens") {
+      // Set the tokenCount based on the offer kind
+      tokenCount = offer.tokenCount;
+    }
+
+    const total = quantity !== undefined ? offer.price * quantity : offer.price;
+
+    const order: IOrder<K> = (await this.orderDao.create({
+      offerId,
+      quantity,
+      status: "pending",
+      tokenCount,
+      total,
+      userId,
+    } as IOrder<K>)) as IOrder<K>;
+
+    return order;
   }
 
   /**
@@ -151,5 +193,17 @@ export abstract class BaseService<K extends object> implements IPayment<K> {
     );
   }
 
-  abstract createOrder(offerId: unknown, userId: unknown): Promise<IOrder<K>>;
+  async isUserAlreadySubscribed(
+    userId: K,
+    offerId: K,
+  ): Promise<IOrder<K> | null> {
+    const existingSubscription = await this.orderDao.findOne({
+      offerId: offerId,
+      status: "paid",
+      userId: userId, // You may want to adjust this based on your criteria
+    });
+
+    return existingSubscription;
+  }
+
 }

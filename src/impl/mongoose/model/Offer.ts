@@ -22,8 +22,9 @@ const offerSchema = new Schema<IMongooseOffer>({
     type: Schema.Types.ObjectId,
   },
   price: { required: true, type: Number },
+  quantityLimit: Number,
   tokenCount: { required: true, type: Number },
-  weight: Number,
+  weight: { default: 0, type: Number },
 });
 
 export default mongoose.model("offer", offerSchema) as Model<IMongooseOffer>;

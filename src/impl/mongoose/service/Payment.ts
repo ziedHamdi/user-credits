@@ -1,29 +1,15 @@
 import { Types } from "mongoose";
+
 type ObjectId = Types.ObjectId;
 
 import { IDaoFactory } from "../../../db/dao";
-import { IOffer, IOrder, IUserCredits } from "../../../db/model";
-import { OrderStatus } from "../../../db/model/IOrder";
-import { EntityNotFoundError } from "../../../errors/EntityNotFoundError";
+import { IOrder, IUserCredits } from "../../../db/model";
+import { EntityNotFoundError } from "../../../errors";
 import { BaseService } from "../../../service/BaseService";
-import { IMongooseOrder } from "../model/Order";
 
 export class Payment extends BaseService<ObjectId> {
   constructor(daoFactory: IDaoFactory<ObjectId>) {
     super(daoFactory);
-  }
-
-  async createOrder(
-    offerId: ObjectId,
-    userId: ObjectId,
-  ): Promise<IMongooseOrder> {
-    const order: IMongooseOrder = (await this.orderDao.create({
-      offerId: offerId,
-      status: "pending",
-      tokenCount: 100,
-      userId: userId,
-    })) as IMongooseOrder;
-    return order;
   }
 
   async execute(order: IOrder<ObjectId>): Promise<IUserCredits<ObjectId>> {
@@ -53,5 +39,4 @@ export class Payment extends BaseService<ObjectId> {
     if (!userCredits) throw new EntityNotFoundError("IUserCredits", userId);
     return userCredits;
   }
-
 }

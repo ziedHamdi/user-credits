@@ -10,9 +10,13 @@ export interface OrderStatus {
  * @param K the type of foreign keys (is used for all foreign keys type)
  */
 export interface IOrder<K extends object> extends BaseEntity<K> {
+  country: string | null;
   history: [OrderStatus] | null;
   offerId: K;
+  quantity: number;
   status: "pending" | "paid" | "refused";
-  tokenCount: number;
+  taxRate: number | null;
+  tokenCount: number | null;
+  total: number;
   userId: K;
 }

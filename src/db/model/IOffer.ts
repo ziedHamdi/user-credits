@@ -13,6 +13,7 @@ export interface IOffer<K extends object> extends BaseEntity<K> {
   overridingKey: string;
   parentOfferId: K;
   price: number;
-  tokenCount: number;
+  quantityLimit: number | null;
+  tokenCount: number | null;
   weight: number;
 }
