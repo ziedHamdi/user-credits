@@ -1,5 +1,3 @@
-// stripe-mock.ts
-
 import { IOrder } from "../../../src/db/model";
 import { OrderStatus } from "../../../src/db/model/IOrder";
 import { IPaymentClient } from "../../../src/service/IPaymentClient";

@@ -5,7 +5,7 @@ export interface IPaymentClient<K extends object> {
 
   createPaymentIntent(order: IOrder<K>): Promise<IOrder<K> | null>;
 
-  executePayment(order: IOrder<K>): Promise<IOrder<K> | null>;
+  executePayment(order: IOrder<K>): Promise<IOrder<K>>;
 
   fetchUserBalance(userId: K): Promise<number>;
 

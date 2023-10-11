@@ -8,6 +8,7 @@ import { IPaymentClient } from "../../service/IPaymentClient";
 import { ObjectId } from "../mongoose/TypeDefs";
 
 /**
+ * This class abstracts out all stripe-specific objects by handling both calls to the stripe endpoint, and webhooks parsing. Results will be in the format of this project interfaces.
  * Docs for stripe: https://stripe.com/docs/payments/accept-a-payment?ui=elements
  *
  * Handling abandoned or incomplete payment intents in Stripe can be a complex task, especially if you can't store the client_secret on the server.
@@ -20,13 +21,13 @@ export class StripeClient implements IPaymentClient<ObjectId> {
 
   constructor(configReader: IConfigReader) {
     this.stripe = new Stripe(configReader.paymentSecretKey(), {
-      apiVersion: configReader.paymentApiVersion(),
+      apiVersion: configReader.paymentApiVersion()
     });
     this.currency = configReader.currency();
   }
 
   async createPaymentIntent(
-    order: IOrder<ObjectId>,
+    order: IOrder<ObjectId>
   ): Promise<IOrder<ObjectId> | null> {
     try {
       const intent = await this.stripe.paymentIntents.create({
@@ -34,7 +35,7 @@ export class StripeClient implements IPaymentClient<ObjectId> {
         currency: this.currency, // Replace with your desired currency
         description: `Payment for Order #${
           order._id
-        } created ${new Date().toDateString()}`, // Modify as needed
+        } created ${new Date().toDateString()}` // Modify as needed
       });
 
       // Update the order object with paymentIntentId
@@ -60,7 +61,7 @@ export class StripeClient implements IPaymentClient<ObjectId> {
    * @param order the order containing intent information
    */
   async executePayment(
-    order: IOrder<ObjectId>,
+    order: IOrder<ObjectId>
   ): Promise<IOrder<ObjectId> | null> {
     try {
       // Assuming you have the paymentIntentId stored in the order
@@ -70,7 +71,7 @@ export class StripeClient implements IPaymentClient<ObjectId> {
 
       // Retrieve the payment intent from Stripe
       const intent = await this.stripe.paymentIntents.retrieve(
-        order.paymentIntentId,
+        order.paymentIntentId
       );
 
       // Update the order status based on the payment intent status
@@ -81,7 +82,7 @@ export class StripeClient implements IPaymentClient<ObjectId> {
           // Create a payment status entry in the order's history
           this.addHistoryItem(order, {
             message: "Payment succeeded",
-            status: "paid",
+            status: "paid"
           } as OrderStatus);
           break;
 
@@ -91,7 +92,7 @@ export class StripeClient implements IPaymentClient<ObjectId> {
           // Create a payment status entry in the order's history
           this.addHistoryItem(order, {
             message: "Payment method issues",
-            status: "refused",
+            status: "refused"
           } as OrderStatus);
           break;
 
@@ -102,7 +103,7 @@ export class StripeClient implements IPaymentClient<ObjectId> {
             message:
               "Payment requires an action we don't handle: " +
               intent.next_action,
-            status: "error",
+            status: "error"
           } as OrderStatus);
           break;
 
@@ -134,7 +135,7 @@ export class StripeClient implements IPaymentClient<ObjectId> {
       const event = this.stripe.webhooks.constructEvent(
         eventPayload.body,
         signature,
-        webhookSecret,
+        webhookSecret
       );
       return event;
     } catch (error) {

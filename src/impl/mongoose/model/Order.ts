@@ -21,6 +21,7 @@ const orderSchema = new Schema<IMongooseOrder>(
     // identifier on remote payment system to track status
     country: String,
     history: [orderStatusSchema],
+    offerGroup: { required: true, type: String },
     offerId: {
       ref: "offer",
       required: true,

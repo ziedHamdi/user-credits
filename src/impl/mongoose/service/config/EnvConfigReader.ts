@@ -4,6 +4,11 @@ import { IConfigReader } from "../../../../service/config/IConfigReader";
 
 dotenv.config(); // Load environment variables from a .env file
 
+/**
+ * This is one possible implementation for configuration reading.
+ * If your project doesn't read environment variables from .env, feel free to implement your own IConfigReader and store
+ * it as <code>configReader</code> in the Awilix container.
+ */
 export class EnvConfigReader implements IConfigReader {
   private readonly defaultCurrency: string;
   private readonly apiVersion: string;

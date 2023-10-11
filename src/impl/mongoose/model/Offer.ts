@@ -7,7 +7,18 @@ import { IOffer } from "../../../db/model";
 export type IMongooseOffer = IOffer<ObjectId> & Document;
 
 const offerSchema = new Schema<IMongooseOffer>({
-  cycle: { enum: ["once", "monthly", "yearly"], type: String },
+  cycle: {
+    enum: [
+      "once",
+      "weekly",
+      "bi-weekly",
+      "monthly",
+      "trimester",
+      "semester",
+      "yearly",
+    ],
+    type: String,
+  },
   hasSubOffers: { type: Boolean },
   kind: {
     enum: ["subscription", "tokens", "expertise"],
@@ -15,6 +26,10 @@ const offerSchema = new Schema<IMongooseOffer>({
     type: String,
   },
   name: { required: true, type: String },
+  /**
+   * Detailed documentation in interface @IOffer.offerGroup
+   */
+  offerGroup: { required: true, type: String },
   overridingKey: String,
   parentOfferId: {
     ref: "offer",

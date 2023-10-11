@@ -12,7 +12,7 @@ import {
   ITokenTimetable,
   IUserCredits,
 } from "../db/model";
-import { InvalidOrderError } from "../errors";
+import { InvalidOrderError, PaymentError } from "../errors";
 import { IPayment } from "./IPayment";
 
 export abstract class BaseService<K extends object> implements IPayment<K> {
@@ -203,6 +203,48 @@ export abstract class BaseService<K extends object> implements IPayment<K> {
     });
 
     return existingSubscription;
+  }
+
+
+  protected async getUserCredits(userId: ObjectId): Promise<IUserCredits<ObjectId>> {
+    const userCredits: IUserCredits<ObjectId> = await this.daoFactory
+      .getUserCreditsDao()
+      .findByUserId(userId);
+
+    if (!userCredits) {
+      throw new PaymentError(`Illegal state: user has no prepared userCredits (${userId}).`);
+    }
+
+    return userCredits;
+  }
+
+  protected calculateExpiryDate(startDate: Date, cycle: string): Date {
+    const date = new Date(startDate);
+
+    switch (cycle) {
+      case "once":
+        return date;
+      case "weekly":
+        date.setDate(date.getDate() + 7);
+        return date;
+      case "bi-weekly":
+        date.setDate(date.getDate() + 14);
+        return date;
+      case "monthly":
+        date.setMonth(date.getMonth() + 1);
+        return date;
+      case "trimester":
+        date.setMonth(date.getMonth() + 3);
+        return date;
+      case "semester":
+        date.setMonth(date.getMonth() + 6);
+        return date;
+      case "yearly":
+        date.setFullYear(date.getFullYear() + 1);
+        return date;
+      default:
+        return date;
+    }
   }
 
 }

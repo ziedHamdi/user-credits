@@ -4,5 +4,6 @@
  */
 export interface BaseEntity<K> {
   _id: K;
+  markModified(field: string): void;
   save(): Promise<unknown>;
 }

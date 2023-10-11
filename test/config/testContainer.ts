@@ -20,6 +20,7 @@ import { MockOfferDao } from "../db/dao/mocks/MockOfferDao";
 import { MockOrderDao } from "../db/dao/mocks/MockOrderDao";
 import { MockTokenTimetableDao } from "../db/dao/mocks/MockTokenTimetableDao";
 import { MockUserCreditsDao } from "../db/dao/mocks/MockUserCreditsDao";
+import { StripeMock } from "../service/mocks/StripeMock";
 
 export class TestContainerSingleton {
   private static container: AwilixContainer<object>;
@@ -28,6 +29,7 @@ export class TestContainerSingleton {
   private constructor() {
     // Private constructor to prevent external instantiation
   }
+
   public static async getInstance(): Promise<AwilixContainer<object>> {
     if (TestContainerSingleton.active) return this.container;
     this.active = true;
@@ -83,8 +85,11 @@ export class TestContainerSingleton {
 
     this.container.register({
       configReader: asClass(EnvConfigReader).singleton(),
+    });
+    this.container.register({
       stripeClient: asClass(StripeClient).singleton(),
     });
+    this.container.register({ stripeMock: asValue(new StripeMock()) });
 
     return this.container;
   }
