@@ -53,8 +53,8 @@ export class StripeMock implements IPaymentClient<IOrder<ObjectId>> {
   handleWebhook(eventPayload: any, webhookSecret: string) {
     // For testing purposes, you can return a mock Stripe event
     const mockEvent = {
-      id: 'mockEventId',
-      type: 'payment_intent.succeeded',
+      id: "mockEventId",
+      type: "payment_intent.succeeded",
       // Add more event properties as needed for testing
     };
     return mockEvent;
