@@ -111,7 +111,7 @@ describe("MergeOffers tests", () => {
     ({ daoFactoryMock, offerChild1, offerChild2, offerRoot1, offerRoot2 } =
       mocks);
 
-    service = new Payment(daoFactoryMock);
+    service = new Payment(daoFactoryMock, );
   });
 
   afterAll(async () => {

@@ -1,4 +1,4 @@
-import { asFunction, asValue, createContainer } from "awilix";
+import { asClass, asFunction, asValue, createContainer } from "awilix";
 import { AwilixContainer } from "awilix/lib/container";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import { Types } from "mongoose";
@@ -14,6 +14,8 @@ import type {
 } from "../../src/db/model";
 import { connectToDb } from "../../src/impl/mongoose/connection";
 import { MongooseDaoFactory } from "../../src/impl/mongoose/dao/MongooseDaoFactory";
+import { EnvConfigReader } from "../../src/impl/mongoose/service/config/EnvConfigReader";
+import { StripeClient } from "../../src/impl/service/StripeClient";
 import { MockOfferDao } from "../db/dao/mocks/MockOfferDao";
 import { MockOrderDao } from "../db/dao/mocks/MockOrderDao";
 import { MockTokenTimetableDao } from "../db/dao/mocks/MockTokenTimetableDao";
@@ -77,6 +79,11 @@ export class TestContainerSingleton {
       mongooseDaoFactory: asFunction(
         () => new MongooseDaoFactory(),
       ).singleton(),
+    });
+
+    this.container.register({
+      configReader: asClass(EnvConfigReader).singleton(),
+      stripeClient: asClass(StripeClient).singleton(),
     });
 
     return this.container;

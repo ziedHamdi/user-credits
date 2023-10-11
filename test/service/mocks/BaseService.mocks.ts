@@ -3,6 +3,7 @@ import { Types } from "mongoose";
 import { IDaoFactory } from "../../../src/db/dao";
 import { IOffer, ISubscription } from "../../../src/db/model";
 import { TestContainerSingleton } from "../../config/testContainer";
+import { IConfigReader } from "../../../src/service/config/IConfigReader";
 
 export type ObjectId = Types.ObjectId;
 
@@ -36,6 +37,7 @@ export async function initMocks(): Promise<InitMocksResult> {
   const testContainer = await TestContainerSingleton.getInstance();
   // Sample data for testing
   const sampleUserId: ObjectId = testContainer.resolve("sampleUserId");
+  const configReader = testContainer.resolve<IConfigReader>("configReader");
 
   const offerRoot1: IOffer<ObjectId> = {
     _id: newObjectId(),

@@ -6,9 +6,13 @@ import { IDaoFactory } from "../../../db/dao";
 import { IOrder, IUserCredits } from "../../../db/model";
 import { EntityNotFoundError } from "../../../errors";
 import { BaseService } from "../../../service/BaseService";
+import { StripeClient } from "../../service/StripeClient";
 
 export class Payment extends BaseService<ObjectId> {
-  constructor(daoFactory: IDaoFactory<ObjectId>) {
+  constructor(
+    daoFactory: IDaoFactory<ObjectId>,
+    protected stripe: StripeClient,
+  ) {
     super(daoFactory);
   }
 

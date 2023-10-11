@@ -11,7 +11,7 @@ const subscriptionSchema = new Schema<
 >({
   expires: Date,
   offerId: {
-    ref: "IOffer",
+    ref: "offer",
     required: true,
     type: Schema.Types.ObjectId,
   },
@@ -28,7 +28,6 @@ const userCreditsSchema = new Schema<IMongooseUserCredits>(
     subscriptions: [subscriptionSchema],
     tokens: { default: 0, required: true, type: Number },
     userId: {
-      ref: "User",
       required: true,
       type: Schema.Types.ObjectId,
     },

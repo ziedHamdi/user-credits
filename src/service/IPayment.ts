@@ -8,8 +8,8 @@ import { IUserCredits } from "../db/model/IUserCredits";
  */
 export interface IPayment<K extends object | null> {
   createOrder(offerId: unknown, userId: unknown): Promise<IOrder<K>>;
+  execute(order: IOrder<K>): Promise<IUserCredits<K>>;
   getDaoFactory(): IDaoFactory<K>;
-  // execute(order: IOrder<K>): Promise<IUserCredits<K>>;
   loadOffers(userId: unknown): Promise<IOffer<K>[]>;
   // orderStatusChanged(
   //   orderId: unknown,

@@ -13,7 +13,6 @@ import {
   IUserCredits,
 } from "../db/model";
 import { InvalidOrderError } from "../errors";
-import { IMongooseOrder } from "../impl/mongoose/model/Order";
 import { IPayment } from "./IPayment";
 
 export abstract class BaseService<K extends object> implements IPayment<K> {

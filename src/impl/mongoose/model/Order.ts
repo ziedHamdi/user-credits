@@ -10,7 +10,7 @@ const orderStatusSchema = new Schema<OrderStatus>({
   date: Date,
   message: String,
   status: {
-    enum: ["pending", "paid", "refused"],
+    enum: ["pending", "paid", "refused", "error"],
     required: true,
     type: String,
   },
@@ -18,16 +18,20 @@ const orderStatusSchema = new Schema<OrderStatus>({
 
 const orderSchema = new Schema<IMongooseOrder>(
   {
+    // identifier on remote payment system to track status
     country: String,
     history: [orderStatusSchema],
     offerId: {
-      ref: "IOffer",
+      ref: "offer",
       required: true,
       type: Schema.Types.ObjectId,
     },
+    paymentIntentId: String,
+    // not stored in db, only present to carry information in memory
+    paymentIntentSecret: { select: false, type: String },
     quantity: Number,
     status: {
-      enum: ["pending", "paid", "refused"],
+      enum: ["pending", "paid", "refused", "error"],
       required: true,
       type: String,
     },
@@ -35,7 +39,6 @@ const orderSchema = new Schema<IMongooseOrder>(
     tokenCount: { required: true, type: Number },
     total: Number,
     userId: {
-      ref: "User",
       required: true,
       type: Schema.Types.ObjectId,
     },
