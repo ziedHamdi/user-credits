@@ -1,5 +1,6 @@
 import { BaseEntity } from "./BaseEntity";
 import { OfferCycle } from "./IOffer";
+import { MinimalId } from "./MinimalId";
 
 export interface OrderStatus {
   date: Date;
@@ -10,7 +11,7 @@ export interface OrderStatus {
 /**
  * @param K the type of foreign keys (is used for all foreign keys type)
  */
-export interface IOrder<K extends object> extends BaseEntity<K> {
+export interface IOrder<K extends MinimalId> extends BaseEntity<K> {
   country: string | null;
   currency: string;
   customCycle: number | null;

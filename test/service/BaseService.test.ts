@@ -5,8 +5,8 @@ import expect from "expect";
 import { IDaoFactory } from "../../src/db/dao"; // Import the actual path
 import { IOffer, ISubscription, IUserCredits } from "../../src/db/model"; // Import the actual path
 import { InvalidOrderError } from "../../src/errors";
-import { PaymentService } from "../../src/service/PaymentService";
 import { BaseService } from "../../src/service/BaseService"; //IMPROVEMENT Should use { IPayment } and add a secondary interface instead
+import { PaymentService } from "../../src/service/PaymentService";
 // eslint-disable-next-line no-unused-vars,@typescript-eslint/no-unused-vars
 import { toHaveSameFields } from "../extend/sameObjects";
 import { initMocks, kill, ObjectId } from "./mocks/BaseService.mocks";
@@ -111,7 +111,7 @@ describe("MergeOffers tests", () => {
     ({ daoFactoryMock, offerChild1, offerChild2, offerRoot1, offerRoot2 } =
       mocks);
 
-    service = new PaymentService(daoFactoryMock, );
+    service = new PaymentService(daoFactoryMock);
   });
 
   afterAll(async () => {

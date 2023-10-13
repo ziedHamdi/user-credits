@@ -1,6 +1,5 @@
 import { IDaoFactory } from "../db/dao";
-import { IOffer } from "../db/model/IOffer";
-import { IOrder } from "../db/model/IOrder";
+import { IOffer, IOrder, MinimalId } from "../db/model";
 import { IUserCredits } from "../db/model/IUserCredits";
 
 /**
@@ -12,7 +11,7 @@ import { IUserCredits } from "../db/model/IUserCredits";
  *
  * @param K The type of foreign keys used throughout the library.
  */
-export interface IService<K extends object | null> {
+export interface IService<K extends MinimalId | null> {
   /**
    * This method is called by the web client (or by the payment webhook server callback) after a payment has been
    * executed by the client library, whether it was successful or not.

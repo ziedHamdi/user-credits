@@ -1,11 +1,10 @@
 import Stripe from "stripe";
 
-import { IOrder } from "../../db/model";
+import { IOrder, MinimalId } from "../../db/model";
 import { OrderStatus } from "../../db/model/IOrder";
 import { PaymentError } from "../../errors";
 import { IConfigReader } from "../../service/config/IConfigReader";
 import { IPaymentClient } from "../../service/IPaymentClient";
-import { ObjectId } from "../mongoose/TypeDefs";
 
 /**
  * This class abstracts out all stripe-specific objects by handling both calls to the stripe endpoint, and webhooks parsing. Results will be in the format of this project interfaces.
@@ -15,7 +14,7 @@ import { ObjectId } from "../mongoose/TypeDefs";
  * The strategy is then to store the order, and create new intents if the payment failed or was abandoned.
  * The IOrder.paymentIntentId is therefore a value that can change as long as the status is not "paid"
  */
-export class StripeClient implements IPaymentClient<ObjectId> {
+export class StripeClient<K extends MinimalId> implements IPaymentClient<K> {
   private readonly stripe: Stripe;
   private readonly currency: string;
 
@@ -27,8 +26,8 @@ export class StripeClient implements IPaymentClient<ObjectId> {
   }
 
   async createPaymentIntent(
-    order: IOrder<ObjectId>
-  ): Promise<IOrder<ObjectId> | null> {
+    order: IOrder<K>
+  ): Promise<IOrder<K> | null> {
     try {
       const intent = await this.stripe.paymentIntents.create({
         amount: order.total * 100, // 'amount' represents the amount in cents
@@ -61,8 +60,8 @@ export class StripeClient implements IPaymentClient<ObjectId> {
    * @param order the order containing intent information
    */
   async afterPaymentExecuted(
-    order: IOrder<ObjectId>
-  ): Promise<IOrder<ObjectId> | null> {
+    order: IOrder<K>
+  ): Promise<IOrder<K> | null> {
     try {
       // Assuming you have the paymentIntentId stored in the order
       if (!order.paymentIntentId) {
@@ -118,9 +117,9 @@ export class StripeClient implements IPaymentClient<ObjectId> {
     }
   }
 
-  private addHistoryItem(order: IOrder<ObjectId>, historyItem: OrderStatus) {
+  private addHistoryItem(order: IOrder<K>, historyItem: OrderStatus) {
     if (!order.history) {
-      order.history = [];
+      order.history = [] as unknown as [OrderStatus];
     }
     historyItem.date = historyItem.date ?? new Date();
 
@@ -144,7 +143,7 @@ export class StripeClient implements IPaymentClient<ObjectId> {
     }
   }
 
-  async checkUserBalance(userId: string): Promise<number> {
+  async checkUserBalance(userId: K): Promise<number> {
     try {
       // Fetch user balance, you may need to implement this part
       const balance = await this.fetchUserBalance(userId);
@@ -156,7 +155,7 @@ export class StripeClient implements IPaymentClient<ObjectId> {
   }
 
   // Implement this method to fetch the user's balance from Stripe
-  async fetchUserBalance(userId: string): Promise<number> {
+  async fetchUserBalance(userId: K): Promise<number> {
     try {
       // Fetch user balance from Stripe
       // Implement the logic here

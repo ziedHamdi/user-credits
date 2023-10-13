@@ -1,10 +1,11 @@
 import { BaseEntity } from "./BaseEntity";
 import { OfferCycle } from "./IOffer";
+import { MinimalId } from "./MinimalId";
 
 /**
  * @param K the type of foreign keys (is used for all foreign keys type)
  */
-export interface ISubscription<K extends object> {
+export interface ISubscription<K extends MinimalId> {
   /**
    * Only allowed to have a value when cycle=custom. Expresses the order duration before expiry in seconds.
    */
@@ -27,7 +28,7 @@ export interface IActivatedOffer {
   tokens: number;
 }
 
-export interface IUserCredits<K extends object> extends BaseEntity<K> {
+export interface IUserCredits<K extends MinimalId> extends BaseEntity<K> {
   offers: IActivatedOffer[];
   subscriptions: (unknown extends ISubscription<K> ? unknown : never)[];
   userId: K;

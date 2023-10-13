@@ -16,11 +16,13 @@ import { connectToDb } from "../../src/impl/mongoose/connection";
 import { MongooseDaoFactory } from "../../src/impl/mongoose/dao/MongooseDaoFactory";
 import { EnvConfigReader } from "../../src/impl/mongoose/service/config/EnvConfigReader";
 import { StripeClient } from "../../src/impl/service/StripeClient";
+import { checkContainer } from "../../src/util/AwilixConfigChecker";
 import { MockOfferDao } from "../db/dao/mocks/MockOfferDao";
 import { MockOrderDao } from "../db/dao/mocks/MockOrderDao";
 import { MockTokenTimetableDao } from "../db/dao/mocks/MockTokenTimetableDao";
 import { MockUserCreditsDao } from "../db/dao/mocks/MockUserCreditsDao";
 import { StripeMock } from "../service/mocks/StripeMock";
+import { EXPECTED_PROPERTIES } from "../../src/Constants";
 
 export class TestContainerSingleton {
   private static container: AwilixContainer<object>;
@@ -100,3 +102,29 @@ export class TestContainerSingleton {
     // TestContainerSingleton.active = await mongoServer.stop(true);
   }
 }
+
+const TEST_EXPECTED_PROPERTIES: Record<string, "Value" | "Function"> = {
+  configReader: "Function",
+  daoFactoryMock: "Function",
+  dbUri: "Value",
+  defaultCurrency: "Value",
+  mongoServer: "Value",
+  mongooseDaoFactory: "Function",
+  sampleUserId: "Value",
+  stripeClient: "Function",
+  stripeMock: "Value",
+};
+
+async function check(): Promise<boolean> {
+  const isContainerValid = checkContainer(
+    await TestContainerSingleton.getInstance(),
+    TEST_EXPECTED_PROPERTIES,
+  );
+  return isContainerValid;
+}
+
+check()
+  .then((valid) => {
+    console.log("Awilix container", valid ? " started" : "Invalid");
+  })
+  .catch((err) => console.error(err));

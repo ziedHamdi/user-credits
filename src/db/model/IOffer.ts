@@ -1,4 +1,5 @@
 import { BaseEntity } from "./BaseEntity";
+import { MinimalId } from "./MinimalId";
 
 export type OfferCycle =
   | "once"
@@ -13,7 +14,7 @@ export type OfferCycle =
 /**
  * @param K the type of foreign keys (is used for all foreign keys type)
  */
-export interface IOffer<K extends object> extends BaseEntity<K> {
+export interface IOffer<K extends MinimalId> extends BaseEntity<K> {
   /**
    * Only allowed to have a value when cycle=custom. Expresses the order duration before expiry in seconds.
    */

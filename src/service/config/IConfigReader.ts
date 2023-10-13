@@ -1,6 +1,6 @@
 export interface IConfigReader {
   currency(): string;
-  paymentApiVersion(): string;
+  paymentApiVersion(): "2023-08-16";
   paymentPublicKey(): string;
   paymentSecretKey(): string;
 }

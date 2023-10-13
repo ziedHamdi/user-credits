@@ -1,6 +1,5 @@
-import {IOrder} from "../model/IOrder";
-import {IBaseDao} from "./IBaseDao";
+import { IOrder, MinimalId } from "../model";
+import { IBaseDao } from "./IBaseDao";
 
-export interface IOrderDao<K extends object, D extends IOrder<K>>
-    extends IBaseDao<D> {
-}
+export interface IOrderDao<K extends MinimalId, D extends IOrder<K>>
+  extends IBaseDao<D> {}

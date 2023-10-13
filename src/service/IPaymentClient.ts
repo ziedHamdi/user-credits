@@ -1,4 +1,4 @@
-import { IOrder } from "../db/model";
+import { IOrder, MinimalId } from "../db/model";
 
 /**
  * Interface for a payment client that abstracts out payment operations, allowing the UserCredits library to remain
@@ -9,7 +9,7 @@ import { IOrder } from "../db/model";
  * these calls.
  * @param K The type of foreign keys (used for all foreign keys type).
  */
-export interface IPaymentClient<K extends object> {
+export interface IPaymentClient<K extends MinimalId> {
   /**
    * This method is called by the UserCredits library after a payment has been executed, whether it was successful or not.
    * It allows the payment client to handle any post-payment logic.
@@ -17,7 +17,7 @@ export interface IPaymentClient<K extends object> {
    * @param order The order resulting from a payment transaction.
    * @returns A promise that resolves to the updated order after payment execution.
    */
-  afterPaymentExecuted(order: IOrder<K>): Promise<IOrder<K>>;
+  afterPaymentExecuted(order: IOrder<K>): Promise<IOrder<K> | null>;
 
   /**
    * Checks the balance of a user with the specified unique identifier.
@@ -26,7 +26,7 @@ export interface IPaymentClient<K extends object> {
    * @param userId The unique identifier of the user whose balance needs to be checked.
    * @returns A promise that resolves to the user's token balance.
    */
-  checkUserBalance(userId: string): Promise<number>;
+  checkUserBalance(userId: K): Promise<number>;
 
   /**
    * Creates a payment intent for an order. This method is used to initiate the payment process.
