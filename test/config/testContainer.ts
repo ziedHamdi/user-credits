@@ -90,6 +90,7 @@ export class TestContainerSingleton {
       stripeClient: asClass(StripeClient).singleton(),
     });
     this.container.register({ stripeMock: asValue(new StripeMock()) });
+    this.container.register({ defaultCurrency: asValue("usd") });
 
     return this.container;
   }

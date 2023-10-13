@@ -10,23 +10,132 @@ UserCredits is an open-source library designed to simplify the implementation of
 
 - **Payment Integration:** UserCredits is designed to integrate seamlessly with popular payment gateways, starting with Stripe. Accept payments from your users for token purchases or services rendered.
 
-- **Flexible Offers and Subscriptions:** Define a wide range of offers and subscription plans tailored to your business needs. Customize pricing, discounts, and subscription durations.
+- **Flexible Offers and Subscriptions:** Customize your pricing, discounts, and subscription durations for different offers using the `offer.overridingKey` and `weight` options. These features allow you to create tailored subscription plans, making it easier for users to enjoy lower prices on related offers.
 
-- **Multi-Currency Support:** Display offers and prices in multiple currencies to cater to a global audience. Currency conversion is built-in, making it easy to handle international payments.
+- **Offer Group Logic:** With the `offer.offerGroup` feature, users can subscribe to multiple offers and services simultaneously while keeping each offer's token balance separated from the others. Conceptually related offers can share the same `offerGroup` value, allowing you to compute the expiry date accordingly. For example, offers in the group 'mobileTV' can offer weekly, monthly, and yearly subscriptions. If a user subscribes for a month and later opts for a yearly subscription while the month hasn't ended, the expiry date of the subscription will combine both durations, providing a seamless and flexible experience.
+
+- **Multi-Currency Support:** Easily display orders and prices in multiple currencies to accommodate a global audience. While currency conversion is not built-in, UserCredits offers seamless integration to sync and manage international payments effortlessly.
 
 ## Architecture
 
-UserCredits is built with a modular architecture that separates core business logic from database implementations. Key architectural components include:
+UserCredits is designed with a modular architecture that simplifies development by abstracting the complexities of both database interactions and payment processing libraries. The architecture consists of distinct layers, each with its unique role:
 
-- **DAO Factory:** The Data Access Object (DAO) Factory abstracts database interactions, allowing you to switch between database technologies without changing the core logic of your application.
+**1. Declarative Interfaces**
+At the core of UserCredits, you'll find a set of declarative interfaces that define the project's concepts and abstractions.
 
-- **Service Layer:** UserCredits provides a flexible service layer that acts as a facade for pay-as-you-go features. It abstracts complex operations, making it easy to create orders, execute payments, and check token balances.
+**2. Technology-Agnostic Logic**
+The next layer implements technology-agnostic logic, providing methods for creating orders, managing special offers based on user subscriptions, and handling various payment-related operations and monitoring.
 
-- **Inversion of Control (IoC):** IoC, implemented through the Awilix library, manages dependencies and injects the appropriate DAOs into your service and other components. This allows for easy adaptation to various projects and technologies.
+**3. Implementation Layer**
+Each of these layers can be changed without any adaptations needed on the other:
+
+- **Database Abstraction:** Beneath the technology-agnostic logic, a database implementation is in place, currently using Mongoose and MongoDB. Importantly, adding support for other databases is straightforward. You can create Data Access Objects (DAOs) and schemas that adhere to the abstract concepts defined in the first layer. These implementations are utilized by the second layer, which remains unaware of the underlying database specifics.
+
+- **Payment Platform Integration:** The final layer serves as a bridge to payment platforms like Stripe. It encapsulates the intricacies of payment operations, allowing UserCredits to seamlessly interact with different payment providers.
+
+All these layers are efficiently managed through Inversion of Control (IoC) principles, leveraging the Awilix library. The end result is a user-friendly and adaptable library that abstracts away the complexities of database and payment integration.
+
+UserCredits provides developers with a single, unified facade interface, simplifying their interactions with the library and shielding them from intricate implementation details. This design encourages easy adaptation to various projects and technologies.
 
 ## Get Started
 
 To start using UserCredits in your project, follow the installation and usage instructions in the [blog series](https://dev.to/zhamdi/architecting-pay-as-you-go-magic-usercredits-winning-formula-4ace).
+
+
+# Using UserCredits
+
+UserCredits provides two key interfaces to manage payments, subscriptions, and credits in your application: `IService` and `IPaymentClient`. These interfaces are designed to simplify the integration of payment processing and user credit management while remaining framework-agnostic.
+
+## IService Interface
+
+The `IService` interface is your entry point to user credit management and offer handling. It abstracts complex operations for user-specific offers and subscriptions. To use it, follow these steps:
+
+### 1. Create an Instance
+
+Instantiate the `Service` class, passing in the necessary dependencies:
+
+```javascript
+const service = new Service(daoFactory, defaultCurrency);
+```
+
+### 2. Load User Offers
+
+Load user-specific offers, applying overriding logic for suboffers:
+
+```javascript
+const offers = await service.loadOffers(userId);
+```
+
+### 3. Create an Order
+
+Create an order for a user to purchase an offer:
+
+```javascript
+const order = await service.createOrder(offerId, userId);
+```
+
+### 4. Check Subscription Status
+
+Check if a user is already subscribed to a specific offer:
+
+```javascript
+const existingSubscription = await service.isUserAlreadySubscribed(userId, offerId);
+```
+
+### 5. Get User Credits
+
+Retrieve user credits for a given user. User credits represent a list of credits grouped by offerGroup, allowing users to consume credits within each group independently of others. Each offerGroup contains activated offers with their respective start and expiry dates, along with the associated tokens.
+
+```javascript
+const userCredits = await service.getUserCredits(userId);
+```
+
+## IPaymentClient Interface
+
+The `IPaymentClient` interface abstracts payment processing operations. It allows you to integrate payment gateways seamlessly without locking your application to a specific technology. To use it, follow these steps:
+
+### 1. Create an Instance
+
+Instantiate a class implementing the `IPaymentClient` interface, providing the required configurations:
+
+```javascript
+const paymentClient = new MyPaymentClient(config);
+```
+
+### 2. Execute Payment
+
+Execute a payment and handle the payment execution status:
+
+```javascript
+const updatedOrder = await paymentClient.afterPaymentExecuted(order);
+```
+
+### 3. Check User Balance
+
+Check a user's balance before processing payments:
+
+```javascript
+const balance = await paymentClient.checkUserBalance(userId);
+```
+
+### 4. Create Payment Intent
+
+Create a payment intent to handle transactions:
+
+```javascript
+const paymentIntent = await paymentClient.createPaymentIntent(order);
+```
+
+### 5. Handle Webhooks
+
+Handle payment-related webhooks securely:
+
+```javascript
+paymentClient.handleWebhook(eventPayload, webhookSecret);
+```
+
+By leveraging the `IService` and `IPaymentClient` interfaces, you can seamlessly manage user credits, subscriptions, and payments in your application while remaining flexible and adaptable to various technologies.
+
 
 ## Testing
 We are using the project mongodb-memory-server to run an in memory mongodb for tests. Which generates the following warning
@@ -50,7 +159,7 @@ UserCredits is an open-source project, and we welcome contributions from the com
 
 ## License
 
-UserCredits is released under the [MIT License](#). Feel free to use it in your projects, commercial or otherwise.
+UserCredits is released under the [MIT License](https://github.com/ziedHamdi/UserCredits/blob/master/LICENSE). Feel free to use it in your projects, commercial or otherwise.
 
 ---
 

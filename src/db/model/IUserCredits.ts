@@ -1,17 +1,15 @@
 import { BaseEntity } from "./BaseEntity";
+import { OfferCycle } from "./IOffer";
 
 /**
  * @param K the type of foreign keys (is used for all foreign keys type)
  */
 export interface ISubscription<K extends object> {
-  cycle:
-    | "once"
-    | "weekly"
-    | "bi-weekly"
-    | "monthly"
-    | "trimester"
-    | "semester"
-    | "yearly";
+  /**
+   * Only allowed to have a value when cycle=custom. Expresses the order duration before expiry in seconds.
+   */
+  customCycle: number | null;
+  cycle: OfferCycle;
   /** Check documentation in @IOffer */
   offerGroup: string;
   offerId: K;

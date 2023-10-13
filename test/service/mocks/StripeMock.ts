@@ -19,7 +19,7 @@ export class StripeMock implements IPaymentClient<IOrder<ObjectId>> {
     return order;
   }
 
-  async executePayment(
+  async afterPaymentExecuted(
     order: IOrder<ObjectId>,
   ): Promise<IOrder<ObjectId> | null> {
     // Simulate executing a payment and updating the order status

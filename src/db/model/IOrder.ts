@@ -1,4 +1,5 @@
 import { BaseEntity } from "./BaseEntity";
+import { OfferCycle } from "./IOffer";
 
 export interface OrderStatus {
   date: Date;
@@ -11,6 +12,9 @@ export interface OrderStatus {
  */
 export interface IOrder<K extends object> extends BaseEntity<K> {
   country: string | null;
+  currency: string;
+  customCycle: number | null;
+  cycle: OfferCycle;
   history: [OrderStatus] | null;
   /** Check documentation in @IOffer */
   offerGroup: string;

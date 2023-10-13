@@ -51,8 +51,8 @@ export class StripeClient implements IPaymentClient<ObjectId> {
   }
 
   /**
-   * Execute the payment using the paymentIntentId.
-   * This will be called by the client after an execute has been called by Stripe Elements. It will just notify the client of the status. Webhooks are another channel to do the same thing if the client session was interrupted.
+   * Execute the after payment routines using the paymentIntentId. This method checks that it is called after Stripe executed a payment (eg. by Stripe Elements) or after a callback webhook triggers.
+   * It will just notify the client of the status change so that information is synced.
    * https://stripe.com/docs/payments/accept-a-payment?ui=elements
    *
    * If you want to implement more complex cases, your can override this method and call confirmPayment by yourself, handling redirects and other needed actions.
@@ -60,7 +60,7 @@ export class StripeClient implements IPaymentClient<ObjectId> {
    *
    * @param order the order containing intent information
    */
-  async executePayment(
+  async afterPaymentExecuted(
     order: IOrder<ObjectId>
   ): Promise<IOrder<ObjectId> | null> {
     try {

@@ -3,6 +3,7 @@ type ObjectId = Types.ObjectId;
 import mongoose, { Document, Model, Schema } from "mongoose";
 
 import { IOrder, OrderStatus } from "../../../db/model/IOrder";
+import { CycleSchema } from "./Offer";
 
 export type IMongooseOrder = IOrder<ObjectId> & Document;
 
@@ -20,6 +21,9 @@ const orderSchema = new Schema<IMongooseOrder>(
   {
     // identifier on remote payment system to track status
     country: String,
+    currency: String,
+    customCycle: Number,
+    cycle: CycleSchema,
     history: [orderStatusSchema],
     offerGroup: { required: true, type: String },
     offerId: {

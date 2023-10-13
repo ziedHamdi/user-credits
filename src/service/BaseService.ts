@@ -12,10 +12,12 @@ import {
   ITokenTimetable,
   IUserCredits,
 } from "../db/model";
+import { OfferCycle } from "../db/model/IOffer";
 import { InvalidOrderError, PaymentError } from "../errors";
-import { IPayment } from "./IPayment";
+import { addDays, addMonths, addSeconds, addYears } from "../util/Dates";
+import { IService } from "./IService";
 
-export abstract class BaseService<K extends object> implements IPayment<K> {
+export abstract class BaseService<K extends object> implements IService<K> {
   protected daoFactory: IDaoFactory<K>;
 
   protected readonly offerDao: IOfferDao<K, IOffer<K>>;
@@ -26,7 +28,10 @@ export abstract class BaseService<K extends object> implements IPayment<K> {
   >;
   protected readonly userCreditsDao: IUserCreditsDao<K, IUserCredits<K>>;
 
-  protected constructor(daoFactory: IDaoFactory<K>) {
+  protected constructor(
+    daoFactory: IDaoFactory<K>,
+    protected defaultCurrency: string = "usd",
+  ) {
     this.daoFactory = daoFactory;
 
     this.offerDao = daoFactory.getOfferDao();
@@ -62,6 +67,7 @@ export abstract class BaseService<K extends object> implements IPayment<K> {
     offerId: K,
     userId: K,
     quantity?: number, // Optional quantity parameter
+    currency?: string = this.defaultCurrency,
   ): Promise<IOrder<K>> {
     const offer = await this.offerDao.findOne({ _id: offerId });
 
@@ -87,6 +93,9 @@ export abstract class BaseService<K extends object> implements IPayment<K> {
     const total = quantity !== undefined ? offer.price * quantity : offer.price;
 
     const order: IOrder<K> = (await this.orderDao.create({
+      currency,
+      customCycle: offer.customCycle,
+      cycle: offer.cycle,
       offerId,
       quantity,
       status: "pending",
@@ -205,46 +214,52 @@ export abstract class BaseService<K extends object> implements IPayment<K> {
     return existingSubscription;
   }
 
-
-  protected async getUserCredits(userId: ObjectId): Promise<IUserCredits<ObjectId>> {
-    const userCredits: IUserCredits<ObjectId> = await this.daoFactory
+  protected async getUserCredits(
+    userId: K,
+  ): Promise<IUserCredits<K>> {
+    const userCredits: IUserCredits<K> = await this.daoFactory
       .getUserCreditsDao()
       .findByUserId(userId);
 
     if (!userCredits) {
-      throw new PaymentError(`Illegal state: user has no prepared userCredits (${userId}).`);
+      throw new PaymentError(
+        `Illegal state: user has no prepared userCredits (${userId}).`,
+      );
     }
 
     return userCredits;
   }
 
-  protected calculateExpiryDate(startDate: Date, cycle: string): Date {
+  protected calculateExpiryDate(
+    startDate: Date,
+    cycle: OfferCycle,
+    customCycle?: number,
+  ): Date {
     const date = new Date(startDate);
 
     switch (cycle) {
       case "once":
         return date;
       case "weekly":
-        date.setDate(date.getDate() + 7);
-        return date;
+        return addDays(date, 7);
       case "bi-weekly":
-        date.setDate(date.getDate() + 14);
-        return date;
+        return addDays(date, 14);
       case "monthly":
-        date.setMonth(date.getMonth() + 1);
-        return date;
+        return addMonths(date, 1);
       case "trimester":
-        date.setMonth(date.getMonth() + 3);
-        return date;
+        return addMonths(date, 3);
       case "semester":
-        date.setMonth(date.getMonth() + 6);
-        return date;
+        return addMonths(date, 6);
       case "yearly":
-        date.setFullYear(date.getFullYear() + 1);
-        return date;
-      default:
-        return date;
+        return addYears(date, 1);
+      case "custom":
+        if (customCycle !== undefined && customCycle >= 0) {
+          return addSeconds(date, customCycle);
+        }
+        break;
     }
-  }
 
+    // Handle invalid or missing cycle
+    throw new Error("Invalid or missing cycle value");
+  }
 }

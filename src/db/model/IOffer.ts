@@ -1,17 +1,24 @@
 import { BaseEntity } from "./BaseEntity";
 
+export type OfferCycle =
+  | "once"
+  | "weekly"
+  | "bi-weekly"
+  | "monthly"
+  | "trimester"
+  | "semester"
+  | "yearly"
+  | "custom";
+
 /**
  * @param K the type of foreign keys (is used for all foreign keys type)
  */
 export interface IOffer<K extends object> extends BaseEntity<K> {
-  cycle:
-    | "once"
-    | "weekly"
-    | "bi-weekly"
-    | "monthly"
-    | "trimester"
-    | "semester"
-    | "yearly";
+  /**
+   * Only allowed to have a value when cycle=custom. Expresses the order duration before expiry in seconds.
+   */
+  customCycle: number | null;
+  cycle: OfferCycle;
   /**indicates information about exclusive offers. Designed to be a boolean*/
   hasSubOffers: unknown;
   kind: "subscription" | "tokens" | "expertise";

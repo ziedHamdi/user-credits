@@ -5,7 +5,7 @@ import expect from "expect";
 import { IDaoFactory } from "../../src/db/dao"; // Import the actual path
 import { IOffer, ISubscription, IUserCredits } from "../../src/db/model"; // Import the actual path
 import { InvalidOrderError } from "../../src/errors";
-import { Payment } from "../../src/impl/mongoose/service/Payment";
+import { PaymentService } from "../../src/service/PaymentService";
 import { BaseService } from "../../src/service/BaseService"; //IMPROVEMENT Should use { IPayment } and add a secondary interface instead
 // eslint-disable-next-line no-unused-vars,@typescript-eslint/no-unused-vars
 import { toHaveSameFields } from "../extend/sameObjects";
@@ -44,7 +44,7 @@ describe("BaseService.getActiveSubscriptions", () => {
 
   beforeEach(() => {
     // Create a new instance of BaseService with the mock userCreditsDao
-    service = new Payment(daoFactoryMock);
+    service = new PaymentService(daoFactoryMock);
 
     // Reset the mock function before each test
     (daoFactoryMock.getUserCreditsDao().findByUserId as jest.Mock).mockReset();
@@ -111,7 +111,7 @@ describe("MergeOffers tests", () => {
     ({ daoFactoryMock, offerChild1, offerChild2, offerRoot1, offerRoot2 } =
       mocks);
 
-    service = new Payment(daoFactoryMock, );
+    service = new PaymentService(daoFactoryMock, );
   });
 
   afterAll(async () => {
@@ -153,7 +153,7 @@ describe("createOrder", () => {
     ({ mongooseDaoFactory, offerRoot1, offerRoot2, sampleUserId } = mocks);
     await mongooseDaoFactory.getOfferDao().create(offerRoot1);
     await mongooseDaoFactory.getOfferDao().create(offerRoot2);
-    service = new Payment(mongooseDaoFactory);
+    service = new PaymentService(mongooseDaoFactory);
   });
 
   afterAll(async () => {
