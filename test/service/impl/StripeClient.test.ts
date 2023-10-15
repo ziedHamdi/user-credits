@@ -1,43 +1,42 @@
-import { beforeEach, describe, it } from "@jest/globals";
+import { beforeEach, describe, it, jest } from "@jest/globals";
 import { expect } from "expect";
 
 import { IOrder } from "../../../src/db/model";
 import { StripeClient } from "../../../src/impl/service/StripeClient";
 import { IConfigReader } from "../../../src/service/config/IConfigReader";
-
-const paymentIntentsCreateMock: jest.Mock = jest.fn();
-const paymentIntentsRetrieveMock: jest.Mock = jest.fn();
-const constructEventMock: jest.Mock = jest.fn();
-
-jest.mock("stripe", () => {
-  return {
-    __esModule: true,
-    default: {
-      paymentIntents: {
-        create: paymentIntentsCreateMock,
-        retrieve: paymentIntentsRetrieveMock,
-      },
-      webhooks: {
-        constructEvent: constructEventMock,
-      },
-    },
-  };
-});
+import {
+  constructEventMock,
+  paymentIntentsCreateMock,
+  paymentIntentsRetrieveMock,
+  mockedStripe
+} from "./mocks/StripeMocks";
 
 describe("StripeClient", () => {
-  const configReaderMock = {
-    currency: jest.fn(),
-    paymentApiVersion: jest.fn(),
-    paymentSecretKey: jest.fn(),
-  } as unknown as IConfigReader;
-
-  const stripeClient = new StripeClient(configReaderMock);
+  let stripeClient: StripeClient<string>;
 
   beforeEach(() => {
-    // Clear all instances and calls to constructor
-    paymentIntentsCreateMock.mockClear();
-    paymentIntentsRetrieveMock.mockClear();
-    constructEventMock.mockClear();
+    // Mock the 'stripe' module and provide a factory function
+    jest.mock("stripe", () => {
+      return jest.fn().mockImplementation(() => {
+        return {
+          paymentIntents: {
+            create: paymentIntentsCreateMock,
+            retrieve: paymentIntentsRetrieveMock,
+          },
+          webhooks: {
+            constructEvent: constructEventMock,
+          },
+        };
+      });
+    });
+
+    const configReaderMock = {
+      currency: jest.fn(),
+      paymentApiVersion: jest.fn(),
+      paymentSecretKey: jest.fn(),
+    } as unknown as IConfigReader;
+
+    stripeClient = new StripeClient(configReaderMock);
   });
 
   it("should create a payment intent", async () => {
@@ -53,7 +52,7 @@ describe("StripeClient", () => {
       status: "requires_payment_method",
     };
 
-    paymentIntentsCreateMock.mockResolvedValue(expectedPaymentIntent);
+    paymentIntentsCreateMock.mockResolvedValue(expectedPaymentIntent as never);
 
     // Act
     const result = await stripeClient.createPaymentIntent(order);
@@ -84,7 +83,9 @@ describe("StripeClient", () => {
       status: "succeeded",
     };
 
-    paymentIntentsRetrieveMock.mockResolvedValue(expectedPaymentIntent);
+    paymentIntentsRetrieveMock.mockResolvedValue(
+      expectedPaymentIntent as never,
+    );
 
     // Act
     const result = await stripeClient.afterPaymentExecuted(order);

@@ -9,7 +9,7 @@
     "build": "rmdir /s /q .\\dist & npx tsc",
     "lint": "npx eslint --fix .",
     "prepublishOnly": "npm run lint && npm run build && npm test",
-    "test": "npx jest --coverage --coverageDirectory='coverage'"
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage --coverageDirectory='coverage'"
   },
   "devDependencies": {
     "@jest/globals": "^29.7.0",

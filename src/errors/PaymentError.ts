@@ -1,9 +1,10 @@
-export class PaymentError extends Error {
+import { BaseError } from "./BaseError";
+
+export class PaymentError<E extends Error | undefined> extends BaseError<E> {
   constructor(
     message: string,
-    public originalError?: any,
+    public originalError?: E,
   ) {
-    super(message);
-    this.name = "StripeError";
+    super(message, originalError);
   }
 }

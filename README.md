@@ -148,6 +148,7 @@ Jest must be launched with the node option `--experimental-vm-modules` also to e
 here's an example of how to add that param from console:
 `node --experimental-vm-modules node_modules/jest/bin/jest.js test/db/dao/IOfferDao.test.ts --testNamePattern="it() test name"
 `
+Or `node --experimental-vm-modules node_modules/jest/bin/jest.js`
 
 ### Timeout bug
 There's a bug in MongoMemoryServer taking too long to execute. See:

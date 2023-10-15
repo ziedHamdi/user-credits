@@ -28,8 +28,10 @@ export class StripeClient<K extends MinimalId> implements IPaymentClient<K> {
   async createPaymentIntent(
     order: IOrder<K>
   ): Promise<IOrder<K> | null> {
+    const paymentIntents = this.stripe.paymentIntents;
+    console.error("Payment intent: ", paymentIntents);
     try {
-      const intent = await this.stripe.paymentIntents.create({
+      const intent = await paymentIntents.create({
         amount: order.total * 100, // 'amount' represents the amount in cents
         currency: this.currency, // Replace with your desired currency
         description: `Payment for Order #${
@@ -45,7 +47,7 @@ export class StripeClient<K extends MinimalId> implements IPaymentClient<K> {
       return order;
     } catch (error) {
       // Handle and translate the error
-      throw new PaymentError("Error creating payment intent", error);
+      throw new PaymentError("Error creating payment intent", error as Error);
     }
   }
 
@@ -113,7 +115,7 @@ export class StripeClient<K extends MinimalId> implements IPaymentClient<K> {
       return order;
     } catch (error) {
       // Handle and translate the error
-      throw new PaymentError("Error executing payment", error);
+      throw new PaymentError("Error executing payment", error as Error);
     }
   }
 
@@ -139,7 +141,7 @@ export class StripeClient<K extends MinimalId> implements IPaymentClient<K> {
       return event;
     } catch (error) {
       // Handle and translate the error
-      throw new PaymentError("Error handling webhook event", error);
+      throw new PaymentError("Error handling webhook event", error as Error);
     }
   }
 
@@ -150,7 +152,7 @@ export class StripeClient<K extends MinimalId> implements IPaymentClient<K> {
       return balance;
     } catch (error) {
       // Handle and translate the error
-      throw new PaymentError("Error checking user balance", error);
+      throw new PaymentError("Error checking user balance", error as Error);
     }
   }
 
@@ -162,7 +164,7 @@ export class StripeClient<K extends MinimalId> implements IPaymentClient<K> {
       return 1000; // Example balance
     } catch (error) {
       // Handle and translate the error
-      throw new PaymentError("Error fetching user balance", error);
+      throw new PaymentError("Error fetching user balance", error as Error);
     }
   }
 }
