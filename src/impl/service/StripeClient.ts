@@ -29,7 +29,6 @@ export class StripeClient<K extends MinimalId> implements IPaymentClient<K> {
     order: IOrder<K>
   ): Promise<IOrder<K> | null> {
     const paymentIntents = this.stripe.paymentIntents;
-    console.error("Payment intent: ", paymentIntents);
     try {
       const intent = await paymentIntents.create({
         amount: order.total * 100, // 'amount' represents the amount in cents

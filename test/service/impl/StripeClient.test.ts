@@ -6,7 +6,6 @@ import { StripeClient } from "../../../src/impl/service/StripeClient";
 import { IConfigReader } from "../../../src/service/config/IConfigReader";
 import {
   constructEventMock,
-  mockedStripe,
   paymentIntentsCreateMock,
   paymentIntentsRetrieveMock,
 } from "./mocks/StripeMocks";
@@ -16,6 +15,10 @@ jest.mock("stripe", () => {
     return {
       paymentIntents: {
         create: paymentIntentsCreateMock,
+        retrieve: paymentIntentsRetrieveMock,
+      },
+      webhooks: {
+        constructEvent: constructEventMock,
       },
     };
   });
@@ -25,19 +28,6 @@ describe("StripeClient", () => {
   let stripeClient: StripeClient<string>;
 
   beforeEach(() => {
-    // Mock the 'stripe' module and provide a factory function
-    mockedStripe.mockImplementation((apiKey: string, options?: any) => {
-      return {
-        paymentIntents: {
-          create: paymentIntentsCreateMock,
-          retrieve: paymentIntentsRetrieveMock,
-        },
-        webhooks: {
-          constructEvent: constructEventMock,
-        },
-      };
-    });
-
     const configReaderMock = {
       currency: jest.fn(() => "usd"),
       paymentApiVersion: jest.fn(),

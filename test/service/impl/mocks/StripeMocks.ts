@@ -1,18 +1,15 @@
-import { expect, jest, test } from "@jest/globals";
+import { jest } from "@jest/globals";
+import Mock = jest.Mock;
 
-export class StripeMock {
-  constructor(apiKey: string, options?: any) {
-    // Implement your mock behavior here, if needed
-  }
-}
-export const mockedStripe = jest.fn(
-  (apiKey: string, options?: any) => new StripeMock(apiKey, options),
-);
-jest.mock("stripe", () => mockedStripe);
+type PaymentIntentsCreate = (params: any) => Promise<any>;
+type PaymentIntentsRetrieve = (paymentIntentId: string) => Promise<any>;
+type ConstructEvent = (rawBody: string, sig: string, secret: string) => any;
 
-export const paymentIntentsCreateMock = jest.fn();
-export const paymentIntentsRetrieveMock = jest.fn();
-export const constructEventMock = jest.fn();
+// Create jest.fn mocks with the specified signatures
+export const paymentIntentsCreateMock: Mock<PaymentIntentsCreate> = jest.fn<PaymentIntentsCreate>();
+export const paymentIntentsRetrieveMock: Mock<PaymentIntentsRetrieve> = jest.fn<PaymentIntentsRetrieve>();
+export const constructEventMock: Mock<ConstructEvent> = jest.fn<ConstructEvent>();
+
 
 export function stripeMockInit() {
   return {
@@ -29,12 +26,7 @@ export function stripeMockInit() {
   };
 }
 
-// export const stripeMock = jest.mock(
-//   "stripe",
-//   stripeMockInit,
-// );
 export function clearStripeMocks() {
-  // Clear all instances and calls to constructor
   paymentIntentsCreateMock.mockClear();
   paymentIntentsRetrieveMock.mockClear();
   constructEventMock.mockClear();
