@@ -1,6 +1,6 @@
 import { expect, jest, test } from "@jest/globals";
 
-class StripeMock {
+export class StripeMock {
   constructor(apiKey: string, options?: any) {
     // Implement your mock behavior here, if needed
   }
