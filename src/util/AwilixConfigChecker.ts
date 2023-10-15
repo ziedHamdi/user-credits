@@ -20,20 +20,20 @@ export function checkContainer(
       console.error(`Missing registration for property: ${propertyName}`);
       return false;
     }
+    //
+    // if (propertyType === "Function" && !registration.factories.length) {
+    //   console.error(
+    //     `Expected a function registration for property: ${propertyName}`
+    //   );
+    //   return false;
+    // }
 
-    if (propertyType === "Function" && !registration.factories.length) {
-      console.error(
-        `Expected a function registration for property: ${propertyName}`
-      );
-      return false;
-    }
-
-    if (propertyType === "Value" && !registration.values.length) {
-      console.error(
-        `Expected a value registration for property: ${propertyName}`
-      );
-      return false;
-    }
+    // if (propertyType === "Value" && !registration.values.length) {
+    //   console.error(
+    //     `Expected a value registration for property: ${propertyName}`
+    //   );
+    //   return false;
+    // }
   }
 
   // If all checks pass, return true

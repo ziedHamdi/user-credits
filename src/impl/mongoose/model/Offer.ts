@@ -20,10 +20,9 @@ export const CycleSchema = new Schema({
   type: String,
 });
 
-
 const offerSchema = new Schema<IMongooseOffer>({
   customCycle: Number,
-  cycle: CycleSchema,
+  cycle: String,
   hasSubOffers: { type: Boolean },
   kind: {
     enum: ["subscription", "tokens", "expertise"],

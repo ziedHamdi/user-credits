@@ -3,7 +3,8 @@ import { afterAll, afterEach, beforeAll, describe, it } from "@jest/globals";
 import expect from "expect";
 
 import { IDaoFactory } from "../../../src/db/dao";
-import { IOffer, ISubscription, IUserCredits } from "../../../src/db/model";
+import { IOffer, IOrder, ISubscription, IUserCredits, MinimalId } from "../../../src/db/model";
+import { IActivatedOffer } from "../../../src/db/model/IUserCredits";
 import { BaseService } from "../../../src/service/BaseService";
 // eslint-disable-next-line no-unused-vars,@typescript-eslint/no-unused-vars
 import { toHaveSameFields } from "../../extend/sameObjects";
@@ -15,6 +16,13 @@ import {
   newObjectId,
   ObjectId,
 } from "../../service/mocks/BaseService.mocks";
+
+class ExtendedBaseService<K extends MinimalId> extends BaseService<K> {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  afterExecute(order: IOrder<K>): Promise<IUserCredits<K>> {
+    return Promise.resolve(undefined as unknown as IUserCredits<K>);
+  }
+}
 
 /**
  * This file is now testing MongoDb adapter (mongooseDaoFactory) only, but the same test should run on any implementation.
@@ -30,7 +38,7 @@ describe("offer creation", () => {
     const mocks = await initMocks();
     ({ mongooseDaoFactory, offerRoot1 } = mocks);
     // Create a new instance of BaseService with the mock userCreditsDao
-    service = new BaseService<ObjectId>(mongooseDaoFactory);
+    service = new ExtendedBaseService<ObjectId>(mongooseDaoFactory);
   });
 
   afterAll(async () => {
@@ -117,7 +125,7 @@ describe("Offer Database Integration Test", () => {
     } = mocks);
 
     // Use the actual MongoDB connection for the service
-    service = new BaseService<ObjectId>(mongooseDaoFactory);
+    service = new ExtendedBaseService<ObjectId>(mongooseDaoFactory);
   });
 
   afterAll(async () => await kill(), 15000);
@@ -163,6 +171,7 @@ describe("Offer Database Integration Test", () => {
     const userId = newObjectId();
     // Create the userCredits document with active and unpaid subscriptions
     const userCredits: IUserCredits<ObjectId> = {
+      offers: [] as IActivatedOffer[],
       subscriptions: [
         subscriptionPaid1,
         subscriptionPending1,
@@ -170,7 +179,7 @@ describe("Offer Database Integration Test", () => {
       ],
       tokens: 100,
       userId,
-    } as IUserCredits<ObjectId>;
+    } as unknown as IUserCredits<ObjectId>;
 
     const createdUserCredits: IUserCredits<ObjectId> = await service
       .getDaoFactory()
@@ -239,7 +248,7 @@ describe("Offer Database Integration Test", () => {
       ],
       tokens: 100,
       userId,
-    } as IUserCredits<ObjectId>;
+    } as unknown as IUserCredits<ObjectId>;
 
     const createdUserCredits: IUserCredits<ObjectId> = await service
       .getDaoFactory()

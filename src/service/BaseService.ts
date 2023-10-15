@@ -23,13 +23,11 @@ export abstract class BaseService<K extends MinimalId> implements IService<K> {
 
   protected readonly offerDao: IOfferDao<K, IOffer<K>>;
   protected readonly orderDao: IOrderDao<K, IOrder<K>>;
-  protected readonly tokenTimetableDao: ITokenTimetableDao<
-    K,
-    ITokenTimetable<K>
-  >;
+  protected readonly tokenTimetableDao: ITokenTimetableDao<K,
+    ITokenTimetable<K>>;
   protected readonly userCreditsDao: IUserCreditsDao<K, IUserCredits<K>>;
 
-  protected constructor(
+  constructor(
     daoFactory: IDaoFactory<K>,
     protected defaultCurrency: string = "usd",
   ) {
@@ -68,7 +66,7 @@ export abstract class BaseService<K extends MinimalId> implements IService<K> {
     offerId: K,
     userId: K,
     quantity?: number, // Optional quantity parameter
-    currency?: string = this.defaultCurrency,
+    currency: string = this.defaultCurrency,
   ): Promise<IOrder<K>> {
     const offer = await this.offerDao.findOne({ _id: offerId });
 
@@ -261,4 +259,8 @@ export abstract class BaseService<K extends MinimalId> implements IService<K> {
     // Handle invalid or missing cycle
     throw new Error("Invalid or missing cycle value");
   }
+
+  abstract afterExecute(order: IOrder<K>): Promise<IUserCredits<K>>;
 }
+
+

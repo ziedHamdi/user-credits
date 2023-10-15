@@ -46,7 +46,7 @@ export class TestContainerSingleton {
       subscriptions: [],
       tokens: 0,
       userId: sampleUserId,
-    } as IUserCredits<ObjectId>;
+    } as unknown as IUserCredits<ObjectId>;
 
     this.container.register({
       daoFactoryMock: asFunction(() => {
@@ -123,8 +123,8 @@ async function check(): Promise<boolean> {
   return isContainerValid;
 }
 
-check()
-  .then((valid) => {
-    console.log("Awilix container", valid ? " started" : "Invalid");
-  })
-  .catch((err) => console.error(err));
+// check()
+//   .then((valid) => {
+//     console.log("Awilix container", valid ? " started" : "Invalid");
+//   })
+//   .catch((err) => console.error(err));

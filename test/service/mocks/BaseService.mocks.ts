@@ -37,7 +37,6 @@ export async function initMocks(): Promise<InitMocksResult> {
   const testContainer = await TestContainerSingleton.getInstance();
   // Sample data for testing
   const sampleUserId: ObjectId = testContainer.resolve("sampleUserId");
-  const configReader = testContainer.resolve<IConfigReader>("configReader");
 
   const offerRoot1: IOffer<ObjectId> = {
     _id: newObjectId(),
@@ -45,6 +44,7 @@ export async function initMocks(): Promise<InitMocksResult> {
     hasSubOffers: false, // This offer has no sub-offers
     kind: "tokens",
     name: "100 tokens for 100$",
+    offerGroup: "ai",
     overridingKey: "100tokens",
     parentOfferId: null as any, // To be updated below
     price: 100,
@@ -58,6 +58,7 @@ export async function initMocks(): Promise<InitMocksResult> {
     hasSubOffers: true, // This offer has sub-offers
     kind: "subscription",
     name: "Starter",
+    offerGroup: "subscriptions",
     parentOfferId: null as any, // To be updated below
     price: 50,
     quantityLimit: 5,
@@ -70,6 +71,7 @@ export async function initMocks(): Promise<InitMocksResult> {
     hasSubOffers: true, // This offer has sub-offers
     kind: "subscription",
     name: "Supplement",
+    offerGroup: "subscriptions",
     parentOfferId: null as any, // To be updated below
     price: 20,
     quantityLimit: 10,
@@ -82,6 +84,7 @@ export async function initMocks(): Promise<InitMocksResult> {
     hasSubOffers: false, // This offer has no sub-offers
     kind: "tokens",
     name: "20% off on 50 tokens",
+    offerGroup: "ai",
     overridingKey: "50tokens",
     parentOfferId: offerRoot2._id, // is a sub-offer of Starter offer
     price: 40,
@@ -95,6 +98,7 @@ export async function initMocks(): Promise<InitMocksResult> {
     hasSubOffers: false, // This offer has no sub-offers
     kind: "tokens",
     name: "30% off on 100 tokens",
+    offerGroup: "ai",
     overridingKey: "100tokens",
     parentOfferId: offerRoot2._id, // is a sub-offer of Starter offer overrides the 100tokens offer
     price: 70,
@@ -107,6 +111,7 @@ export async function initMocks(): Promise<InitMocksResult> {
     hasSubOffers: false, // This offer has no sub-offers
     kind: "tokens",
     name: "30% off on 50 tokens",
+    offerGroup: "ai",
     overridingKey: "50tokens",
     parentOfferId: offerRoot3._id, // is a sub-offer of Starter offer
     price: 30,
@@ -120,6 +125,7 @@ export async function initMocks(): Promise<InitMocksResult> {
     hasSubOffers: false, // This offer has no sub-offers
     kind: "tokens",
     name: "40% off on 100 tokens",
+    offerGroup: "ai",
     overridingKey: "100tokens",
     parentOfferId: offerRoot3._id, // is a sub-offer of Starter offer overrides the 100tokens offer
     price: 60,
@@ -132,28 +138,28 @@ export async function initMocks(): Promise<InitMocksResult> {
     offerId: offerRoot2._id,
     starts: new Date(),
     status: "paid",
-  } as ISubscription<ObjectId>;
+  } as unknown as ISubscription<ObjectId>;
 
   const subscriptionPaid2: ISubscription<ObjectId> = {
     expires: new Date(),
     offerId: offerRoot3._id,
     starts: new Date(),
     status: "paid",
-  } as ISubscription<ObjectId>;
+  } as unknown as ISubscription<ObjectId>;
 
   const subscriptionPending1: ISubscription<ObjectId> = {
     expires: new Date(),
     offerId: offerRoot1._id,
     starts: new Date(),
     status: "pending",
-  } as ISubscription<ObjectId>;
+  } as unknown as ISubscription<ObjectId>;
 
   const subscriptionRefused1: ISubscription<ObjectId> = {
     expires: new Date(),
     offerId: offerChild1._id,
     starts: new Date(),
     status: "refused",
-  } as ISubscription<ObjectId>;
+  } as unknown as ISubscription<ObjectId>;
 
   const daoFactoryMock: IDaoFactory<ObjectId> =
     testContainer.resolve("daoFactoryMock");

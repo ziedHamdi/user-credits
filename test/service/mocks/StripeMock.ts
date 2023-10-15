@@ -1,9 +1,8 @@
-import { IOrder } from "../../../src/db/model";
+import { IOrder, MinimalId } from "../../../src/db/model";
 import { OrderStatus } from "../../../src/db/model/IOrder";
 import { IPaymentClient } from "../../../src/service/IPaymentClient";
-import { ObjectId } from "./BaseService.mocks";
 
-export class StripeMock implements IPaymentClient<IOrder<ObjectId>> {
+export class StripeMock<K extends MinimalId> implements IPaymentClient<K> {
   private readonly currency: string;
 
   constructor() {
@@ -11,8 +10,8 @@ export class StripeMock implements IPaymentClient<IOrder<ObjectId>> {
   }
 
   async createPaymentIntent(
-    order: IOrder<ObjectId>,
-  ): Promise<IOrder<ObjectId> | null> {
+    order: IOrder<K>,
+  ): Promise<IOrder<K> | null> {
     // Simulate creating a payment intent and updating the order
     order.paymentIntentId = "mockPaymentIntentId";
     order.paymentIntentSecret = "mockClientSecret";
@@ -20,8 +19,8 @@ export class StripeMock implements IPaymentClient<IOrder<ObjectId>> {
   }
 
   async afterPaymentExecuted(
-    order: IOrder<ObjectId>,
-  ): Promise<IOrder<ObjectId> | null> {
+    order: IOrder<K>,
+  ): Promise<IOrder<K> | null> {
     // Simulate executing a payment and updating the order status
     if (order.paymentIntentSecret === "mockClientSecret") {
       order.status = "paid";
@@ -40,7 +39,7 @@ export class StripeMock implements IPaymentClient<IOrder<ObjectId>> {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async fetchUserBalance(userId: string): Promise<number> {
+  async fetchUserBalance(userId: K): Promise<number> {
     // Simulate fetching the user's balance (replace with your logic)
     // For this mock, return a static balance
     return 1000;
@@ -58,11 +57,16 @@ export class StripeMock implements IPaymentClient<IOrder<ObjectId>> {
     return mockEvent;
   }
 
-  private addHistoryItem(order: IOrder<ObjectId>, historyItem: OrderStatus) {
+  private addHistoryItem(order: IOrder<K>, historyItem: OrderStatus) {
     if (!order.history) {
-      order.history = [];
+      order.history = [] as unknown as [OrderStatus];
     }
     historyItem.date = new Date();
     order.history.push(historyItem);
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  checkUserBalance(userId: K): Promise<number> {
+    return Promise.resolve(0);
   }
 }

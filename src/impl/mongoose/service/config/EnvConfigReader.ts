@@ -22,19 +22,19 @@ export class EnvConfigReader implements IConfigReader {
     this.defaultCurrency = process.env.CURRENCY || "usd";
   }
 
-  get paymentApiVersion(): string {
+  paymentApiVersion(): string {
     return this.apiVersion;
   }
 
-  get paymentPublicKey(): string {
+  paymentPublicKey(): string {
     return this.publicKey;
   }
 
-  get paymentSecretKey(): string {
+  paymentSecretKey(): string {
     return this.privateKey;
   }
 
-  get currency(): string {
+  currency(): string {
     return this.defaultCurrency;
   }
 }
