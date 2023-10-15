@@ -69,7 +69,7 @@ describe("StripeClient", () => {
     );
   });
 
-  it("should handle afterPaymentExecuted", async () => {
+  it("should handle afterPaymentExecuted when status is 'succeeded'", async () => {
     // Arrange
     const order: IOrder<string> = {
       paymentIntentId: "payment_intent_id",
@@ -95,5 +95,61 @@ describe("StripeClient", () => {
     expect(result?.status).toBe("paid");
     expect(result?.history?.length).toBe(1);
     expect(result?.history?.[0]?.status).toBe("paid");
+  });
+
+  it("should handle afterPaymentExecuted when status is 'requires_payment_method'", async () => {
+    // Arrange
+    const order: IOrder<string> = {
+      paymentIntentId: "payment_intent_id",
+    } as IOrder<string>;
+
+    const expectedPaymentIntent = {
+      id: "payment_intent_id",
+      next_action: null,
+      status: "requires_payment_method",
+    };
+
+    paymentIntentsRetrieveMock.mockResolvedValue(
+      expectedPaymentIntent as never,
+    );
+
+    // Act
+    const result = await stripeClient.afterPaymentExecuted(order);
+
+    // Assert
+    expect(paymentIntentsRetrieveMock).toHaveBeenCalledWith(
+      "payment_intent_id",
+    );
+    expect(result?.status).toBe("refused");
+    expect(result?.history?.length).toBe(1);
+    expect(result?.history?.[0]?.status).toBe("refused");
+  });
+
+  it("should handle afterPaymentExecuted when status is 'requires_action'", async () => {
+    // Arrange
+    const order: IOrder<string> = {
+      paymentIntentId: "payment_intent_id",
+    } as IOrder<string>;
+
+    const expectedPaymentIntent = {
+      id: "payment_intent_id",
+      next_action: "action_required",
+      status: "requires_action",
+    };
+
+    paymentIntentsRetrieveMock.mockResolvedValue(
+      expectedPaymentIntent as never,
+    );
+
+    // Act
+    const result = await stripeClient.afterPaymentExecuted(order);
+
+    // Assert
+    expect(paymentIntentsRetrieveMock).toHaveBeenCalledWith(
+      "payment_intent_id",
+    );
+    expect(result?.status).toBe("error");
+    expect(result?.history?.length).toBe(1);
+    expect(result?.history?.[0]?.status).toBe("error");
   });
 });
