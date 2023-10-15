@@ -11,6 +11,16 @@ import {
   paymentIntentsRetrieveMock,
 } from "./mocks/StripeMocks";
 
+jest.mock("stripe", () => {
+  return jest.fn().mockImplementation(() => {
+    return {
+      paymentIntents: {
+        create: paymentIntentsCreateMock,
+      },
+    };
+  });
+});
+
 describe("StripeClient", () => {
   let stripeClient: StripeClient<string>;
 
