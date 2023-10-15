@@ -39,7 +39,7 @@ describe("StripeClient", () => {
     });
 
     const configReaderMock = {
-      currency: jest.fn(),
+      currency: jest.fn(() => "usd"),
       paymentApiVersion: jest.fn(),
       paymentSecretKey: jest.fn(),
     } as unknown as IConfigReader;
