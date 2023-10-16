@@ -24,6 +24,7 @@ export type InitMocksResult = {
   sampleUserId: ObjectId;
   subscriptionPaid1: ISubscription<ObjectId>;
   subscriptionPaid2: ISubscription<ObjectId>;
+  subscriptionPaidRoot1: ISubscription<ObjectId>;
   subscriptionPending1: ISubscription<ObjectId>;
   subscriptionRefused1: ISubscription<ObjectId>;
 };
@@ -132,6 +133,15 @@ export async function initMocks(): Promise<InitMocksResult> {
     weight: 2,
   } as IOffer<ObjectId>;
 
+  const subscriptionPaidRoot1: ISubscription<ObjectId> = {
+    expires: new Date(),
+    offerGroup: offerRoot1.offerGroup,
+    offerId: offerRoot1._id,
+    starts: new Date(),
+    status: "paid",
+    tokens: offerRoot1.tokenCount,
+  } as unknown as ISubscription<ObjectId>;
+
   const subscriptionPaid1: ISubscription<ObjectId> = {
     expires: new Date(),
     offerId: offerRoot2._id,
@@ -180,6 +190,7 @@ export async function initMocks(): Promise<InitMocksResult> {
     sampleUserId,
     subscriptionPaid1,
     subscriptionPaid2,
+    subscriptionPaidRoot1,
     subscriptionPending1,
     subscriptionRefused1,
   };
