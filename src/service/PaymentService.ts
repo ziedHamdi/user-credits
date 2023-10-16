@@ -70,7 +70,7 @@ export class PaymentService<K extends MinimalId> extends BaseService<K> {
 
     if (updatedOrder.status === "paid") {
       // Payment was successful, increment the user's offer tokens
-      existingSubscription.tokens += updatedOrder.tokenCount || 0;
+      // existingSubscription.tokens += updatedOrder.tokenCount || 0;
       // Modify the offer object as needed
       const offerGroup: IActivatedOffer = this.updateOfferGroup(
         userCredits,

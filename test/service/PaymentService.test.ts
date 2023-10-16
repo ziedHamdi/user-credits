@@ -131,7 +131,6 @@ describe("PaymentService", () => {
       paymentClient,
       "afterPaymentExecuted" as keyof IPaymentClient<ObjectId>,
     );
-    // afterPaymentExecutedMock.mockResolvedValue(order);
 
     // Act
     const updatedUserCredits = await service.afterExecute(order);
@@ -149,8 +148,9 @@ describe("PaymentService", () => {
     expect(subscriptionPaidRoot1.status).toEqual("paid");
 
     // Verify that the subscription's tokens were updated correctly
-    expect(subscriptionPaidRoot1.tokens).toEqual(
-      subscriptionPaidRoot1.tokens + (order.tokenCount || 0),
+    const activatedOffer = updatedUserCredits.offers[0];
+    expect(activatedOffer.tokens).toEqual(
+      (order.tokenCount || 0),
     );
 
     // Verify that an offer with the same offerGroup as the order was added or updated
