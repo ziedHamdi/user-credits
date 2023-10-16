@@ -246,13 +246,13 @@ export abstract class BaseService<K extends MinimalId> implements IService<K> {
       case "bi-weekly":
         return addDays(date, 14 * quantity);
       case "monthly":
-        return addMonths(date, 1 * quantity);
+        return addMonths(date, quantity);
       case "trimester":
         return addMonths(date, 3 * quantity);
       case "semester":
-        return addMonths(date, 6 * quantity);
+        return addMonths(date, 4 * quantity);
       case "yearly":
-        return addYears(date, 1 * quantity);
+        return addYears(date, quantity);
       case "custom":
         if (customCycle !== undefined && customCycle >= 0) {
           return addSeconds(date, customCycle * quantity);
