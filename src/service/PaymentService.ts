@@ -1,6 +1,5 @@
 import { IDaoFactory } from "../db/dao";
 import {
-  IOffer,
   IOrder,
   ISubscription,
   IUserCredits,

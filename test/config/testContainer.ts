@@ -5,6 +5,7 @@ import { Types } from "mongoose";
 
 type ObjectId = Types.ObjectId;
 
+import { EXPECTED_PROPERTIES } from "../../src/Constants";
 import type { IDaoFactory } from "../../src/db/dao";
 import type {
   IOffer,
@@ -14,7 +15,7 @@ import type {
 } from "../../src/db/model";
 import { connectToDb } from "../../src/impl/mongoose/connection";
 import { MongooseDaoFactory } from "../../src/impl/mongoose/dao/MongooseDaoFactory";
-import { EnvConfigReader } from "../../src/impl/mongoose/service/config/EnvConfigReader";
+import { EnvConfigReader } from "../../src/impl/service/EnvConfigReader";
 import { StripeClient } from "../../src/impl/service/StripeClient";
 import { checkContainer } from "../../src/util/AwilixConfigChecker";
 import { MockOfferDao } from "../db/dao/mocks/MockOfferDao";
@@ -22,7 +23,6 @@ import { MockOrderDao } from "../db/dao/mocks/MockOrderDao";
 import { MockTokenTimetableDao } from "../db/dao/mocks/MockTokenTimetableDao";
 import { MockUserCreditsDao } from "../db/dao/mocks/MockUserCreditsDao";
 import { StripeMock } from "../service/mocks/StripeMock";
-import { EXPECTED_PROPERTIES } from "../../src/Constants";
 
 export class TestContainerSingleton {
   private static container: AwilixContainer<object>;
@@ -122,9 +122,3 @@ async function check(): Promise<boolean> {
   );
   return isContainerValid;
 }
-
-// check()
-//   .then((valid) => {
-//     console.log("Awilix container", valid ? " started" : "Invalid");
-//   })
-//   .catch((err) => console.error(err));

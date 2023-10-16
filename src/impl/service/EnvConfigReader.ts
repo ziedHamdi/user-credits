@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
 
-import { IConfigReader } from "../../../../service/config/IConfigReader";
+import { IConfigReader } from "../../service/config/IConfigReader";
 
 dotenv.config(); // Load environment variables from a .env file
 
