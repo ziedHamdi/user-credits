@@ -62,7 +62,11 @@ export class PaymentService<K extends MinimalId> extends BaseService<K> {
 
     if (!existingSubscription) {
       throw new PaymentError(
-        `Illegal state: userCredits(${userCredits._id}) has no subscription for orderId (${updatedOrder._id}).`,
+        `Illegal state: userCredits(${
+          userCredits._id
+        }) has no subscription for orderId (${
+          updatedOrder._id
+        }). Found subscriptions: ${JSON.stringify(userCredits.subscriptions)}`,
       );
     }
 
@@ -95,18 +99,23 @@ export class PaymentService<K extends MinimalId> extends BaseService<K> {
       existingOffer.expires = this.calculateExpiryDate(
         existingOffer.expires,
         order.cycle,
+        order.quantity,
       );
-      existingOffer.tokens += order.tokenCount || 0;
+      existingOffer.tokens += (order.tokenCount || 0) * order.quantity;
       return existingOffer;
     }
 
-    const currentDate = new Date();
+    const currentDate = order.updatedAt || order.createdAt || new Date();
     // Create a new offer if not found
     const newOffer: IActivatedOffer = {
-      expires: this.calculateExpiryDate(currentDate, order.cycle),
+      expires: this.calculateExpiryDate(
+        currentDate,
+        order.cycle,
+        order.quantity,
+      ),
       offerGroup: order.offerGroup,
       starts: currentDate,
-      tokens: order.tokenCount || 0,
+      tokens: (order.tokenCount || 0) * order.quantity,
     };
     userCredits.offers.push(newOffer);
 

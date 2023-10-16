@@ -11,6 +11,7 @@ const offerSchema = new Schema<IMongooseOffer>({
   cycle: {
     enum: [
       "once",
+      "daily",
       "weekly",
       "bi-weekly",
       "monthly",

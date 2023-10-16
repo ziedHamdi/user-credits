@@ -231,6 +231,7 @@ export abstract class BaseService<K extends MinimalId> implements IService<K> {
   protected calculateExpiryDate(
     startDate: Date,
     cycle: OfferCycle,
+    quantity: number = 1,
     customCycle?: number,
   ): Date {
     const date = new Date(startDate);
@@ -238,21 +239,23 @@ export abstract class BaseService<K extends MinimalId> implements IService<K> {
     switch (cycle) {
       case "once":
         return date;
+      case "daily":
+        return addDays(date, quantity);
       case "weekly":
-        return addDays(date, 7);
+        return addDays(date, 7 * quantity);
       case "bi-weekly":
-        return addDays(date, 14);
+        return addDays(date, 14 * quantity);
       case "monthly":
-        return addMonths(date, 1);
+        return addMonths(date, 1 * quantity);
       case "trimester":
-        return addMonths(date, 3);
+        return addMonths(date, 3 * quantity);
       case "semester":
-        return addMonths(date, 6);
+        return addMonths(date, 6 * quantity);
       case "yearly":
-        return addYears(date, 1);
+        return addYears(date, 1 * quantity);
       case "custom":
         if (customCycle !== undefined && customCycle >= 0) {
-          return addSeconds(date, customCycle);
+          return addSeconds(date, customCycle * quantity);
         }
         break;
     }

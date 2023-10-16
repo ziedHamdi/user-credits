@@ -138,8 +138,7 @@ export async function initMocks(): Promise<InitMocksResult> {
     _id: new Types.ObjectId(),
     country: "US",
     currency: "USD",
-    customCycle: 3, // Example custom cycle
-    cycle: "monthly",
+    cycle: "weekly",
     history: [
       {
         date: new Date(),

@@ -1,5 +1,5 @@
 //NODE: these imports are a temporary workaround to avoid the warning: "Corresponding file is not included in tsconfig.json"
-import { beforeAll, describe, it } from "@jest/globals";
+import { beforeAll, beforeEach, describe, it } from "@jest/globals";
 import { expect } from "expect";
 import { Types } from "mongoose";
 
@@ -11,40 +11,43 @@ import {
   IUserCredits,
 } from "../../src/db/model";
 import { OrderStatus } from "../../src/db/model/IOrder";
+import { IActivatedOffer } from "../../src/db/model/IUserCredits";
 import { PaymentError } from "../../src/errors";
 import { IPaymentClient } from "../../src/service/IPaymentClient";
 import { PaymentService } from "../../src/service/PaymentService";
+import { addMonths } from "../../src/util/Dates";
 import { TestContainerSingleton } from "../config/testContainer";
 import { initMocks, ObjectId } from "./mocks/BaseService.mocks";
 import { MOCK_VALUES } from "./mocks/StripeMock";
 
+/**
+ * Temporary class to access the protected methods
+ */
+class TestPaymentService<K extends ObjectId> extends PaymentService<K> {
+  // Expose the protected method as public for testing purposes
+  public testUpdateOfferGroup(
+    userCredits: IUserCredits<K>,
+    order: IOrder<K>,
+  ): IActivatedOffer {
+    return this.updateOfferGroup(userCredits, order);
+  }
+}
+
 describe("PaymentService", () => {
   let daoFactoryMock: IDaoFactory<ObjectId>;
-  let sampleUserId: ObjectId;
   let offerRoot1: IOffer<ObjectId>;
   let orderOfferRoot1: IOrder<ObjectId>;
-  let subscriptionPaid1: ISubscription<ObjectId>;
   let subscriptionPaidRoot1: ISubscription<ObjectId>;
-  let subscriptionPending1: ISubscription<ObjectId>;
-  let subscriptionRefused1: ISubscription<ObjectId>;
   let paymentClient: IPaymentClient<ObjectId>;
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     // Initialize your mocks and dependencies here.
     const mocks = await initMocks();
-    ({
-      daoFactoryMock,
-      offerRoot1,
-      orderOfferRoot1,
-      sampleUserId,
-      subscriptionPaid1,
-      subscriptionPaidRoot1,
-      subscriptionPending1,
-      subscriptionRefused1,
-    } = mocks);
+    ({ daoFactoryMock, offerRoot1, orderOfferRoot1, subscriptionPaidRoot1 } =
+      mocks);
     paymentClient = (await TestContainerSingleton.getInstance()).resolve(
       "stripeMock",
-    );;
+    );
   });
 
   const defaultCurrency = "usd";
@@ -131,6 +134,7 @@ describe("PaymentService", () => {
       paymentClient,
       "afterPaymentExecuted" as keyof IPaymentClient<ObjectId>,
     );
+    // afterPaymentExecutedMock.mockResolvedValue(order);
 
     // Act
     const updatedUserCredits = await service.afterExecute(order);
@@ -149,9 +153,7 @@ describe("PaymentService", () => {
 
     // Verify that the subscription's tokens were updated correctly
     const activatedOffer = updatedUserCredits.offers[0];
-    expect(activatedOffer.tokens).toEqual(
-      (order.tokenCount || 0),
-    );
+    expect(activatedOffer.tokens).toEqual(order.tokenCount || 0);
 
     // Verify that an offer with the same offerGroup as the order was added or updated
     const expectedOffer = {
@@ -167,3 +169,85 @@ describe("PaymentService", () => {
     // Add more assertions based on your specific use case
   });
 });
+
+describe("PaymentService.updateOfferGroup", () => {
+  let daoFactoryMock: IDaoFactory<ObjectId>;
+  let order: IOrder<Types.ObjectId>;
+  let userCredits: IUserCredits<ObjectId>;
+  let service: TestPaymentService<ObjectId>;
+  let paymentClient: IPaymentClient<ObjectId>;
+
+  beforeEach(async () => {
+    // Initialize your mocks and dependencies here.
+    const mocks = await initMocks();
+    ({
+      daoFactoryMock,
+      orderOfferRoot1: order,
+    } = mocks);
+
+    paymentClient = (await TestContainerSingleton.getInstance()).resolve(
+      "stripeMock",
+    );
+
+    service = new TestPaymentService<ObjectId>(
+      daoFactoryMock,
+      paymentClient,
+      "usd",
+    );
+;
+    const userId = order.userId;
+    userCredits = {
+      offers: [] as unknown as [IActivatedOffer],
+      subscriptions: [] as unknown as [OrderStatus],
+      userId,
+    } as unknown as IUserCredits<ObjectId>;
+  });
+
+  it("should update an existing offer in userCredits", () => {
+    order.cycle = "weekly"; // order a week
+    order.quantity = 3; // a total of three weeks
+    const offer = {
+      expires: addMonths(new Date(), 2), // TODO test also if a date is passed: check that the new date start from today and not from that last date (make it possible to chose from both scenarios)
+      offerGroup: order.offerGroup,
+      starts: addMonths(new Date(), -1), // Will check that the startDate is untouched
+      tokens: 500,
+    };
+
+    // Arrange
+    userCredits.offers.push({
+      ...offer,
+    });
+
+    // Act
+    const updatedOffer: IActivatedOffer = service.testUpdateOfferGroup(
+      userCredits,
+      order,
+    );
+
+    // Assert
+    expect(updatedOffer.expires).toEqual(
+      new Date(offer.expires.getTime() + 1000 * 60 * 60 * 24 * 7 * 3),
+    );
+    expect(updatedOffer.tokens).toEqual(500 + (order.tokenCount || 0) * 3);
+  });
+
+  it("should create a new offer in userCredits", () => {
+    order.cycle = "weekly"; // order a week
+    order.quantity = 3; // a total of three weeks
+
+    // Arrange
+    userCredits.offers = []; // Clear existing offers
+
+    // Act
+    const newOffer: IActivatedOffer = service.testUpdateOfferGroup(
+      userCredits,
+      order,
+    );
+
+    // Assert
+    expect(newOffer.offerGroup).toEqual(order.offerGroup);
+    expect(newOffer.tokens).toEqual((order.tokenCount || 0) * 3);
+    expect(newOffer.expires).toEqual(new Date( (order.updatedAt || order.createdAt || new Date()).getTime() + 1000 * 60 * 60 * 24 * 7 * 3 ));
+  });
+});
+

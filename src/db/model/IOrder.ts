@@ -13,6 +13,7 @@ export interface OrderStatus {
  */
 export interface IOrder<K extends MinimalId> extends BaseEntity<K> {
   country: string | null;
+  createdAt: Date;
   currency: string;
   customCycle: number | null;
   cycle: OfferCycle;
@@ -33,5 +34,6 @@ export interface IOrder<K extends MinimalId> extends BaseEntity<K> {
   taxRate: number | null;
   tokenCount: number | null;
   total: number;
+  updatedAt: Date;
   userId: K;
 }

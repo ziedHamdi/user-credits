@@ -13,6 +13,7 @@ const subscriptionSchema = new Schema<
   cycle: {
     enum: [
       "once",
+      "daily",
       "weekly",
       "bi-weekly",
       "monthly",

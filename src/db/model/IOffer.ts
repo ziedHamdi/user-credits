@@ -3,6 +3,7 @@ import { MinimalId } from "./MinimalId";
 
 export type OfferCycle =
   | "once"
+  | "daily"
   | "weekly"
   | "bi-weekly"
   | "monthly"

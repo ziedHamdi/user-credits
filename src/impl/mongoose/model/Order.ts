@@ -25,6 +25,7 @@ const orderSchema = new Schema<IMongooseOrder>(
     cycle: {
       enum: [
         "once",
+        "daily",
         "weekly",
         "bi-weekly",
         "monthly",
