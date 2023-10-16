@@ -1,7 +1,18 @@
 import { IDaoFactory } from "../db/dao";
-import { IOffer, IOrder, ISubscription, IUserCredits, MinimalId } from "../db/model";
+import {
+  IOffer,
+  IOrder,
+  ISubscription,
+  IUserCredits,
+  MinimalId,
+} from "../db/model";
 import { IActivatedOffer } from "../db/model/IUserCredits";
 import { EntityNotFoundError, PaymentError } from "../errors";
+import {
+  InvalidPaymentError,
+  PaymentErrorCode,
+  PaymentErrorDetails,
+} from "../errors/InvalidPaymentError";
 import { BaseService } from "./BaseService";
 import { IPaymentClient } from "./IPaymentClient";
 
@@ -15,9 +26,15 @@ export class PaymentService<K extends MinimalId> extends BaseService<K> {
   }
 
   async afterExecute(order: IOrder<K>): Promise<IUserCredits<K>> {
+    if (order.status == "paid") {
+      throw new InvalidPaymentError("order is already paid", {
+        errorCode: PaymentErrorCode.DuplicateAttemptError,
+        orderId: order._id,
+      } as PaymentErrorDetails);
+    }
     // Retrieve user credits
     const userCredits: IUserCredits<K> = await this.getUserCredits(
-      order.userId
+      order.userId,
     );
 
     // Execute the payment and get the updated order
@@ -36,16 +53,16 @@ export class PaymentService<K extends MinimalId> extends BaseService<K> {
 
   protected updateCredits(
     userCredits: IUserCredits<K>,
-    updatedOrder: IOrder<K>
+    updatedOrder: IOrder<K>,
   ): IActivatedOffer | null {
     const existingSubscription: ISubscription<K> =
       userCredits.subscriptions.find(
-        (subscription) => subscription.orderId === updatedOrder._id
+        (subscription) => subscription.orderId === updatedOrder._id,
       ) as ISubscription<K>;
 
     if (!existingSubscription) {
       throw new PaymentError(
-        `Illegal state: userCredits(${userCredits._id}) has no subscription for orderId (${updatedOrder._id}).`
+        `Illegal state: userCredits(${userCredits._id}) has no subscription for orderId (${updatedOrder._id}).`,
       );
     }
 
@@ -57,7 +74,7 @@ export class PaymentService<K extends MinimalId> extends BaseService<K> {
       // Modify the offer object as needed
       const offerGroup: IActivatedOffer = this.updateOfferGroup(
         userCredits,
-        updatedOrder
+        updatedOrder,
       );
       return offerGroup;
     }
@@ -66,11 +83,10 @@ export class PaymentService<K extends MinimalId> extends BaseService<K> {
 
   protected updateOfferGroup(
     userCredits: IUserCredits<K>,
-    order: IOrder<K>
+    order: IOrder<K>,
   ): IActivatedOffer {
-
     const existingOfferIndex = userCredits.offers.findIndex(
-      (offer: IActivatedOffer) => offer.offerGroup === order.offerGroup
+      (offer: IActivatedOffer) => offer.offerGroup === order.offerGroup,
     );
 
     if (existingOfferIndex !== -1) {
@@ -78,7 +94,7 @@ export class PaymentService<K extends MinimalId> extends BaseService<K> {
       const existingOffer = userCredits.offers[existingOfferIndex];
       existingOffer.expires = this.calculateExpiryDate(
         existingOffer.expires,
-        order.cycle
+        order.cycle,
       );
       existingOffer.tokens += order.tokenCount || 0;
       return existingOffer;
@@ -90,7 +106,7 @@ export class PaymentService<K extends MinimalId> extends BaseService<K> {
       expires: this.calculateExpiryDate(currentDate, order.cycle),
       offerGroup: order.offerGroup,
       starts: currentDate,
-      tokens: order.tokenCount || 0
+      tokens: order.tokenCount || 0,
     };
     userCredits.offers.push(newOffer);
 
@@ -99,10 +115,9 @@ export class PaymentService<K extends MinimalId> extends BaseService<K> {
 
   async orderStatusChanged(
     orderId: K,
-    status: "pending" | "paid" | "refused"
+    status: "pending" | "paid" | "refused",
   ): Promise<IOrder<K>> {
-    const order: null | IOrder<K> =
-      await this.orderDao.findById(orderId);
+    const order: null | IOrder<K> = await this.orderDao.findById(orderId);
     if (!order) throw new EntityNotFoundError("IOrder", orderId);
     order.status = status;
     await order.save();

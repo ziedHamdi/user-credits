@@ -2,6 +2,10 @@ import { IOrder, MinimalId } from "../../../src/db/model";
 import { OrderStatus } from "../../../src/db/model/IOrder";
 import { IPaymentClient } from "../../../src/service/IPaymentClient";
 
+export const MOCK_VALUES = {
+  paymentIntentSecretAsPaid: "IntentAsPaid",
+};
+
 export class StripeMock<K extends MinimalId> implements IPaymentClient<K> {
   private readonly currency: string;
 
@@ -9,20 +13,16 @@ export class StripeMock<K extends MinimalId> implements IPaymentClient<K> {
     this.currency = "usd"; // Set a default currency for testing
   }
 
-  async createPaymentIntent(
-    order: IOrder<K>,
-  ): Promise<IOrder<K> | null> {
+  async createPaymentIntent(order: IOrder<K>): Promise<IOrder<K> | null> {
     // Simulate creating a payment intent and updating the order
     order.paymentIntentId = "mockPaymentIntentId";
-    order.paymentIntentSecret = "mockClientSecret";
+    order.paymentIntentSecret = MOCK_VALUES.paymentIntentSecretAsPaid;
     return order;
   }
 
-  async afterPaymentExecuted(
-    order: IOrder<K>,
-  ): Promise<IOrder<K>> {
+  async afterPaymentExecuted(order: IOrder<K>): Promise<IOrder<K>> {
     // Simulate executing a payment and updating the order status
-    if (order.paymentIntentSecret === "mockClientSecret") {
+    if (order.paymentIntentSecret === MOCK_VALUES.paymentIntentSecretAsPaid) {
       order.status = "paid";
       this.addHistoryItem(order, {
         message: "Payment succeeded",

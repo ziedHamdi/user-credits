@@ -16,6 +16,7 @@ import { IPaymentClient } from "../../src/service/IPaymentClient";
 import { PaymentService } from "../../src/service/PaymentService";
 import { TestContainerSingleton } from "../config/testContainer";
 import { initMocks, ObjectId } from "./mocks/BaseService.mocks";
+import { MOCK_VALUES } from "./mocks/StripeMock";
 
 describe("PaymentService", () => {
   let daoFactoryMock: IDaoFactory<ObjectId>;
@@ -106,8 +107,8 @@ describe("PaymentService", () => {
     );
     const userId = new Types.ObjectId();
     const order: IOrder<ObjectId> = orderOfferRoot1;
-    order.status = "paid";
-    order.paymentIntentSecret = "mockClientSecret"; // this value behaves as a payment success response (that triggers a paid status)
+    order.status = "pending"; // if it is already paid, the call will throw an InvalidPaymentError
+    order.paymentIntentSecret = MOCK_VALUES.paymentIntentSecretAsPaid; // this value behaves as a payment success response (that triggers a paid status)
 
     // Mock the necessary methods and provide expected return values
 
