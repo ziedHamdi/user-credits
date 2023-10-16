@@ -121,7 +121,7 @@ describe("PaymentService", () => {
     // Mock `getUserCredits` to return a userCredits object with a matching subscription
     const getUserCreditsMock = jest.spyOn(service, "getUserCredits" as keyof PaymentService<ObjectId>);
     getUserCreditsMock.mockResolvedValue({
-      offers: [] as unknown as [OrderStatus<ObjectId>],
+      offers: [] as unknown as [OrderStatus],
       subscriptions: [subscriptionPaidRoot1] as unknown as [ISubscription<ObjectId>], // A valid subscription
       userId,
       markModified: jest.fn(), // Mock the markModified function
