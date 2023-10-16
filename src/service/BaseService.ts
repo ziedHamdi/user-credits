@@ -95,6 +95,7 @@ export abstract class BaseService<K extends MinimalId> implements IService<K> {
       currency,
       customCycle: offer.customCycle,
       cycle: offer.cycle,
+      offerGroup: offer.offerGroup,
       offerId,
       quantity,
       status: "pending",
