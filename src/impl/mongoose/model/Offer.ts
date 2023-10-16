@@ -6,23 +6,21 @@ import { IOffer } from "../../../db/model";
 
 export type IMongooseOffer = IOffer<ObjectId> & Document;
 
-export const CycleSchema = new Schema({
-  enum: [
-    "once",
-    "weekly",
-    "bi-weekly",
-    "monthly",
-    "trimester",
-    "semester",
-    "yearly",
-    "custom",
-  ],
-  type: String,
-});
-
 const offerSchema = new Schema<IMongooseOffer>({
   customCycle: Number,
-  cycle: String,
+  cycle: {
+    enum: [
+      "once",
+      "weekly",
+      "bi-weekly",
+      "monthly",
+      "trimester",
+      "semester",
+      "yearly",
+      "custom",
+    ],
+    type: String,
+  },
   hasSubOffers: { type: Boolean },
   kind: {
     enum: ["subscription", "tokens", "expertise"],

@@ -3,7 +3,6 @@ type ObjectId = Types.ObjectId;
 import mongoose, { Document, Model, Schema } from "mongoose";
 
 import { IActivatedOffer, ISubscription, IUserCredits } from "../../../db/model/IUserCredits";
-import { CycleSchema } from "./Offer";
 
 export type IMongooseUserCredits = IUserCredits<ObjectId> & Document;
 
@@ -11,7 +10,19 @@ const subscriptionSchema = new Schema<
   ISubscription<ObjectId>,
   Model<ISubscription<ObjectId>>
 >({
-  cycle: CycleSchema,
+  cycle: {
+    enum: [
+      "once",
+      "weekly",
+      "bi-weekly",
+      "monthly",
+      "trimester",
+      "semester",
+      "yearly",
+      "custom",
+    ],
+    type: String,
+  },
   /**
    * Detailed documentation in interface @IOffer.offerGroup
    */

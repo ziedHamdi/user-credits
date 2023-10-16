@@ -3,7 +3,6 @@ type ObjectId = Types.ObjectId;
 import mongoose, { Document, Model, Schema } from "mongoose";
 
 import { IOrder, OrderStatus } from "../../../db/model/IOrder";
-import { CycleSchema } from "./Offer";
 
 export type IMongooseOrder = IOrder<ObjectId> & Document;
 
@@ -23,7 +22,19 @@ const orderSchema = new Schema<IMongooseOrder>(
     country: String,
     currency: String,
     customCycle: Number,
-    cycle: CycleSchema,
+    cycle: {
+      enum: [
+        "once",
+        "weekly",
+        "bi-weekly",
+        "monthly",
+        "trimester",
+        "semester",
+        "yearly",
+        "custom",
+      ],
+      type: String,
+    },
     history: [orderStatusSchema],
     offerGroup: { required: true, type: String },
     offerId: {
