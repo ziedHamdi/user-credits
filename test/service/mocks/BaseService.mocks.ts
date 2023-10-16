@@ -1,7 +1,7 @@
 import { Types } from "mongoose";
 
 import { IDaoFactory } from "../../../src/db/dao";
-import { IOffer, ISubscription } from "../../../src/db/model";
+import { IOffer, IOrder, ISubscription } from "../../../src/db/model";
 import { TestContainerSingleton } from "../../config/testContainer";
 
 export type ObjectId = Types.ObjectId;
@@ -21,6 +21,7 @@ export type InitMocksResult = {
   offerRoot1: IOffer<ObjectId>;
   offerRoot2: IOffer<ObjectId>;
   offerRoot3: IOffer<ObjectId>;
+  orderOfferRoot1: IOrder<ObjectId>;
   sampleUserId: ObjectId;
   subscriptionPaid1: ISubscription<ObjectId>;
   subscriptionPaid2: ISubscription<ObjectId>;
@@ -133,10 +134,36 @@ export async function initMocks(): Promise<InitMocksResult> {
     weight: 2,
   } as IOffer<ObjectId>;
 
+  const orderOfferRoot1: IOrder<ObjectId> = {
+    _id: new Types.ObjectId(),
+    country: "US",
+    currency: "USD",
+    customCycle: 3, // Example custom cycle
+    cycle: "monthly",
+    history: [
+      {
+        date: new Date(),
+        message: "Order created",
+        status: "pending",
+      },
+    ],
+    offerGroup: "mockOfferGroup",
+    offerId: offerRoot1._id, // Mock ObjectId for offer
+    paymentIntentId: "mockPaymentIntentId",
+    paymentIntentSecret: "mockPaymentIntentSecret",
+    quantity: 1,
+    status: "pending",
+    taxRate: 0.21, // Example tax rate
+    tokenCount: 10, // Example token count
+    total: 100, // Example total amount
+    userId: new Types.ObjectId(), // Mock ObjectId for user
+  } as unknown as IOrder<ObjectId>;
+
   const subscriptionPaidRoot1: ISubscription<ObjectId> = {
     expires: new Date(),
     offerGroup: offerRoot1.offerGroup,
     offerId: offerRoot1._id,
+    orderId: orderOfferRoot1._id,
     starts: new Date(),
     status: "paid",
     tokens: offerRoot1.tokenCount,
@@ -170,6 +197,8 @@ export async function initMocks(): Promise<InitMocksResult> {
     status: "refused",
   } as unknown as ISubscription<ObjectId>;
 
+
+
   const daoFactoryMock: IDaoFactory<ObjectId> =
     testContainer.resolve("daoFactoryMock");
   testContainer.resolve("mongoServer");
@@ -187,6 +216,7 @@ export async function initMocks(): Promise<InitMocksResult> {
     offerRoot1,
     offerRoot2,
     offerRoot3,
+    orderOfferRoot1,
     sampleUserId,
     subscriptionPaid1,
     subscriptionPaid2,
