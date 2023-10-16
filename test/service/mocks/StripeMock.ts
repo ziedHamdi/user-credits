@@ -20,7 +20,7 @@ export class StripeMock<K extends MinimalId> implements IPaymentClient<K> {
 
   async afterPaymentExecuted(
     order: IOrder<K>,
-  ): Promise<IOrder<K> | null> {
+  ): Promise<IOrder<K>> {
     // Simulate executing a payment and updating the order status
     if (order.paymentIntentSecret === "mockClientSecret") {
       order.status = "paid";

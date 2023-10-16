@@ -62,7 +62,7 @@ export class StripeClient<K extends MinimalId> implements IPaymentClient<K> {
    */
   async afterPaymentExecuted(
     order: IOrder<K>
-  ): Promise<IOrder<K> | null> {
+  ): Promise<IOrder<K>> {
     try {
       // Assuming you have the paymentIntentId stored in the order
       if (!order.paymentIntentId) {
@@ -156,6 +156,7 @@ export class StripeClient<K extends MinimalId> implements IPaymentClient<K> {
   }
 
   // Implement this method to fetch the user's balance from Stripe
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async fetchUserBalance(userId: K): Promise<number> {
     try {
       // Fetch user balance from Stripe

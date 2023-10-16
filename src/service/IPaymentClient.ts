@@ -17,7 +17,7 @@ export interface IPaymentClient<K extends MinimalId> {
    * @param order The order resulting from a payment transaction.
    * @returns A promise that resolves to the updated order after payment execution.
    */
-  afterPaymentExecuted(order: IOrder<K>): Promise<IOrder<K> | null>;
+  afterPaymentExecuted(order: IOrder<K>): Promise<IOrder<K>>;
 
   /**
    * Checks the balance of a user with the specified unique identifier.

@@ -30,6 +30,6 @@ export interface IActivatedOffer {
 
 export interface IUserCredits<K extends MinimalId> extends BaseEntity<K> {
   offers: IActivatedOffer[];
-  subscriptions: (unknown extends ISubscription<K> ? unknown : never)[];
+  subscriptions: ISubscription<K>[];
   userId: K;
 }

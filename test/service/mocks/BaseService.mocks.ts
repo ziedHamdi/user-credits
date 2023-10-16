@@ -3,7 +3,6 @@ import { Types } from "mongoose";
 import { IDaoFactory } from "../../../src/db/dao";
 import { IOffer, ISubscription } from "../../../src/db/model";
 import { TestContainerSingleton } from "../../config/testContainer";
-import { IConfigReader } from "../../../src/service/config/IConfigReader";
 
 export type ObjectId = Types.ObjectId;
 
