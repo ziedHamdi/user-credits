@@ -1,4 +1,4 @@
-import { Types } from "mongoose";
+import { Connection, Types } from "mongoose";
 type ObjectId = Types.ObjectId;
 
 import { IUserCreditsDao } from "../../../db/dao/IUserCreditsDao";
@@ -11,8 +11,8 @@ export class UserCreditsDao
   extends BaseMongooseDao<IMongooseUserCredits>
   implements IUserCreditsDao<ObjectId, IMongooseUserCredits>
 {
-  constructor() {
-    super(UserCredits);
+  constructor(connection: Connection) {
+    super(connection, UserCredits, "user_credits");
   }
 
   findByUserId(userId: ObjectId): Promise<IUserCredits<ObjectId>> {

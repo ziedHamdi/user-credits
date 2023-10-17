@@ -1,4 +1,4 @@
-import { Types } from "mongoose";
+import { Connection, Types } from "mongoose";
 type ObjectId = Types.ObjectId;
 
 import { IOrderDao } from "../../../db/dao/IOrderDao";
@@ -10,7 +10,7 @@ export class OrderDao
   extends BaseMongooseDao<IMongooseOrder>
   implements IOrderDao<ObjectId, IMongooseOrder>
 {
-  constructor() {
-    super(Order);
+  constructor(connection: Connection) {
+    super(connection, Order, "order");
   }
 }

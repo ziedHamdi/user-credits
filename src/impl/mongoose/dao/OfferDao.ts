@@ -1,4 +1,4 @@
-import { Types } from "mongoose";
+import { Connection, Types } from "mongoose";
 type ObjectId = Types.ObjectId;
 
 import { IOfferDao } from "../../../db/dao/IOfferDao";
@@ -10,8 +10,8 @@ export class OfferDao
   extends BaseMongooseDao<IMongooseOffer>
   implements IOfferDao<ObjectId, IMongooseOffer>
 {
-  constructor() {
-    super(Offer);
+  constructor(connection: Connection) {
+    super(connection, Offer, "offer");
   }
 
   async loadSubOffers(parentOfferId: ObjectId): Promise<IMongooseOffer[]> {

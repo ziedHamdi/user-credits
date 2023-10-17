@@ -45,4 +45,4 @@ const offerSchema = new Schema<IMongooseOffer>({
   weight: { default: 0, type: Number },
 });
 
-export default mongoose.model("offer", offerSchema) as Model<IMongooseOffer>;
+export default offerSchema;

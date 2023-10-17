@@ -1,4 +1,5 @@
-import { Types } from "mongoose";
+import { MongoMemoryServer } from "mongodb-memory-server";
+import { Connection, Types } from "mongoose";
 
 import { IDaoFactory } from "../../../src/db/dao";
 import { IOffer, IOrder, ISubscription } from "../../../src/db/model";
@@ -11,8 +12,9 @@ export function newObjectId(): ObjectId {
 }
 
 export type InitMocksResult = {
+  connection: Connection;
   daoFactoryMock: IDaoFactory<ObjectId>;
-  dbUri: string;
+  mongoMemoryServer: MongoMemoryServer;
   mongooseDaoFactory: IDaoFactory<ObjectId>;
   offerChild1: IOffer<ObjectId>;
   offerChild2: IOffer<ObjectId>;
@@ -30,12 +32,10 @@ export type InitMocksResult = {
   subscriptionRefusedChild3_2: ISubscription<ObjectId>;
 };
 
-export async function kill(): Promise<void> {
-  await TestContainerSingleton.stop();
-}
-
-export async function initMocks(): Promise<InitMocksResult> {
-  const testContainer = await TestContainerSingleton.getInstance();
+export async function initMocks(
+  singleton: boolean = true,
+): Promise<InitMocksResult> {
+  const testContainer = await TestContainerSingleton.getInstance(singleton);
   // Sample data for testing
   const sampleUserId: ObjectId = testContainer.resolve("sampleUserId");
 
@@ -302,13 +302,13 @@ export async function initMocks(): Promise<InitMocksResult> {
 
   const daoFactoryMock: IDaoFactory<ObjectId> =
     testContainer.resolve("daoFactoryMock");
-  testContainer.resolve("mongoServer");
   const mongooseDaoFactory: IDaoFactory<ObjectId> =
     testContainer.resolve("mongooseDaoFactory");
 
   return {
+    connection: testContainer.resolve("connection"),
     daoFactoryMock,
-    dbUri: testContainer.resolve("dbUri"),
+    mongoMemoryServer: testContainer.resolve("mongoMemoryServer"),
     mongooseDaoFactory,
     offerChild1,
     offerChild2,

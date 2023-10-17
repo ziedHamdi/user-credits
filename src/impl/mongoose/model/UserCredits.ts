@@ -72,7 +72,4 @@ const userCreditsSchema = new Schema<IMongooseUserCredits>(
   { timestamps: true },
 );
 
-export default mongoose.model(
-  "user_credits",
-  userCreditsSchema,
-) as Model<IMongooseUserCredits>;
+export default userCreditsSchema;

@@ -1,4 +1,4 @@
-import { Types } from "mongoose";
+import { Connection, Types } from "mongoose";
 type ObjectId = Types.ObjectId;
 
 import { ITokenTimetableDao } from "../../../db/dao";
@@ -10,7 +10,7 @@ export class TokenTimetableDao
   extends BaseMongooseDao<IMongooseTokenTimetable>
   implements ITokenTimetableDao<ObjectId, IMongooseTokenTimetable>
 {
-  constructor() {
-    super(TokenTimetable);
+  constructor(connection: Connection) {
+    super(connection, TokenTimetable, "token_timetable");
   }
 }

@@ -1,4 +1,4 @@
-import { Types } from "mongoose";
+import { Connection, Types } from "mongoose";
 type ObjectId = Types.ObjectId;
 
 import {
@@ -22,11 +22,11 @@ export class MongooseDaoFactory implements IDaoFactory<ObjectId> {
   private readonly tokenTimetableDao;
   private readonly userCreditsDao;
 
-  constructor() {
-    this.offerDao = new OfferDao();
-    this.orderDao = new OrderDao();
-    this.tokenTimetableDao = new TokenTimetableDao();
-    this.userCreditsDao = new UserCreditsDao();
+  constructor(public connection: Connection) {
+    this.offerDao = new OfferDao(connection);
+    this.orderDao = new OrderDao(connection);
+    this.tokenTimetableDao = new TokenTimetableDao(connection);
+    this.userCreditsDao = new UserCreditsDao(connection);
   }
 
   getOfferDao(): IOfferDao<ObjectId, IOffer<ObjectId>> {

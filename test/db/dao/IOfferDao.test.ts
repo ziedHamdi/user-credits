@@ -1,6 +1,15 @@
 //NODE: these imports are a temporary workaround to avoid the warning: "Corresponding file is not included in tsconfig.json"
-import { afterAll, afterEach, beforeAll, beforeEach, describe, it } from "@jest/globals";
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  it,
+} from "@jest/globals";
 import expect from "expect";
+import { MongoMemoryServer } from "mongodb-memory-server";
+import { Connection } from "mongoose";
 
 import { IDaoFactory } from "../../../src/db/dao";
 import {
@@ -18,7 +27,6 @@ import { addVersion0, clearDatabase, copyId } from "../../extend/util";
 import {
   initMocks,
   InitMocksResult,
-  kill,
   newObjectId,
   ObjectId,
 } from "../../service/mocks/BaseService.mocks";
@@ -39,21 +47,21 @@ describe("offer creation", () => {
   let mongooseDaoFactory: IDaoFactory<ObjectId>;
   let offerRoot1: IOffer<ObjectId>;
   let service: BaseService<ObjectId>;
-  beforeAll(async () => {
+  let mongoMemoryServer: MongoMemoryServer;
+  let connection: Connection;
+
+  beforeEach(async () => {
     // Initialize mocks and dependencies here.
-    const mocks = await initMocks();
-    ({ mongooseDaoFactory, offerRoot1 } = mocks);
+    const mocks = await initMocks(false);
+    ({ connection, mongoMemoryServer, mongooseDaoFactory, offerRoot1 } = mocks);
     // Create a new instance of BaseService with the mock userCreditsDao
     service = new ExtendedBaseService<ObjectId>(mongooseDaoFactory);
   });
 
   afterEach(async () => {
-    await clearDatabase;
+    await mongoMemoryServer.stop(false);
+    await connection.close();
   });
-
-  afterAll(async () => {
-    await kill();
-  }, 15000);
 
   it("should create offer then retrieve it", async () => {
     const offerDao = service.getDaoFactory().getOfferDao();
@@ -118,11 +126,14 @@ describe("Offer Database Integration Test", () => {
   let subscriptionPaidRoot2: ISubscription<ObjectId>;
   let subscriptionPendingChild3_1: ISubscription<ObjectId>;
   let subscriptionRefusedChild3_2: ISubscription<ObjectId>;
+  let mongoMemoryServer: MongoMemoryServer;
+  let connection: Connection;
 
-  beforeAll();
   beforeEach(async () => {
     // Initialize your mocks and dependencies here.
     ({
+      connection,
+      mongoMemoryServer,
       mongooseDaoFactory,
       offerChild1,
       offerChild2,
@@ -137,14 +148,14 @@ describe("Offer Database Integration Test", () => {
       subscriptionRefusedChild3_2,
     } = await initMocks());
 
-    // Use the actual MongoDB connection for the service
+    // Create a new instance of BaseService with the mock userCreditsDao
     service = new ExtendedBaseService<ObjectId>(mongooseDaoFactory);
-  })
+  });
 
   afterEach(async () => {
-    await clearDatabase();
-    await kill();
-  }, 15000);
+    await mongoMemoryServer.stop(false);
+    await connection.close();
+  });
 
   it("should insert all offers and retrieve only root offers from the database for a null userId", async () => {
     const { createdOffer1, createdOffer2, createdOffer3 } = await insertOffers(

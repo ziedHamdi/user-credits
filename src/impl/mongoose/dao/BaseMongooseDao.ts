@@ -1,4 +1,4 @@
-import { Document, Model } from "mongoose";
+import { Connection, Document, Model, Schema } from "mongoose";
 
 import { IBaseDao } from "../../../db/dao";
 import { SystemError } from "../../../errors";
@@ -6,8 +6,8 @@ import { SystemError } from "../../../errors";
 export class BaseMongooseDao<D extends Document> implements IBaseDao<D> {
   model: Model<D>;
 
-  constructor(model: Model<D>) {
-    this.model = model;
+  constructor(connection: Connection, schema: Schema<D>, name: string) {
+    this.model = connection.model(name, schema, name) as unknown as Model<D>;
   }
 
   // Wrap a method with try-catch and throw SystemError on error

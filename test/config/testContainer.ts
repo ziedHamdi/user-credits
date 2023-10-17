@@ -1,19 +1,19 @@
 import { asClass, asFunction, asValue, createContainer } from "awilix";
 import { AwilixContainer } from "awilix/lib/container";
-import { MongoMemoryServer } from "mongodb-memory-server";
-import { Types } from "mongoose";
+import mongoose, { Connection, Types } from "mongoose";
 
 type ObjectId = Types.ObjectId;
 
 // import { EXPECTED_PROPERTIES } from "../../src/Constants";
+import { MongoMemoryServer } from "mongodb-memory-server";
+
 import type { IDaoFactory } from "../../src/db/dao";
 import type {
   IOffer,
   IOrder,
   ITokenTimetable,
-  IUserCredits,
+  IUserCredits
 } from "../../src/db/model";
-import { connectToDb } from "../../src/impl/mongoose/connection";
 import { MongooseDaoFactory } from "../../src/impl/mongoose/dao/MongooseDaoFactory";
 import { EnvConfigReader } from "../../src/impl/service/EnvConfigReader";
 import { StripeClient } from "../../src/impl/service/StripeClient";
@@ -24,6 +24,19 @@ import { MockTokenTimetableDao } from "../db/dao/mocks/MockTokenTimetableDao";
 import { MockUserCreditsDao } from "../db/dao/mocks/MockUserCreditsDao";
 import { StripeMock } from "../service/mocks/StripeMock";
 
+interface MongoConnectionAndServer {
+  connection: Connection;
+  mongoMemoryServer: MongoMemoryServer;
+}
+
+async function launchMongoMemoryDb(): Promise<MongoConnectionAndServer> {
+  const mongoMemoryServer = await MongoMemoryServer.create();
+  const uri = mongoMemoryServer.getUri();
+  // Set up the MongoDB connection
+  const connection: Connection = mongoose.createConnection(uri);
+  return { connection, mongoMemoryServer } as MongoConnectionAndServer;
+}
+
 export class TestContainerSingleton {
   private static container: AwilixContainer<object>;
   private static active: boolean = false;
@@ -32,28 +45,34 @@ export class TestContainerSingleton {
     // Private constructor to prevent external instantiation
   }
 
-  public static async getInstance(): Promise<AwilixContainer<object>> {
-    if (TestContainerSingleton.active) return this.container;
-    this.active = true;
-    this.container = createContainer();
+  public static async getInstance(
+    singleton: boolean = true
+  ): Promise<AwilixContainer<object>> {
+    if (singleton && TestContainerSingleton.active) return this.container;
+
+    const toReturn = createContainer();
+    if (singleton) {
+      TestContainerSingleton.active = true;
+      TestContainerSingleton.container = toReturn;
+    }
 
     const sampleUserId = new Types.ObjectId();
-    this.container.register({
-      sampleUserId: asValue(sampleUserId),
+    toReturn.register({
+      sampleUserId: asValue(sampleUserId)
     });
 
     const sampleUserCredits = {
       subscriptions: [],
       tokens: 0,
-      userId: sampleUserId,
+      userId: sampleUserId
     } as unknown as IUserCredits<ObjectId>;
 
-    this.container.register({
+    toReturn.register({
       daoFactoryMock: asFunction(() => {
         const offerDaoMock = new MockOfferDao({} as IOffer<ObjectId>);
         const orderDaoMock = new MockOrderDao({} as IOrder<ObjectId>);
         const tokenTimetableMock = new MockTokenTimetableDao(
-          {} as ITokenTimetable<ObjectId>,
+          {} as ITokenTimetable<ObjectId>
         );
         const userCreditsDaoMock = new MockUserCreditsDao(sampleUserCredits);
 
@@ -61,45 +80,35 @@ export class TestContainerSingleton {
           getOfferDao: () => offerDaoMock,
           getOrderDao: () => orderDaoMock,
           getTokenTimetableDao: () => tokenTimetableMock,
-          getUserCreditsDao: () => userCreditsDaoMock,
+          getUserCreditsDao: () => userCreditsDaoMock
         } as unknown as IDaoFactory<ObjectId>;
         return daoFactoryMock;
-      }),
+      })
     });
 
-    async function initializeMongoServer() {
-      const mongoServer = await MongoMemoryServer.create();
-      const uri = mongoServer.getUri();
-      await connectToDb(uri, "UserCreditsTests");
-      console.log("Mongoose connected to test mongodb: ", uri);
-      return mongoServer; // Return the value you want to register
-    }
-
-    // Wait for initializeMongoServer to complete before proceeding
-    const mongoServer = await initializeMongoServer();
-    this.container.register({ mongoServer: asValue(mongoServer) });
-    this.container.register({ dbUri: asValue(mongoServer.getUri()) });
-    this.container.register({
-      mongooseDaoFactory: asFunction(
-        () => new MongooseDaoFactory(),
-      ).singleton(),
+    const memoryDbAndConnection = await launchMongoMemoryDb();
+    toReturn.register({
+      mongoMemoryServer: asValue(memoryDbAndConnection.mongoMemoryServer)
+    });
+    toReturn.register({
+      connection: asValue(memoryDbAndConnection.connection)
+    });
+    toReturn.register({
+      mongooseDaoFactory: asValue(
+        new MongooseDaoFactory(memoryDbAndConnection.connection),
+      ),
     });
 
-    this.container.register({
-      configReader: asClass(EnvConfigReader).singleton(),
+    toReturn.register({
+      configReader: asClass(EnvConfigReader).singleton()
     });
-    this.container.register({
-      stripeClient: asClass(StripeClient).singleton(),
+    toReturn.register({
+      stripeClient: asClass(StripeClient).singleton()
     });
-    this.container.register({ stripeMock: asValue(new StripeMock()) });
-    this.container.register({ defaultCurrency: asValue("usd") });
+    toReturn.register({ stripeMock: asValue(new StripeMock()) });
+    toReturn.register({ defaultCurrency: asValue("usd") });
 
-    return this.container;
-  }
-
-  public static async stop() {
-    // const mongoServer: MongoMemoryServer = TestContainerSingleton.container.resolve("mongoServer") as MongoMemoryServer;
-    // TestContainerSingleton.active = await mongoServer.stop(true);
+    return toReturn;
   }
 }
 
