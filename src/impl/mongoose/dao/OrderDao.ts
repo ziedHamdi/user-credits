@@ -1,4 +1,5 @@
-import { Types } from "mongoose"; type ObjectId = Types.ObjectId;
+import { Types } from "mongoose";
+type ObjectId = Types.ObjectId;
 
 import { IOrderDao } from "../../../db/dao/IOrderDao";
 import { Order } from "../model";

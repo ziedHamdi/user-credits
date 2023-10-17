@@ -1,4 +1,5 @@
-import { Types } from "mongoose"; type ObjectId = Types.ObjectId;
+import { Types } from "mongoose";
+type ObjectId = Types.ObjectId;
 
 import { IUserCreditsDao } from "../../../db/dao/IUserCreditsDao";
 import { IUserCredits } from "../../../db/model/IUserCredits";

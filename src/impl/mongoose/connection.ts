@@ -12,7 +12,7 @@ export async function connectToDb(uri: string, dbName: string) {
 
   connected = (await mongoose.connect(uri, {
     dbName,
-  } as ConnectOptions) as Mongoose);
+  } as ConnectOptions)) as Mongoose;
   dbUri = uri;
 }
 

@@ -1,4 +1,5 @@
-import { Types } from "mongoose"; type ObjectId = Types.ObjectId;
+import { Types } from "mongoose";
+type ObjectId = Types.ObjectId;
 
 import { IOfferDao } from "../../../db/dao/IOfferDao";
 import { Offer } from "../model";
@@ -17,6 +18,4 @@ export class OfferDao
     // Use find() to get sub-offers based on the parentOfferId
     return this.find({ parentOfferId });
   }
-
-
 }

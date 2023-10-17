@@ -1,5 +1,5 @@
 //NODE: these imports are a temporary workaround to avoid the warning: "Corresponding file is not included in tsconfig.json"
-import { beforeAll, beforeEach, describe, it } from "@jest/globals";
+import { beforeEach, describe, it } from "@jest/globals";
 import { expect } from "expect";
 import { Types } from "mongoose";
 
@@ -180,10 +180,7 @@ describe("PaymentService.updateOfferGroup", () => {
   beforeEach(async () => {
     // Initialize your mocks and dependencies here.
     const mocks = await initMocks();
-    ({
-      daoFactoryMock,
-      orderOfferRoot1: order,
-    } = mocks);
+    ({ daoFactoryMock, orderOfferRoot1: order } = mocks);
 
     paymentClient = (await TestContainerSingleton.getInstance()).resolve(
       "stripeMock",
@@ -194,7 +191,6 @@ describe("PaymentService.updateOfferGroup", () => {
       paymentClient,
       "usd",
     );
-;
     const userId = order.userId;
     userCredits = {
       offers: [] as unknown as [IActivatedOffer],
@@ -247,7 +243,11 @@ describe("PaymentService.updateOfferGroup", () => {
     // Assert
     expect(newOffer.offerGroup).toEqual(order.offerGroup);
     expect(newOffer.tokens).toEqual((order.tokenCount || 0) * 3);
-    expect(newOffer.expires).toEqual(new Date( (order.updatedAt || order.createdAt || new Date()).getTime() + 1000 * 60 * 60 * 24 * 7 * 3 ));
+    expect(newOffer.expires).toEqual(
+      new Date(
+        (order.updatedAt || order.createdAt || new Date()).getTime() +
+          1000 * 60 * 60 * 24 * 7 * 3,
+      ),
+    );
   });
 });
-

@@ -9,11 +9,11 @@ declare module "expect" {
   }
 }
 
-const toHaveSameFields: MatcherFunction<[expected: Record<string, any>]> = (
+const toHaveSameFields: MatcherFunction<[expected: Record<string, never>]> = (
   received,
-  expected: Record<string, any>,
+  expected: Record<string, never>,
 ) => {
-  const receivedKeys = Object.keys(received as Record<string, any>);
+  const receivedKeys = Object.keys(received as Record<string, never>);
   const expectedKeys = Object.keys(expected);
 
   // Check if the number of fields is the same
@@ -28,7 +28,7 @@ const toHaveSameFields: MatcherFunction<[expected: Record<string, any>]> = (
 
   // Compare fields and their values
   for (const key of receivedKeys) {
-    const receivedValue = (received as Record<string, any>)[key];
+    const receivedValue = (received as Record<string, never>)[key];
     const expectedValue = expected[key];
 
     if (!deepEquals(receivedValue, expectedValue)) {
@@ -54,7 +54,7 @@ const toHaveSameFields: MatcherFunction<[expected: Record<string, any>]> = (
   };
 };
 
-function deepEquals(a: any, b: any): boolean {
+function deepEquals(a: object, b: object): boolean {
   // Handle null values
   if (a === null && b === null) {
     return true;
@@ -72,14 +72,19 @@ function deepEquals(a: any, b: any): boolean {
 
   // Handle arrays
   if (Array.isArray(a)) {
-    if (!Array.isArray(b) || a.length !== b.length) {
+    const aArray = a as object[];
+    const bArray = b as object[];
+
+    if (!Array.isArray(bArray) || aArray.length !== bArray.length) {
       return false;
     }
-    for (let i = 0; i < a.length; i++) {
-      if (!deepEquals(a[i], b[i])) {
+
+    for (let i = 0; i < aArray.length; i++) {
+      if (!deepEquals(aArray[i], bArray[i])) {
         return false;
       }
     }
+
     return true;
   }
 
@@ -92,7 +97,7 @@ function deepEquals(a: any, b: any): boolean {
   }
 
   for (const key of keysA) {
-    if (!keysB.includes(key) || !deepEquals(a[key], b[key])) {
+    if (!keysB.includes(key) || !deepEquals(a[key as keyof typeof a] as object, b[key as keyof typeof b] as object)) {
       return false;
     }
   }

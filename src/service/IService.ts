@@ -11,7 +11,7 @@ import { IUserCredits } from "../db/model/IUserCredits";
  *
  * @param K The type of foreign keys used throughout the library.
  */
-export interface IService<K extends MinimalId | null> {
+export interface IService<K extends MinimalId> {
   /**
    * This method is called by the web client (or by the payment webhook server callback) after a payment has been
    * executed by the client library, whether it was successful or not.

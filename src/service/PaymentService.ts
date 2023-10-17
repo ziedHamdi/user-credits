@@ -1,10 +1,5 @@
 import { IDaoFactory } from "../db/dao";
-import {
-  IOrder,
-  ISubscription,
-  IUserCredits,
-  MinimalId,
-} from "../db/model";
+import { IOrder, ISubscription, IUserCredits, MinimalId } from "../db/model";
 import { IActivatedOffer } from "../db/model/IUserCredits";
 import { EntityNotFoundError, PaymentError } from "../errors";
 import {

@@ -1,6 +1,5 @@
 import { asClass, asFunction, asValue, createContainer } from "awilix";
 import { AwilixContainer } from "awilix/lib/container";
-import { Types } from "mongoose";
 
 import { EXPECTED_PROPERTIES } from "./Constants";
 import { MongooseDaoFactory } from "./impl/mongoose/dao/MongooseDaoFactory";
@@ -51,5 +50,5 @@ async function check(): Promise<boolean> {
 }
 
 check().catch((err) =>
-  console.err("Failed to launch Mongoose-Stripe IOC Container", err),
+  console.error("Failed to launch Mongoose-Stripe IOC Container", err),
 );

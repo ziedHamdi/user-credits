@@ -2,7 +2,11 @@ import { Types } from "mongoose";
 type ObjectId = Types.ObjectId;
 import mongoose, { Document, Model, Schema } from "mongoose";
 
-import { IActivatedOffer, ISubscription, IUserCredits } from "../../../db/model/IUserCredits";
+import {
+  IActivatedOffer,
+  ISubscription,
+  IUserCredits,
+} from "../../../db/model/IUserCredits";
 
 export type IMongooseUserCredits = IUserCredits<ObjectId> & Document;
 

@@ -6,15 +6,15 @@ UserCredits is an open-source library designed to simplify the implementation of
 
 - **Token Abstraction:** UserCredits introduces the concept of tokens, which abstracts real-world currency to provide flexibility in pricing models. Users can purchase tokens that can be used to pay for services, products, or subscriptions.
 
-- **Real-Time Credit Tracking:** Keep track of your users' token balances and consumption in real time. Users can easily view their credit history and remaining tokens.
+  - **Real-Time Credit Tracking:** Keep track of your users' token balances and consumption in real time. Users can easily view their credit history and remaining tokens.
 
-- **Payment Integration:** UserCredits is designed to integrate seamlessly with popular payment gateways, starting with Stripe. Accept payments from your users for token purchases or services rendered.
+  - **Payment Integration:** UserCredits is designed to integrate seamlessly with popular payment gateways, starting with Stripe. Accept payments from your users for token purchases or services rendered.
 
-- **Flexible Offers and Subscriptions:** Customize your pricing, discounts, and subscription durations for different offers using the `offer.overridingKey` and `weight` options. These features allow you to create tailored subscription plans, making it easier for users to enjoy lower prices on related offers.
+  - **Flexible Offers and Subscriptions:** Customize your pricing, discounts, and subscription durations for different offers using the `offer.overridingKey` and `weight` options. These features allow you to create tailored subscription plans, making it easier for users to enjoy lower prices on related offers.
 
-- **Offer Group Logic:** With the `offer.offerGroup` feature, users can subscribe to multiple offers and services simultaneously while keeping each offer's token balance separated from the others. Conceptually related offers can share the same `offerGroup` value, allowing you to compute the expiry date accordingly. For example, offers in the group 'mobileTV' can offer weekly, monthly, and yearly subscriptions. If a user subscribes for a month and later opts for a yearly subscription while the month hasn't ended, the expiry date of the subscription will combine both durations, providing a seamless and flexible experience.
+  - **Offer Group Logic:** With the `offer.offerGroup` feature, users can subscribe to multiple offers and services simultaneously while keeping each offer's token balance separated from the others. Conceptually related offers can share the same `offerGroup` value, allowing you to compute the expiry date accordingly. For example, offers in the group 'mobileTV' can offer weekly, monthly, and yearly subscriptions. If a user subscribes for a month and later opts for a yearly subscription while the month hasn't ended, the expiry date of the subscription will combine both durations, providing a seamless and flexible experience.
 
-- **Multi-Currency Support:** Easily display orders and prices in multiple currencies to accommodate a global audience. While currency conversion is not built-in, UserCredits offers seamless integration to sync and manage international payments effortlessly.
+  - **Multi-Currency Support:** Easily display orders and prices in multiple currencies to accommodate a global audience. While currency conversion is not built-in, UserCredits offers seamless integration to sync and manage international payments effortlessly.
 
 ## Architecture
 
@@ -31,7 +31,7 @@ Each of these layers can be changed without any adaptations needed on the other:
 
 - **Database Abstraction:** Beneath the technology-agnostic logic, a database implementation is in place, currently using Mongoose and MongoDB. Importantly, adding support for other databases is straightforward. You can create Data Access Objects (DAOs) and schemas that adhere to the abstract concepts defined in the first layer. These implementations are utilized by the second layer, which remains unaware of the underlying database specifics.
 
-- **Payment Platform Integration:** The final layer serves as a bridge to payment platforms like Stripe. It encapsulates the intricacies of payment operations, allowing UserCredits to seamlessly interact with different payment providers.
+  - **Payment Platform Integration:** The final layer serves as a bridge to payment platforms like Stripe. It encapsulates the intricacies of payment operations, allowing UserCredits to seamlessly interact with different payment providers.
 
 All these layers are efficiently managed through Inversion of Control (IoC) principles, leveraging the Awilix library. The end result is a user-friendly and adaptable library that abstracts away the complexities of database and payment integration.
 

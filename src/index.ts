@@ -6,5 +6,6 @@ export { MongooseDaoFactory } from "./impl/mongoose/dao/MongooseDaoFactory";
 export { EnvConfigReader } from "./impl/service/EnvConfigReader";
 export { StripeClient } from "./impl/service/StripeClient";
 export { MongooseStripeContainerSingleton } from "./MongooseStripeInit";
+export * from "./service";
 export { IConfigReader } from "./service/config/IConfigReader";
 export { PaymentService } from "./service/PaymentService";

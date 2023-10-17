@@ -47,11 +47,11 @@ export async function initMocks(): Promise<InitMocksResult> {
     name: "100 tokens for 100$",
     offerGroup: "ai",
     overridingKey: "100tokens",
-    parentOfferId: null as any, // To be updated below
+    parentOfferId: undefined, // To be updated below
     price: 100,
     quantityLimit: 200,
-    tokenCount: 100, // Maximum allowed quantity
-  } as IOffer<ObjectId>;
+    tokenCount: 100,
+  } as unknown as IOffer<ObjectId>;
 
   const offerRoot2: IOffer<ObjectId> = {
     _id: newObjectId(),
@@ -60,11 +60,11 @@ export async function initMocks(): Promise<InitMocksResult> {
     kind: "subscription",
     name: "Starter",
     offerGroup: "subscriptions",
-    parentOfferId: null as any, // To be updated below
+    parentOfferId: undefined, // To be updated below
     price: 50,
     quantityLimit: 5,
-    tokenCount: 0, // Maximum allowed quantity
-  } as IOffer<ObjectId>;
+    tokenCount: 0,
+  } as unknown as IOffer<ObjectId>;
 
   const offerRoot3: IOffer<ObjectId> = {
     _id: newObjectId(),
@@ -73,11 +73,11 @@ export async function initMocks(): Promise<InitMocksResult> {
     kind: "subscription",
     name: "Supplement",
     offerGroup: "subscriptions",
-    parentOfferId: null as any, // To be updated below
+    parentOfferId: undefined, // To be updated below
     price: 20,
     quantityLimit: 10,
-    tokenCount: 0, // Maximum allowed quantity
-  } as IOffer<ObjectId>;
+    tokenCount: 0,
+  } as unknown as IOffer<ObjectId>;
 
   const offerChild1: IOffer<ObjectId> = {
     _id: newObjectId(),
@@ -91,7 +91,7 @@ export async function initMocks(): Promise<InitMocksResult> {
     price: 40,
     tokenCount: 50,
     weight: 1,
-  } as IOffer<ObjectId>;
+  } as unknown as IOffer<ObjectId>;
 
   const offerChild2: IOffer<ObjectId> = {
     _id: newObjectId(),
@@ -104,7 +104,7 @@ export async function initMocks(): Promise<InitMocksResult> {
     parentOfferId: offerRoot2._id, // is a sub-offer of Starter offer overrides the 100tokens offer
     price: 70,
     tokenCount: 100,
-  } as IOffer<ObjectId>;
+  } as unknown as IOffer<ObjectId>;
 
   const offerChild3_1: IOffer<ObjectId> = {
     _id: newObjectId(),
@@ -118,7 +118,7 @@ export async function initMocks(): Promise<InitMocksResult> {
     price: 30,
     tokenCount: 50,
     weight: 2,
-  } as IOffer<ObjectId>;
+  } as unknown as IOffer<ObjectId>;
 
   const offerChild3_2: IOffer<ObjectId> = {
     _id: newObjectId(),
@@ -132,7 +132,7 @@ export async function initMocks(): Promise<InitMocksResult> {
     price: 60,
     tokenCount: 100,
     weight: 2,
-  } as IOffer<ObjectId>;
+  } as unknown as IOffer<ObjectId>;
 
   const orderOfferRoot1: IOrder<ObjectId> = {
     _id: new Types.ObjectId(),
@@ -195,8 +195,6 @@ export async function initMocks(): Promise<InitMocksResult> {
     starts: new Date(),
     status: "refused",
   } as unknown as ISubscription<ObjectId>;
-
-
 
   const daoFactoryMock: IDaoFactory<ObjectId> =
     testContainer.resolve("daoFactoryMock");

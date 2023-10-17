@@ -1,5 +1,5 @@
-import { PaymentError } from "./PaymentError";
 import { MinimalId } from "../db/model";
+import { PaymentError } from "./PaymentError";
 
 export enum PaymentErrorCode {
   AuthorizationError = "Authorization",

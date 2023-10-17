@@ -9,11 +9,11 @@ import { AwilixContainer } from "awilix";
  */
 export function checkContainer(
   container: AwilixContainer<object>,
-  expectedProperties: Record<string, "Value" | "Function">
+  expectedProperties: Record<string, "Value" | "Function">,
 ): boolean {
   // Check if all expected properties are registered in the container
   for (const propertyName of Object.keys(expectedProperties)) {
-    const propertyType = expectedProperties[propertyName];
+    // const propertyType = expectedProperties[propertyName];
     const registration = container.registrations[propertyName];
 
     if (!registration) {

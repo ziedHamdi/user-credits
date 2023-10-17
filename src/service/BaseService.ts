@@ -23,8 +23,10 @@ export abstract class BaseService<K extends MinimalId> implements IService<K> {
 
   protected readonly offerDao: IOfferDao<K, IOffer<K>>;
   protected readonly orderDao: IOrderDao<K, IOrder<K>>;
-  protected readonly tokenTimetableDao: ITokenTimetableDao<K,
-    ITokenTimetable<K>>;
+  protected readonly tokenTimetableDao: ITokenTimetableDao<
+    K,
+    ITokenTimetable<K>
+  >;
   protected readonly userCreditsDao: IUserCreditsDao<K, IUserCredits<K>>;
 
   constructor(
@@ -266,5 +268,3 @@ export abstract class BaseService<K extends MinimalId> implements IService<K> {
 
   abstract afterExecute(order: IOrder<K>): Promise<IUserCredits<K>>;
 }
-
-

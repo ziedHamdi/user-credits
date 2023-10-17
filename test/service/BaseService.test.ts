@@ -3,10 +3,15 @@ import { afterAll, beforeAll, beforeEach, describe, it } from "@jest/globals";
 import expect from "expect";
 
 import { IDaoFactory } from "../../src/db/dao"; // Import the actual path
-import { IOffer, IOrder, ISubscription, IUserCredits, MinimalId } from "../../src/db/model"; // Import the actual path
+import {
+  IOffer,
+  IOrder,
+  ISubscription,
+  IUserCredits,
+  MinimalId,
+} from "../../src/db/model"; // Import the actual path
 import { InvalidOrderError } from "../../src/errors";
 import { BaseService } from "../../src/service/BaseService"; //IMPROVEMENT Should use { IPayment } and add a secondary interface instead
-import { PaymentService } from "../../src/service/PaymentService";
 // eslint-disable-next-line no-unused-vars,@typescript-eslint/no-unused-vars
 import { toHaveSameFields } from "../extend/sameObjects";
 import { initMocks, kill, ObjectId } from "./mocks/BaseService.mocks";

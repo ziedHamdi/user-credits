@@ -41,7 +41,6 @@ export function addProp<K extends Record<string, any>>(
  * Adds a __v mongoose version field with a value of 0 to be able to use jest functions like toContainEqual() and toEqual()
  * @param to the object to enrich with the property "__v"
  */
-export function addVersion0<K extends Record<string, any>>(to: K): K {
+export function addVersion0<K extends Record<string, never>>(to: K): K {
   return addProp("__v", 0, to);
 }
-

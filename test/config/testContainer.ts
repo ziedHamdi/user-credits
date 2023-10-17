@@ -5,7 +5,7 @@ import { Types } from "mongoose";
 
 type ObjectId = Types.ObjectId;
 
-import { EXPECTED_PROPERTIES } from "../../src/Constants";
+// import { EXPECTED_PROPERTIES } from "../../src/Constants";
 import type { IDaoFactory } from "../../src/db/dao";
 import type {
   IOffer,
@@ -17,7 +17,7 @@ import { connectToDb } from "../../src/impl/mongoose/connection";
 import { MongooseDaoFactory } from "../../src/impl/mongoose/dao/MongooseDaoFactory";
 import { EnvConfigReader } from "../../src/impl/service/EnvConfigReader";
 import { StripeClient } from "../../src/impl/service/StripeClient";
-import { checkContainer } from "../../src/util/AwilixConfigChecker";
+// import { checkContainer } from "../../src/util/AwilixConfigChecker";
 import { MockOfferDao } from "../db/dao/mocks/MockOfferDao";
 import { MockOrderDao } from "../db/dao/mocks/MockOrderDao";
 import { MockTokenTimetableDao } from "../db/dao/mocks/MockTokenTimetableDao";
@@ -103,22 +103,22 @@ export class TestContainerSingleton {
   }
 }
 
-const TEST_EXPECTED_PROPERTIES: Record<string, "Value" | "Function"> = {
-  configReader: "Function",
-  daoFactoryMock: "Function",
-  dbUri: "Value",
-  defaultCurrency: "Value",
-  mongoServer: "Value",
-  mongooseDaoFactory: "Function",
-  sampleUserId: "Value",
-  stripeClient: "Function",
-  stripeMock: "Value",
-};
+// const TEST_EXPECTED_PROPERTIES: Record<string, "Value" | "Function"> = {
+//   configReader: "Function",
+//   daoFactoryMock: "Function",
+//   dbUri: "Value",
+//   defaultCurrency: "Value",
+//   mongoServer: "Value",
+//   mongooseDaoFactory: "Function",
+//   sampleUserId: "Value",
+//   stripeClient: "Function",
+//   stripeMock: "Value",
+// };
 
-async function check(): Promise<boolean> {
-  const isContainerValid = checkContainer(
-    await TestContainerSingleton.getInstance(),
-    TEST_EXPECTED_PROPERTIES,
-  );
-  return isContainerValid;
-}
+// async function check(): Promise<boolean> {
+//   const isContainerValid = checkContainer(
+//     await TestContainerSingleton.getInstance(),
+//     TEST_EXPECTED_PROPERTIES,
+//   );
+//   return isContainerValid;
+// }

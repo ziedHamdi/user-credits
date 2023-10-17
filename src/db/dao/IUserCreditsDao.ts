@@ -1,4 +1,4 @@
-import { IUserCredits, IUserCredits, MinimalId } from "../model";
+import { IUserCredits, MinimalId } from "../model";
 import { IBaseDao } from "./IBaseDao";
 
 export interface IUserCreditsDao<K extends MinimalId, D extends IUserCredits<K>>

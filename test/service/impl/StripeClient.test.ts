@@ -1,7 +1,7 @@
 import { beforeEach, describe, it, jest } from "@jest/globals";
 import { expect } from "expect";
 
-import { PaymentError } from "../../../src/errors";
+import { IOrder } from "../../../src/db/model";
 import { StripeClient } from "../../../src/impl/service/StripeClient";
 import { IConfigReader } from "../../../src/service/config/IConfigReader";
 import {
@@ -12,7 +12,6 @@ import {
   prepareAfterPaymentExecutedMock,
   prepareCreatePaymentIntentMock,
 } from "./mocks/StripeMocks";
-import { IOrder } from "../../../src/db/model";
 
 const intentId = "payment_intent_id";
 
@@ -99,7 +98,10 @@ describe("StripeClient", () => {
   });
 
   it("should handle afterPaymentExecuted when status is 'requires_payment_method'", async () => {
-    const order = prepareAfterPaymentExecutedMock("requires_payment_method", intentId);
+    const order = prepareAfterPaymentExecutedMock(
+      "requires_payment_method",
+      intentId,
+    );
 
     // Act
     const result = await stripeClient.afterPaymentExecuted(order);
@@ -133,7 +135,8 @@ describe("StripeClient", () => {
     paymentIntentsRetrieveMock.mockRejectedValue(error);
 
     // Act and Assert
-    await expect(stripeClient.afterPaymentExecuted(order)).rejects.toThrow("Error executing payment");
+    await expect(stripeClient.afterPaymentExecuted(order)).rejects.toThrow(
+      "Error executing payment",
+    );
   });
-
 });

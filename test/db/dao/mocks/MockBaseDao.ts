@@ -1,8 +1,6 @@
 import { IBaseDao } from "../../../../src/db/dao";
 
-export class MockBaseDao<D extends object, I extends IBaseDao<D>>
-  implements IBaseDao<D>
-{
+export class MockBaseDao<D extends object> implements IBaseDao<D> {
   // Declare the functions as public fields with jest.fn()
   public count = jest.fn(async () => 0);
   public create = jest.fn(async () => this.sampleDTO);

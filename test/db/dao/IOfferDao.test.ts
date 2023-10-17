@@ -3,7 +3,13 @@ import { afterAll, afterEach, beforeAll, describe, it } from "@jest/globals";
 import expect from "expect";
 
 import { IDaoFactory } from "../../../src/db/dao";
-import { IOffer, IOrder, ISubscription, IUserCredits, MinimalId } from "../../../src/db/model";
+import {
+  IOffer,
+  IOrder,
+  ISubscription,
+  IUserCredits,
+  MinimalId,
+} from "../../../src/db/model";
 import { IActivatedOffer } from "../../../src/db/model/IUserCredits";
 import { BaseService } from "../../../src/service/BaseService";
 // eslint-disable-next-line no-unused-vars,@typescript-eslint/no-unused-vars
@@ -199,27 +205,27 @@ describe("Offer Database Integration Test", () => {
     const step2SubOffers = await service.getSubOffers(step1ActiveSubscriptions);
 
     // Expect that step2SubOffers contain the created suboffers
-    expect(step2SubOffers).toContainEqual(addVersion0(offerChild1));
-    expect(step2SubOffers).toContainEqual(addVersion0(offerChild2));
+    expect(step2SubOffers).toContainEqual(addVersion0(offerChild1 as Record<string, never>));
+    expect(step2SubOffers).toContainEqual(addVersion0(offerChild2 as Record<string, never));
     expect(step2SubOffers.length).toEqual(2);
 
     // Test the third step: Get regular offers
     const step3RegularOffers = await service.getRegularOffers();
 
     // Expect that step3RegularOffers contain the root offers
-    expect(step3RegularOffers).toContainEqual(addVersion0(offerRoot1));
-    expect(step3RegularOffers).toContainEqual(addVersion0(offerRoot2));
+    expect(step3RegularOffers).toContainEqual(addVersion0(offerRoot1 as Record<string, never));
+    expect(step3RegularOffers).toContainEqual(addVersion0(offerRoot2 as Record<string, never));
     expect(step3RegularOffers.length).toEqual(3);
 
     //All the steps above + merge
     const loadedOffers = await service.loadOffers(createdUserCredits.userId);
     // Expect that loadedOffers contain the created root offers
-    expect(loadedOffers).not.toContainEqual(addVersion0(offerRoot1));
-    expect(loadedOffers).toContainEqual(addVersion0(offerRoot2));
-    expect(loadedOffers).toContainEqual(addVersion0(offerRoot3));
+    expect(loadedOffers).not.toContainEqual(addVersion0(offerRoot1 as Record<string, never));
+    expect(loadedOffers).toContainEqual(addVersion0(offerRoot2 as Record<string, never));
+    expect(loadedOffers).toContainEqual(addVersion0(offerRoot3 as Record<string, never));
     // Expect that loadedOffers do not contain unpaid suboffers but contain active suboffers
-    expect(loadedOffers).toContainEqual(addVersion0(offerChild1));
-    expect(loadedOffers).toContainEqual(addVersion0(offerChild2));
+    expect(loadedOffers).toContainEqual(addVersion0(offerChild1 as Record<string, never));
+    expect(loadedOffers).toContainEqual(addVersion0(offerChild2 as Record<string, never));
     expect(loadedOffers.length).toEqual(4);
   });
 
@@ -258,14 +264,14 @@ describe("Offer Database Integration Test", () => {
     // directly calls loadOffers(), to see details, check the test above this one
     const loadedOffers = await service.loadOffers(createdUserCredits.userId);
     // Expect that loadedOffers contain the created root offers
-    expect(loadedOffers).not.toContainEqual(addVersion0(offerRoot1));
-    expect(loadedOffers).toContainEqual(addVersion0(offerRoot2));
-    expect(loadedOffers).toContainEqual(addVersion0(offerRoot3));
+    expect(loadedOffers).not.toContainEqual(addVersion0(offerRoot1 as Record<string, never));
+    expect(loadedOffers).toContainEqual(addVersion0(offerRoot2 as Record<string, never));
+    expect(loadedOffers).toContainEqual(addVersion0(offerRoot3 as Record<string, never));
     // Expect that loadedOffers do not contain overridden sub-offers of rootOffer2
-    expect(loadedOffers).not.toContainEqual(addVersion0(offerChild1));
-    expect(loadedOffers).not.toContainEqual(addVersion0(offerChild2));
-    expect(loadedOffers).toContainEqual(addVersion0(offerChild3_1));
-    expect(loadedOffers).toContainEqual(addVersion0(offerChild3_2));
+    expect(loadedOffers).not.toContainEqual(addVersion0(offerChild1 as Record<string, never));
+    expect(loadedOffers).not.toContainEqual(addVersion0(offerChild2 as Record<string, never));
+    expect(loadedOffers).toContainEqual(addVersion0(offerChild3_1 as Record<string, never));
+    expect(loadedOffers).toContainEqual(addVersion0(offerChild3_2 as Record<string, never));
     expect(loadedOffers.length).toEqual(4);
   }, 15000);
 });
