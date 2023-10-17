@@ -1,5 +1,5 @@
 //NODE: these imports are a temporary workaround to avoid the warning: "Corresponding file is not included in tsconfig.json"
-import { afterAll, afterEach, beforeAll, describe, it } from "@jest/globals";
+import { afterAll, afterEach, beforeAll, beforeEach, describe, it } from "@jest/globals";
 import expect from "expect";
 
 import { IDaoFactory } from "../../../src/db/dao";
@@ -47,8 +47,11 @@ describe("offer creation", () => {
     service = new ExtendedBaseService<ObjectId>(mongooseDaoFactory);
   });
 
-  afterAll(async () => {
+  afterEach(async () => {
     await clearDatabase;
+  });
+
+  afterAll(async () => {
     await kill();
   }, 15000);
 
@@ -97,6 +100,10 @@ async function insertOffers(
   };
 }
 
+function asRecord(offerChild1: IOffer<ObjectId>): Record<string, never> {
+  return offerChild1 as unknown as Record<string, never>;
+}
+
 describe("Offer Database Integration Test", () => {
   let mongooseDaoFactory: IDaoFactory<ObjectId>;
   let offerRoot1: IOffer<ObjectId>;
@@ -107,14 +114,14 @@ describe("Offer Database Integration Test", () => {
   let offerChild3_1: IOffer<ObjectId>;
   let offerChild3_2: IOffer<ObjectId>;
   let service: BaseService<ObjectId>;
-  let subscriptionPaid1: ISubscription<ObjectId>;
-  let subscriptionPaid2: ISubscription<ObjectId>;
-  let subscriptionPending1: ISubscription<ObjectId>;
-  let subscriptionRefused1: ISubscription<ObjectId>;
+  let subscriptionPaidRoot1: ISubscription<ObjectId>;
+  let subscriptionPaidRoot2: ISubscription<ObjectId>;
+  let subscriptionPendingChild3_1: ISubscription<ObjectId>;
+  let subscriptionRefusedChild3_2: ISubscription<ObjectId>;
 
-  beforeAll(async () => {
+  beforeAll();
+  beforeEach(async () => {
     // Initialize your mocks and dependencies here.
-    const mocks: InitMocksResult = await initMocks();
     ({
       mongooseDaoFactory,
       offerChild1,
@@ -124,19 +131,20 @@ describe("Offer Database Integration Test", () => {
       offerRoot1,
       offerRoot2,
       offerRoot3,
-      subscriptionPaid1,
-      subscriptionPaid2,
-      subscriptionPending1,
-      subscriptionRefused1,
-    } = mocks);
+      subscriptionPaidRoot1,
+      subscriptionPaidRoot2,
+      subscriptionPendingChild3_1,
+      subscriptionRefusedChild3_2,
+    } = await initMocks());
 
     // Use the actual MongoDB connection for the service
     service = new ExtendedBaseService<ObjectId>(mongooseDaoFactory);
-  });
+  })
 
-  afterAll(async () => await kill(), 15000);
-
-  afterEach(clearDatabase, 15000);
+  afterEach(async () => {
+    await clearDatabase();
+    await kill();
+  }, 15000);
 
   it("should insert all offers and retrieve only root offers from the database for a null userId", async () => {
     const { createdOffer1, createdOffer2, createdOffer3 } = await insertOffers(
@@ -158,6 +166,8 @@ describe("Offer Database Integration Test", () => {
     expect(loadedOffers).toContainEqual(createdOffer2);
     expect(loadedOffers).toContainEqual(createdOffer3);
     expect(loadedOffers.length).toEqual(3);
+
+    await clearDatabase();
   });
 
   it("should correctly override conflicting offers", async () => {
@@ -179,9 +189,9 @@ describe("Offer Database Integration Test", () => {
     const userCredits: IUserCredits<ObjectId> = {
       offers: [] as IActivatedOffer[],
       subscriptions: [
-        subscriptionPaid1,
-        subscriptionPending1,
-        subscriptionRefused1,
+        subscriptionPaidRoot1,
+        subscriptionPendingChild3_1,
+        subscriptionRefusedChild3_2,
       ],
       tokens: 100,
       userId,
@@ -197,35 +207,39 @@ describe("Offer Database Integration Test", () => {
       createdUserCredits.userId,
     );
 
-    copyId(step1ActiveSubscriptions[0], subscriptionPaid1);
+    copyId(step1ActiveSubscriptions[0], subscriptionPaidRoot1);
     // Expect that step1ActiveSubscriptions contain the active subscription
-    expect(step1ActiveSubscriptions).toContainEqual(subscriptionPaid1);
+    expect(step1ActiveSubscriptions).toContainEqual(subscriptionPaidRoot1);
 
     // Test the second step: Get subOffers based on active subscriptions
     const step2SubOffers = await service.getSubOffers(step1ActiveSubscriptions);
 
     // Expect that step2SubOffers contain the created suboffers
-    expect(step2SubOffers).toContainEqual(addVersion0(offerChild1 as Record<string, never>));
-    expect(step2SubOffers).toContainEqual(addVersion0(offerChild2 as Record<string, never));
+    expect(step2SubOffers).toContainEqual(addVersion0(asRecord(offerChild1)));
+    expect(step2SubOffers).toContainEqual(addVersion0(asRecord(offerChild2)));
     expect(step2SubOffers.length).toEqual(2);
 
     // Test the third step: Get regular offers
     const step3RegularOffers = await service.getRegularOffers();
 
     // Expect that step3RegularOffers contain the root offers
-    expect(step3RegularOffers).toContainEqual(addVersion0(offerRoot1 as Record<string, never));
-    expect(step3RegularOffers).toContainEqual(addVersion0(offerRoot2 as Record<string, never));
+    expect(step3RegularOffers).toContainEqual(
+      addVersion0(asRecord(offerRoot1)),
+    );
+    expect(step3RegularOffers).toContainEqual(
+      addVersion0(asRecord(offerRoot2)),
+    );
     expect(step3RegularOffers.length).toEqual(3);
 
     //All the steps above + merge
     const loadedOffers = await service.loadOffers(createdUserCredits.userId);
     // Expect that loadedOffers contain the created root offers
-    expect(loadedOffers).not.toContainEqual(addVersion0(offerRoot1 as Record<string, never));
-    expect(loadedOffers).toContainEqual(addVersion0(offerRoot2 as Record<string, never));
-    expect(loadedOffers).toContainEqual(addVersion0(offerRoot3 as Record<string, never));
+    expect(loadedOffers).not.toContainEqual(addVersion0(asRecord(offerRoot1)));
+    expect(loadedOffers).toContainEqual(addVersion0(asRecord(offerRoot2)));
+    expect(loadedOffers).toContainEqual(addVersion0(asRecord(offerRoot3)));
     // Expect that loadedOffers do not contain unpaid suboffers but contain active suboffers
-    expect(loadedOffers).toContainEqual(addVersion0(offerChild1 as Record<string, never));
-    expect(loadedOffers).toContainEqual(addVersion0(offerChild2 as Record<string, never));
+    expect(loadedOffers).toContainEqual(addVersion0(asRecord(offerChild1)));
+    expect(loadedOffers).toContainEqual(addVersion0(asRecord(offerChild2)));
     expect(loadedOffers.length).toEqual(4);
   });
 
@@ -247,10 +261,10 @@ describe("Offer Database Integration Test", () => {
     // Create the userCredits document with active and unpaid subscriptions
     const userCredits: IUserCredits<ObjectId> = {
       subscriptions: [
-        subscriptionPaid1,
-        subscriptionPaid2,
-        subscriptionPending1,
-        subscriptionRefused1,
+        subscriptionPaidRoot1,
+        subscriptionPaidRoot2,
+        subscriptionPendingChild3_1,
+        subscriptionRefusedChild3_2,
       ],
       tokens: 100,
       userId,
@@ -264,14 +278,14 @@ describe("Offer Database Integration Test", () => {
     // directly calls loadOffers(), to see details, check the test above this one
     const loadedOffers = await service.loadOffers(createdUserCredits.userId);
     // Expect that loadedOffers contain the created root offers
-    expect(loadedOffers).not.toContainEqual(addVersion0(offerRoot1 as Record<string, never));
-    expect(loadedOffers).toContainEqual(addVersion0(offerRoot2 as Record<string, never));
-    expect(loadedOffers).toContainEqual(addVersion0(offerRoot3 as Record<string, never));
+    expect(loadedOffers).not.toContainEqual(addVersion0(asRecord(offerRoot1)));
+    expect(loadedOffers).toContainEqual(addVersion0(asRecord(offerRoot2)));
+    expect(loadedOffers).toContainEqual(addVersion0(asRecord(offerRoot3)));
     // Expect that loadedOffers do not contain overridden sub-offers of rootOffer2
-    expect(loadedOffers).not.toContainEqual(addVersion0(offerChild1 as Record<string, never));
-    expect(loadedOffers).not.toContainEqual(addVersion0(offerChild2 as Record<string, never));
-    expect(loadedOffers).toContainEqual(addVersion0(offerChild3_1 as Record<string, never));
-    expect(loadedOffers).toContainEqual(addVersion0(offerChild3_2 as Record<string, never));
+    expect(loadedOffers).not.toContainEqual(addVersion0(asRecord(offerChild1)));
+    expect(loadedOffers).not.toContainEqual(addVersion0(asRecord(offerChild2)));
+    expect(loadedOffers).toContainEqual(addVersion0(asRecord(offerChild3_1)));
+    expect(loadedOffers).toContainEqual(addVersion0(asRecord(offerChild3_2)));
     expect(loadedOffers.length).toEqual(4);
   }, 15000);
 });

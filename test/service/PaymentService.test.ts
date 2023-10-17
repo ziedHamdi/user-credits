@@ -42,9 +42,8 @@ describe("PaymentService", () => {
 
   beforeEach(async () => {
     // Initialize your mocks and dependencies here.
-    const mocks = await initMocks();
     ({ daoFactoryMock, offerRoot1, orderOfferRoot1, subscriptionPaidRoot1 } =
-      mocks);
+      await initMocks());
     paymentClient = (await TestContainerSingleton.getInstance()).resolve(
       "stripeMock",
     );
@@ -99,6 +98,8 @@ describe("PaymentService", () => {
     );
 
     // You can add more specific assertions if needed
+    getUserCreditsMock.mockRestore();
+    afterPaymentExecutedMock.mockRestore();
   });
 
   it("should update user credits after a successful payment", async () => {
@@ -167,6 +168,7 @@ describe("PaymentService", () => {
     );
 
     // Add more assertions based on your specific use case
+    afterPaymentExecutedMock.mockRestore();
   });
 });
 

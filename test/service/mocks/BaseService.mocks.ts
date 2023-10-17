@@ -23,11 +23,11 @@ export type InitMocksResult = {
   offerRoot3: IOffer<ObjectId>;
   orderOfferRoot1: IOrder<ObjectId>;
   sampleUserId: ObjectId;
-  subscriptionPaid1: ISubscription<ObjectId>;
-  subscriptionPaid2: ISubscription<ObjectId>;
   subscriptionPaidRoot1: ISubscription<ObjectId>;
-  subscriptionPending1: ISubscription<ObjectId>;
-  subscriptionRefused1: ISubscription<ObjectId>;
+  subscriptionPaidRoot2: ISubscription<ObjectId>;
+  subscriptionPaidRoot3: ISubscription<ObjectId>;
+  subscriptionPendingChild3_1: ISubscription<ObjectId>;
+  subscriptionRefusedChild3_2: ISubscription<ObjectId>;
 };
 
 export async function kill(): Promise<void> {
@@ -158,6 +158,102 @@ export async function initMocks(): Promise<InitMocksResult> {
     userId: new Types.ObjectId(), // Mock ObjectId for user
   } as unknown as IOrder<ObjectId>;
 
+  const orderOfferRoot2: IOrder<ObjectId> = {
+    _id: new Types.ObjectId(),
+    country: "US",
+    currency: "USD",
+    cycle: "weekly",
+    history: [
+      {
+        date: new Date(),
+        message: "Order created",
+        status: "pending",
+      },
+    ],
+    offerGroup: "mockOfferGroup",
+    offerId: offerRoot2._id, // Mock ObjectId for offer
+    paymentIntentId: "mockPaymentIntentId",
+    paymentIntentSecret: "mockPaymentIntentSecret",
+    quantity: 1,
+    status: "pending",
+    taxRate: 0.21, // Example tax rate
+    tokenCount: 10, // Example token count
+    total: 100, // Example total amount
+    userId: new Types.ObjectId(), // Mock ObjectId for user
+  } as unknown as IOrder<ObjectId>;
+
+  const orderOfferRoot3: IOrder<ObjectId> = {
+    _id: new Types.ObjectId(),
+    country: "US",
+    currency: "USD",
+    cycle: "weekly",
+    history: [
+      {
+        date: new Date(),
+        message: "Order created",
+        status: "pending",
+      },
+    ],
+    offerGroup: "mockOfferGroup",
+    offerId: offerRoot3._id, // Mock ObjectId for offer
+    paymentIntentId: "mockPaymentIntentId",
+    paymentIntentSecret: "mockPaymentIntentSecret",
+    quantity: 1,
+    status: "pending",
+    taxRate: 0.21, // Example tax rate
+    tokenCount: 10, // Example token count
+    total: 100, // Example total amount
+    userId: new Types.ObjectId(), // Mock ObjectId for user
+  } as unknown as IOrder<ObjectId>;
+
+  const orderOfferPendingChild3_1: IOrder<ObjectId> = {
+    _id: new Types.ObjectId(),
+    country: "US",
+    currency: "USD",
+    cycle: "weekly",
+    history: [
+      {
+        date: new Date(),
+        message: "Order created",
+        status: "pending",
+      },
+    ],
+    offerGroup: "mockOfferGroup",
+    offerId: offerChild3_1._id, // Mock ObjectId for offer
+    paymentIntentId: "mockPaymentIntentId",
+    paymentIntentSecret: "mockPaymentIntentSecret",
+    quantity: 1,
+    status: "pending",
+    taxRate: 0.21, // Example tax rate
+    tokenCount: 10, // Example token count
+    total: 100, // Example total amount
+    userId: new Types.ObjectId(), // Mock ObjectId for user
+  } as unknown as IOrder<ObjectId>;
+
+  const orderOfferRefusedChild3_2: IOrder<ObjectId> = {
+    _id: new Types.ObjectId(),
+    country: "US",
+    currency: "USD",
+    cycle: "weekly",
+    history: [
+      {
+        date: new Date(),
+        message: "Order created",
+        status: "refused",
+      },
+    ],
+    offerGroup: "mockOfferGroup",
+    offerId: offerChild3_2._id, // Mock ObjectId for offer
+    paymentIntentId: "mockPaymentIntentId",
+    paymentIntentSecret: "mockPaymentIntentSecret",
+    quantity: 1,
+    status: "pending",
+    taxRate: 0.21, // Example tax rate
+    tokenCount: 10, // Example token count
+    total: 100, // Example total amount
+    userId: new Types.ObjectId(), // Mock ObjectId for user
+  } as unknown as IOrder<ObjectId>;
+
   const subscriptionPaidRoot1: ISubscription<ObjectId> = {
     expires: new Date(),
     offerGroup: offerRoot1.offerGroup,
@@ -168,30 +264,38 @@ export async function initMocks(): Promise<InitMocksResult> {
     tokens: offerRoot1.tokenCount,
   } as unknown as ISubscription<ObjectId>;
 
-  const subscriptionPaid1: ISubscription<ObjectId> = {
+  const subscriptionPaidRoot2: ISubscription<ObjectId> = {
     expires: new Date(),
+    offerGroup: offerRoot2.offerGroup,
     offerId: offerRoot2._id,
+    orderId: orderOfferRoot2._id,
     starts: new Date(),
     status: "paid",
   } as unknown as ISubscription<ObjectId>;
 
-  const subscriptionPaid2: ISubscription<ObjectId> = {
+  const subscriptionPaidRoot3: ISubscription<ObjectId> = {
     expires: new Date(),
+    offerGroup: offerRoot3.offerGroup,
     offerId: offerRoot3._id,
+    orderId: orderOfferRoot3._id,
     starts: new Date(),
     status: "paid",
   } as unknown as ISubscription<ObjectId>;
 
-  const subscriptionPending1: ISubscription<ObjectId> = {
+  const subscriptionPendingChild3_1: ISubscription<ObjectId> = {
     expires: new Date(),
-    offerId: offerRoot1._id,
+    offerGroup: offerChild3_1.offerGroup,
+    offerId: offerRoot3._id,
+    orderId: orderOfferPendingChild3_1._id,
     starts: new Date(),
     status: "pending",
   } as unknown as ISubscription<ObjectId>;
 
-  const subscriptionRefused1: ISubscription<ObjectId> = {
+  const subscriptionRefusedChild3_2: ISubscription<ObjectId> = {
     expires: new Date(),
-    offerId: offerChild1._id,
+    offerGroup: offerChild3_2.offerGroup,
+    offerId: offerChild3_2._id,
+    orderId: orderOfferRefusedChild3_2._id,
     starts: new Date(),
     status: "refused",
   } as unknown as ISubscription<ObjectId>;
@@ -215,10 +319,10 @@ export async function initMocks(): Promise<InitMocksResult> {
     offerRoot3,
     orderOfferRoot1,
     sampleUserId,
-    subscriptionPaid1,
-    subscriptionPaid2,
     subscriptionPaidRoot1,
-    subscriptionPending1,
-    subscriptionRefused1,
+    subscriptionPaidRoot2,
+    subscriptionPaidRoot3,
+    subscriptionPendingChild3_1,
+    subscriptionRefusedChild3_2,
   };
 }
