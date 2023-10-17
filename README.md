@@ -150,6 +150,11 @@ here's an example of how to add that param from console:
 `
 Or `node --experimental-vm-modules node_modules/jest/bin/jest.js`
 
+### IOC
+Because of parallel processes to access mongodb in Jest, we were obliged to create multiple simultaneous in memory mongodb instances to avoid inconsistencies in saved data between different tests.
+Therefore, we enabled multiple simultaneous connections to mongodb through mongoose as described in https://mongoosejs.com/docs/connections.html#multiple_connections.
+To adapt to that constraint, TestContainerSingleton.getInstance() now accepts a singleton:boolean parameter to tell it if it has to be a singleton or a prototype (on false value). See the file testContainer.ts for reference
+
 ### Timeout bug
 There's a bug in MongoMemoryServer taking too long to execute. See:
 https://github.com/nodkz/mongodb-memory-server/issues/323
