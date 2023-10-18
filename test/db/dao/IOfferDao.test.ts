@@ -129,6 +129,7 @@ describe("Offer Database Integration Test", () => {
   let mongoMemoryServer: MongoMemoryServer;
   let connection: Connection;
 
+
   beforeEach(async () => {
     // Initialize your mocks and dependencies here.
     ({
@@ -146,7 +147,7 @@ describe("Offer Database Integration Test", () => {
       subscriptionPaidRoot2,
       subscriptionPendingChild3_1,
       subscriptionRefusedChild3_2,
-    } = await initMocks());
+    } = await initMocks(false));
 
     // Create a new instance of BaseService with the mock userCreditsDao
     service = new ExtendedBaseService<ObjectId>(mongooseDaoFactory);
@@ -201,6 +202,7 @@ describe("Offer Database Integration Test", () => {
       offers: [] as IActivatedOffer[],
       subscriptions: [
         subscriptionPaidRoot1,
+        subscriptionPaidRoot2,
         subscriptionPendingChild3_1,
         subscriptionRefusedChild3_2,
       ],
@@ -218,7 +220,9 @@ describe("Offer Database Integration Test", () => {
       createdUserCredits.userId,
     );
 
+    expect(step1ActiveSubscriptions.length).toEqual(2);
     copyId(step1ActiveSubscriptions[0], subscriptionPaidRoot1);
+    copyId(step1ActiveSubscriptions[1], subscriptionPaidRoot2);
     // Expect that step1ActiveSubscriptions contain the active subscription
     expect(step1ActiveSubscriptions).toContainEqual(subscriptionPaidRoot1);
 

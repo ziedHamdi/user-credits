@@ -20,9 +20,10 @@ export class MongooseStripeContainerSingleton {
     this.active = true;
     this.container = createContainer();
 
-    this.container.register({
-      daoFactory: asFunction(() => new MongooseDaoFactory()),
-    });
+    // FIXME must adapt to new constructor of MongooseDaoFactory
+    // this.container.register({
+    //   daoFactory: asFunction(() => new MongooseDaoFactory()),
+    // });
 
     this.container.register({
       configReader: asClass(EnvConfigReader).singleton(),

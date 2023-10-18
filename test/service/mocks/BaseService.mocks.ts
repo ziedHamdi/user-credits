@@ -255,7 +255,6 @@ export async function initMocks(
   } as unknown as IOrder<ObjectId>;
 
   const subscriptionPaidRoot1: ISubscription<ObjectId> = {
-    expires: new Date(),
     offerGroup: offerRoot1.offerGroup,
     offerId: offerRoot1._id,
     orderId: orderOfferRoot1._id,
@@ -265,7 +264,6 @@ export async function initMocks(
   } as unknown as ISubscription<ObjectId>;
 
   const subscriptionPaidRoot2: ISubscription<ObjectId> = {
-    expires: new Date(),
     offerGroup: offerRoot2.offerGroup,
     offerId: offerRoot2._id,
     orderId: orderOfferRoot2._id,
@@ -274,7 +272,6 @@ export async function initMocks(
   } as unknown as ISubscription<ObjectId>;
 
   const subscriptionPaidRoot3: ISubscription<ObjectId> = {
-    expires: new Date(),
     offerGroup: offerRoot3.offerGroup,
     offerId: offerRoot3._id,
     orderId: orderOfferRoot3._id,
@@ -283,7 +280,6 @@ export async function initMocks(
   } as unknown as ISubscription<ObjectId>;
 
   const subscriptionPendingChild3_1: ISubscription<ObjectId> = {
-    expires: new Date(),
     offerGroup: offerChild3_1.offerGroup,
     offerId: offerRoot3._id,
     orderId: orderOfferPendingChild3_1._id,
@@ -292,7 +288,6 @@ export async function initMocks(
   } as unknown as ISubscription<ObjectId>;
 
   const subscriptionRefusedChild3_2: ISubscription<ObjectId> = {
-    expires: new Date(),
     offerGroup: offerChild3_2.offerGroup,
     offerId: offerChild3_2._id,
     orderId: orderOfferRefusedChild3_2._id,
