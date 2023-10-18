@@ -1,11 +1,27 @@
 import { DuplicateMatchesError } from "../errors";
 
+function defaultCustomEquals<T extends object, U extends object>(
+  a: T,
+  b: U,
+): boolean {
+  interface WithEquals {
+    equals(b: object): boolean;
+  }
+  if (typeof a === "object" && typeof b === "object" && "equals" in a) {
+    // Check if 'a' has an 'equals' method and use it
+    return (a as unknown as WithEquals).equals(b);
+  }
+  // Fallback to default equality check using '=='
+  return a as unknown == b as unknown;
+}
+
 export function copyFieldsWhenMatching<S extends object, T extends object>(
   sourceArray: S[],
   targetArray: T[],
   equalFields: (keyof T)[],
   fieldsToCopy: (keyof S)[],
-  allowMultipleOccurrences: boolean,
+  allowMultipleOccurrences: boolean = false,
+  customEquals: (a: object, b: object) => boolean = defaultCustomEquals,
 ): T[] {
   const toReturn = [...targetArray];
 
@@ -15,10 +31,17 @@ export function copyFieldsWhenMatching<S extends object, T extends object>(
       return equalFields.every((field) => {
         // eslint-disable-next-line no-prototype-builtins
         if (source.hasOwnProperty(field) && target.hasOwnProperty(field)) {
+          console.log(
+            "comparing : ",
+            (source as unknown as T)[field],
+            " and ",
+            target[field],
+            "equal: ",
+            customEquals((source as unknown as T)[field] as object, target[field] as object),
+          );
           return (
             // dirty assertion to hack TS
-            (source as unknown as T)[field] ===
-            target[field]
+            customEquals((source as unknown as T)[field] as object, target[field] as object)
           );
         }
         return true; // Property doesn't exist in either source or target; continue matching.

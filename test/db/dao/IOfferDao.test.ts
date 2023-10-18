@@ -1,4 +1,5 @@
 //NODE: these imports are a temporary workaround to avoid the warning: "Corresponding file is not included in tsconfig.json"
+// FIXME references to ObjectID should be removed as this file is testing the interface IOfferDao not its implementation in mongoose
 import {
   afterAll,
   afterEach,
@@ -26,10 +27,10 @@ import { toHaveSameFields } from "../../extend/sameObjects";
 import { addVersion0, clearDatabase, copyId } from "../../extend/util";
 import {
   initMocks,
-  InitMocksResult,
   newObjectId,
   ObjectId,
 } from "../../service/mocks/BaseService.mocks";
+import { copyFieldsWhenMatching } from "../../../src/util/Copy";
 
 class ExtendedBaseService<K extends MinimalId> extends BaseService<K> {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -221,10 +222,15 @@ describe("Offer Database Integration Test", () => {
     );
 
     expect(step1ActiveSubscriptions.length).toEqual(2);
-    copyId(step1ActiveSubscriptions[0], subscriptionPaidRoot1);
-    copyId(step1ActiveSubscriptions[1], subscriptionPaidRoot2);
+    copyFieldsWhenMatching(
+      step1ActiveSubscriptions,
+      [subscriptionPaidRoot1, subscriptionPaidRoot2],
+      ["orderId"],
+      ["_id"],
+    );
     // Expect that step1ActiveSubscriptions contain the active subscription
     expect(step1ActiveSubscriptions).toContainEqual(subscriptionPaidRoot1);
+    expect(step1ActiveSubscriptions).toContainEqual(subscriptionPaidRoot2);
 
     // Test the second step: Get subOffers based on active subscriptions
     const step2SubOffers = await service.getSubOffers(step1ActiveSubscriptions);

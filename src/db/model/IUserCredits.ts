@@ -6,7 +6,7 @@ import { MinimalId } from "./MinimalId";
  * Interface representing a subscription.
  * @param K - The type of foreign keys (used for all foreign key types).
  */
-export interface ISubscription<K extends MinimalId> {
+export interface ISubscription<K extends MinimalId> extends BaseEntity<K> {
   /**
    * The custom cycle duration in seconds, only applicable when cycle is 'custom'.
    */
