@@ -39,6 +39,7 @@ const offerSchema = new Schema<IMongooseOffer>({
     required: false,
     type: Schema.Types.ObjectId,
   },
+  popular: { type: Number },
   price: { required: true, type: Number },
   quantityLimit: Number,
   tokenCount: { required: true, type: Number },

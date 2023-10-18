@@ -35,6 +35,7 @@ export interface IOffer<K extends MinimalId> extends BaseEntity<K> {
   /**if an exclusive offer has the same key as a regular one, the exclusive offer will override the regular*/
   overridingKey: string;
   parentOfferId: K;
+  popular: number;
   price: number;
   quantityLimit: number | null;
   tokenCount: number | null;

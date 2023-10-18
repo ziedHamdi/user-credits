@@ -1,4 +1,5 @@
 export * from "./db/dao";
+export { IOffer } from "./db/model";
 export * from "./db/model";
 export * from "./errors";
 export { connectToDb } from "./impl/mongoose/connection";
