@@ -1,13 +1,6 @@
 //NODE: these imports are a temporary workaround to avoid the warning: "Corresponding file is not included in tsconfig.json"
 // FIXME references to ObjectID should be removed as this file is testing the interface IOfferDao not its implementation in mongoose
-import {
-  afterAll,
-  afterEach,
-  beforeAll,
-  beforeEach,
-  describe,
-  it,
-} from "@jest/globals";
+import { afterEach, beforeEach, describe, it } from "@jest/globals";
 import expect from "expect";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import { Connection } from "mongoose";
@@ -24,8 +17,8 @@ import { IActivatedOffer } from "../../../src/db/model/IUserCredits";
 import { BaseService } from "../../../src/service/BaseService";
 import { copyFieldsWhenMatching } from "../../../src/util/Copy";
 // eslint-disable-next-line no-unused-vars,@typescript-eslint/no-unused-vars
-import { toHaveSameFields } from "../../extend/sameObjects";
-import { addVersion0, clearDatabase, copyId } from "../../extend/util";
+// import { toHaveSameFields } from "../../extend/sameObjects";
+import { addVersion0, clearDatabase } from "../../extend/util";
 import {
   initMocks,
   newObjectId,
@@ -310,8 +303,12 @@ describe("Offer Database Integration Test", () => {
     // Expect that loadedOffers do not contain overridden sub-offers of rootOffer2
     expect(loadedOffers).toContainEqual(addVersion0(asRecord(offerChild1)));
     expect(loadedOffers).toContainEqual(addVersion0(asRecord(offerChild2)));
-    expect(loadedOffers).not.toContainEqual(addVersion0(asRecord(offerChild3_1)));
-    expect(loadedOffers).not.toContainEqual(addVersion0(asRecord(offerChild3_2)));
+    expect(loadedOffers).not.toContainEqual(
+      addVersion0(asRecord(offerChild3_1)),
+    );
+    expect(loadedOffers).not.toContainEqual(
+      addVersion0(asRecord(offerChild3_2)),
+    );
     expect(loadedOffers.length).toEqual(4);
   }, 15000);
 });

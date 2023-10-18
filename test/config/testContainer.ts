@@ -12,7 +12,7 @@ import type {
   IOffer,
   IOrder,
   ITokenTimetable,
-  IUserCredits
+  IUserCredits,
 } from "../../src/db/model";
 import { MongooseDaoFactory } from "../../src/impl/mongoose/dao/MongooseDaoFactory";
 import { EnvConfigReader } from "../../src/impl/service/EnvConfigReader";
@@ -24,6 +24,8 @@ import { MockTokenTimetableDao } from "../db/dao/mocks/MockTokenTimetableDao";
 import { MockUserCreditsDao } from "../db/dao/mocks/MockUserCreditsDao";
 import { StripeMock } from "../service/mocks/StripeMock";
 
+const DEBUG = false;
+
 interface MongoConnectionAndServer {
   connection: Connection;
   mongoMemoryServer: MongoMemoryServer;
@@ -32,7 +34,7 @@ interface MongoConnectionAndServer {
 async function launchMongoMemoryDb(): Promise<MongoConnectionAndServer> {
   const mongoMemoryServer = await MongoMemoryServer.create();
   const uri = mongoMemoryServer.getUri();
-  console.log("connection uri: ", mongoMemoryServer.getUri());
+  if (DEBUG) console.log("connection uri: ", mongoMemoryServer.getUri());
   // Set up the MongoDB connection
   const connection: Connection = mongoose.createConnection(uri);
   return { connection, mongoMemoryServer } as MongoConnectionAndServer;
@@ -47,7 +49,7 @@ export class TestContainerSingleton {
   }
 
   public static async getInstance(
-    singleton: boolean = true
+    singleton: boolean = true,
   ): Promise<AwilixContainer<object>> {
     if (singleton && TestContainerSingleton.active) return this.container;
 
@@ -59,13 +61,13 @@ export class TestContainerSingleton {
 
     const sampleUserId = new Types.ObjectId();
     toReturn.register({
-      sampleUserId: asValue(sampleUserId)
+      sampleUserId: asValue(sampleUserId),
     });
 
     const sampleUserCredits = {
       subscriptions: [],
       tokens: 0,
-      userId: sampleUserId
+      userId: sampleUserId,
     } as unknown as IUserCredits<ObjectId>;
 
     toReturn.register({
@@ -73,7 +75,7 @@ export class TestContainerSingleton {
         const offerDaoMock = new MockOfferDao({} as IOffer<ObjectId>);
         const orderDaoMock = new MockOrderDao({} as IOrder<ObjectId>);
         const tokenTimetableMock = new MockTokenTimetableDao(
-          {} as ITokenTimetable<ObjectId>
+          {} as ITokenTimetable<ObjectId>,
         );
         const userCreditsDaoMock = new MockUserCreditsDao(sampleUserCredits);
 
@@ -81,18 +83,18 @@ export class TestContainerSingleton {
           getOfferDao: () => offerDaoMock,
           getOrderDao: () => orderDaoMock,
           getTokenTimetableDao: () => tokenTimetableMock,
-          getUserCreditsDao: () => userCreditsDaoMock
+          getUserCreditsDao: () => userCreditsDaoMock,
         } as unknown as IDaoFactory<ObjectId>;
         return daoFactoryMock;
-      })
+      }),
     });
 
     const memoryDbAndConnection = await launchMongoMemoryDb();
     toReturn.register({
-      mongoMemoryServer: asValue(memoryDbAndConnection.mongoMemoryServer)
+      mongoMemoryServer: asValue(memoryDbAndConnection.mongoMemoryServer),
     });
     toReturn.register({
-      connection: asValue(memoryDbAndConnection.connection)
+      connection: asValue(memoryDbAndConnection.connection),
     });
     toReturn.register({
       mongooseDaoFactory: asValue(
@@ -101,10 +103,10 @@ export class TestContainerSingleton {
     });
 
     toReturn.register({
-      configReader: asClass(EnvConfigReader).singleton()
+      configReader: asClass(EnvConfigReader).singleton(),
     });
     toReturn.register({
-      stripeClient: asClass(StripeClient).singleton()
+      stripeClient: asClass(StripeClient).singleton(),
     });
     toReturn.register({ stripeMock: asValue(new StripeMock()) });
     toReturn.register({ defaultCurrency: asValue("usd") });

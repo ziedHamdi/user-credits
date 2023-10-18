@@ -97,7 +97,13 @@ function deepEquals(a: object, b: object): boolean {
   }
 
   for (const key of keysA) {
-    if (!keysB.includes(key) || !deepEquals(a[key as keyof typeof a] as object, b[key as keyof typeof b] as object)) {
+    if (
+      !keysB.includes(key) ||
+      !deepEquals(
+        a[key as keyof typeof a] as object,
+        b[key as keyof typeof b] as object,
+      )
+    ) {
       return false;
     }
   }

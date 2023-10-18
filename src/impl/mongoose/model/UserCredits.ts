@@ -1,6 +1,6 @@
 import { Types } from "mongoose";
 type ObjectId = Types.ObjectId;
-import mongoose, { Document, Model, Schema } from "mongoose";
+import { Document, Model, Schema } from "mongoose";
 
 import {
   IActivatedOffer,

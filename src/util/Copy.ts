@@ -12,7 +12,7 @@ function defaultCustomEquals<T extends object, U extends object>(
     return (a as unknown as WithEquals).equals(b);
   }
   // Fallback to default equality check using '=='
-  return a as unknown == b as unknown;
+  return (a as unknown) == (b as unknown);
 }
 
 export function copyFieldsWhenMatching<S extends object, T extends object>(
@@ -33,7 +33,10 @@ export function copyFieldsWhenMatching<S extends object, T extends object>(
         if (source.hasOwnProperty(field) && target.hasOwnProperty(field)) {
           return (
             // dirty assertion to hack TS
-            customEquals((source as unknown as T)[field] as object, target[field] as object)
+            customEquals(
+              (source as unknown as T)[field] as object,
+              target[field] as object,
+            )
           );
         }
         return true; // Property doesn't exist in either source or target; continue matching.

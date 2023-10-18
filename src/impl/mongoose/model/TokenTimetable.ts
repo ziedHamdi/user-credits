@@ -1,6 +1,6 @@
-import { Model, Types } from "mongoose";
+import { Types } from "mongoose";
 type ObjectId = Types.ObjectId;
-import mongoose, { Document, Schema } from "mongoose";
+import { Document, Schema } from "mongoose";
 
 import { ITokenTimetable } from "../../../db/model/ITokenTimetable";
 

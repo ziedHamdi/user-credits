@@ -1,5 +1,5 @@
 //NODE: these imports are a temporary workaround to avoid the warning: "Corresponding file is not included in tsconfig.json"
-import { afterAll, beforeAll, beforeEach, describe, it } from "@jest/globals";
+import { beforeAll, beforeEach, describe, it } from "@jest/globals";
 import expect from "expect";
 
 import { IDaoFactory } from "../../src/db/dao"; // Import the actual path
@@ -14,7 +14,7 @@ import { InvalidOrderError } from "../../src/errors";
 import { BaseService } from "../../src/service/BaseService"; //IMPROVEMENT Should use { IPayment } and add a secondary interface instead
 // eslint-disable-next-line no-unused-vars,@typescript-eslint/no-unused-vars
 import { toHaveSameFields } from "../extend/sameObjects";
-import { initMocks, kill, ObjectId } from "./mocks/BaseService.mocks";
+import { initMocks, ObjectId } from "./mocks/BaseService.mocks";
 
 class ExtendedBaseService<K extends MinimalId> extends BaseService<K> {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -26,9 +26,9 @@ class ExtendedBaseService<K extends MinimalId> extends BaseService<K> {
 describe("BaseService.getActiveSubscriptions", () => {
   let daoFactoryMock: IDaoFactory<ObjectId>;
   let sampleUserId: ObjectId;
-  let subscriptionPaid1: ISubscription<ObjectId>;
-  let subscriptionPending1: ISubscription<ObjectId>;
-  let subscriptionRefused1: ISubscription<ObjectId>;
+  let subscriptionPaidRoot1: ISubscription<ObjectId>;
+  let subscriptionPendingChild3_1: ISubscription<ObjectId>;
+  let subscriptionRefusedChild3_2: ISubscription<ObjectId>;
   let sampleUserCredits: IUserCredits<ObjectId>;
 
   beforeAll(async () => {
@@ -37,19 +37,15 @@ describe("BaseService.getActiveSubscriptions", () => {
     ({
       daoFactoryMock,
       sampleUserId,
-      subscriptionPaid1,
-      subscriptionPending1,
-      subscriptionRefused1,
+      subscriptionPaidRoot1,
+      subscriptionPendingChild3_1,
+      subscriptionRefusedChild3_2,
     } = mocks);
     sampleUserCredits = {
-      subscriptions: [subscriptionPaid1, subscriptionPending1], // Use the created instances
+      subscriptions: [subscriptionPaidRoot1, subscriptionPendingChild3_1], // Use the created instances
       tokens: 100, // Sample token balance
       userId: sampleUserId,
     } as unknown as IUserCredits<ObjectId>;
-  });
-
-  afterAll(async () => {
-    await kill();
   });
 
   let service: BaseService<ObjectId>;
@@ -87,7 +83,7 @@ describe("BaseService.getActiveSubscriptions", () => {
     // Modify the sampleUserCredits to have no paid subscriptions
     const noPaidSubscriptionsUserCredits: IUserCredits<ObjectId> = {
       ...sampleUserCredits,
-      subscriptions: [subscriptionPending1, subscriptionRefused1],
+      subscriptions: [subscriptionPendingChild3_1, subscriptionRefusedChild3_2],
     } as IUserCredits<ObjectId>;
 
     // Mock the userCreditsDao.findById method to return the modified userCredits
@@ -126,10 +122,6 @@ describe("MergeOffers tests", () => {
     service = new ExtendedBaseService(daoFactoryMock);
   });
 
-  afterAll(async () => {
-    await kill();
-  });
-
   it("should merge sub-offers that match overridingKey with root offers", () => {
     const mergedOffers = service.mergeOffers(
       [offerRoot1, offerRoot2],
@@ -166,10 +158,6 @@ describe("createOrder", () => {
     await mongooseDaoFactory.getOfferDao().create(offerRoot1);
     await mongooseDaoFactory.getOfferDao().create(offerRoot2);
     service = new ExtendedBaseService(mongooseDaoFactory);
-  });
-
-  afterAll(async () => {
-    await kill();
   });
 
   it("should create an order with the specified quantity and total", async () => {
