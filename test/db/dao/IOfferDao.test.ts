@@ -22,6 +22,7 @@ import {
 } from "../../../src/db/model";
 import { IActivatedOffer } from "../../../src/db/model/IUserCredits";
 import { BaseService } from "../../../src/service/BaseService";
+import { copyFieldsWhenMatching } from "../../../src/util/Copy";
 // eslint-disable-next-line no-unused-vars,@typescript-eslint/no-unused-vars
 import { toHaveSameFields } from "../../extend/sameObjects";
 import { addVersion0, clearDatabase, copyId } from "../../extend/util";
@@ -30,7 +31,6 @@ import {
   newObjectId,
   ObjectId,
 } from "../../service/mocks/BaseService.mocks";
-import { copyFieldsWhenMatching } from "../../../src/util/Copy";
 
 class ExtendedBaseService<K extends MinimalId> extends BaseService<K> {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -129,7 +129,6 @@ describe("Offer Database Integration Test", () => {
   let subscriptionRefusedChild3_2: ISubscription<ObjectId>;
   let mongoMemoryServer: MongoMemoryServer;
   let connection: Connection;
-
 
   beforeEach(async () => {
     // Initialize your mocks and dependencies here.
@@ -237,6 +236,7 @@ describe("Offer Database Integration Test", () => {
 
     // Expect that step2SubOffers contain the created suboffers
     expect(step2SubOffers).toContainEqual(addVersion0(asRecord(offerChild1)));
+    offerChild2.weight = 0; // add a default weight value (the mocks intentionally didn't add one)
     expect(step2SubOffers).toContainEqual(addVersion0(asRecord(offerChild2)));
     expect(step2SubOffers.length).toEqual(2);
 
@@ -244,9 +244,11 @@ describe("Offer Database Integration Test", () => {
     const step3RegularOffers = await service.getRegularOffers();
 
     // Expect that step3RegularOffers contain the root offers
+    offerRoot1.weight = 0; // add default filled by db fields
     expect(step3RegularOffers).toContainEqual(
       addVersion0(asRecord(offerRoot1)),
     );
+    offerRoot2.weight = 0; // add default filled by db fields
     expect(step3RegularOffers).toContainEqual(
       addVersion0(asRecord(offerRoot2)),
     );
@@ -257,7 +259,12 @@ describe("Offer Database Integration Test", () => {
     // Expect that loadedOffers contain the created root offers
     expect(loadedOffers).not.toContainEqual(addVersion0(asRecord(offerRoot1)));
     expect(loadedOffers).toContainEqual(addVersion0(asRecord(offerRoot2)));
-    expect(loadedOffers).toContainEqual(addVersion0(asRecord(offerRoot3)));
+    offerRoot3.weight = 0;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { parentOfferId, ...offerRoot3_raw } = offerRoot3; // parentOfferId is removed when reading back from db
+    expect(loadedOffers).toContainEqual(
+      addVersion0(asRecord(offerRoot3_raw as unknown as IOffer<ObjectId>)),
+    );
     // Expect that loadedOffers do not contain unpaid suboffers but contain active suboffers
     expect(loadedOffers).toContainEqual(addVersion0(asRecord(offerChild1)));
     expect(loadedOffers).toContainEqual(addVersion0(asRecord(offerChild2)));

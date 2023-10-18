@@ -261,6 +261,7 @@ export async function initMocks(
     starts: new Date(),
     status: "paid",
     tokens: offerRoot1.tokenCount,
+    weight: offerRoot1.weight,
   } as unknown as ISubscription<ObjectId>;
 
   const subscriptionPaidRoot2: ISubscription<ObjectId> = {
@@ -269,6 +270,8 @@ export async function initMocks(
     orderId: orderOfferRoot2._id,
     starts: new Date(),
     status: "paid",
+    tokens: offerRoot2.tokenCount,
+    weight: offerRoot2.weight,
   } as unknown as ISubscription<ObjectId>;
 
   const subscriptionPaidRoot3: ISubscription<ObjectId> = {
@@ -277,14 +280,18 @@ export async function initMocks(
     orderId: orderOfferRoot3._id,
     starts: new Date(),
     status: "paid",
+    tokens: offerRoot3.tokenCount,
+    weight: offerRoot3.weight,
   } as unknown as ISubscription<ObjectId>;
 
   const subscriptionPendingChild3_1: ISubscription<ObjectId> = {
     offerGroup: offerChild3_1.offerGroup,
-    offerId: offerRoot3._id,
+    offerId: offerChild3_1._id,
     orderId: orderOfferPendingChild3_1._id,
     starts: new Date(),
     status: "pending",
+    tokens: offerChild3_1.tokenCount,
+    weight: offerChild3_1.weight,
   } as unknown as ISubscription<ObjectId>;
 
   const subscriptionRefusedChild3_2: ISubscription<ObjectId> = {
@@ -293,6 +300,8 @@ export async function initMocks(
     orderId: orderOfferRefusedChild3_2._id,
     starts: new Date(),
     status: "refused",
+    tokens: offerChild3_2.tokenCount,
+    weight: offerChild3_2.weight,
   } as unknown as ISubscription<ObjectId>;
 
   const daoFactoryMock: IDaoFactory<ObjectId> =

@@ -31,14 +31,6 @@ export function copyFieldsWhenMatching<S extends object, T extends object>(
       return equalFields.every((field) => {
         // eslint-disable-next-line no-prototype-builtins
         if (source.hasOwnProperty(field) && target.hasOwnProperty(field)) {
-          console.log(
-            "comparing : ",
-            (source as unknown as T)[field],
-            " and ",
-            target[field],
-            "equal: ",
-            customEquals((source as unknown as T)[field] as object, target[field] as object),
-          );
           return (
             // dirty assertion to hack TS
             customEquals((source as unknown as T)[field] as object, target[field] as object)
