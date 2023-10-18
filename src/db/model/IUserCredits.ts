@@ -16,7 +16,7 @@ export interface ISubscription<K extends MinimalId> extends BaseEntity<K> {
    * The cycle of the subscription (e.g., 'once', 'weekly', 'monthly', etc.).
    */
   cycle: OfferCycle;
-
+  name: string;
   /**
    * The grouping of offers belonging to the same service.
    * Example: "Mobile TV Basic" offer with multiple subscription options.

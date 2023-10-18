@@ -236,7 +236,7 @@ describe("Offer Database Integration Test", () => {
 
     // Expect that step2SubOffers contain the created suboffers
     expect(step2SubOffers).toContainEqual(addVersion0(asRecord(offerChild1)));
-    offerChild2.weight = 0; // add a default weight value (the mocks intentionally didn't add one)
+    offerChild2.weight = 1; // add a default weight value (the mocks intentionally didn't add one)
     expect(step2SubOffers).toContainEqual(addVersion0(asRecord(offerChild2)));
     expect(step2SubOffers.length).toEqual(2);
 
@@ -309,7 +309,7 @@ describe("Offer Database Integration Test", () => {
     expect(loadedOffers).toContainEqual(addVersion0(asRecord(offerRoot3)));
     // Expect that loadedOffers do not contain overridden sub-offers of rootOffer2
     expect(loadedOffers).toContainEqual(addVersion0(asRecord(offerChild1)));
-    expect(loadedOffers).not.toContainEqual(addVersion0(asRecord(offerChild2)));
+    expect(loadedOffers).toContainEqual(addVersion0(asRecord(offerChild2)));
     expect(loadedOffers).not.toContainEqual(addVersion0(asRecord(offerChild3_1)));
     expect(loadedOffers).not.toContainEqual(addVersion0(asRecord(offerChild3_2)));
     expect(loadedOffers.length).toEqual(4);

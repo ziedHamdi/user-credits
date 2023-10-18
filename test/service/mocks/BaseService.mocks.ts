@@ -104,6 +104,7 @@ export async function initMocks(
     parentOfferId: offerRoot2._id, // is a sub-offer of Starter offer overrides the 100tokens offer
     price: 70,
     tokenCount: 100,
+    weight: 1,
   } as unknown as IOffer<ObjectId>;
 
   const offerChild3_1: IOffer<ObjectId> = {
@@ -255,6 +256,8 @@ export async function initMocks(
   } as unknown as IOrder<ObjectId>;
 
   const subscriptionPaidRoot1: ISubscription<ObjectId> = {
+    cycle: offerRoot1.cycle,
+    name: offerRoot1.name,
     offerGroup: offerRoot1.offerGroup,
     offerId: offerRoot1._id,
     orderId: orderOfferRoot1._id,
@@ -264,6 +267,8 @@ export async function initMocks(
   } as unknown as ISubscription<ObjectId>;
 
   const subscriptionPaidRoot2: ISubscription<ObjectId> = {
+    cycle: offerRoot2.cycle,
+    name: offerRoot2.name,
     offerGroup: offerRoot2.offerGroup,
     offerId: offerRoot2._id,
     orderId: orderOfferRoot2._id,
@@ -273,6 +278,8 @@ export async function initMocks(
   } as unknown as ISubscription<ObjectId>;
 
   const subscriptionPaidRoot3: ISubscription<ObjectId> = {
+    cycle: offerRoot3.cycle,
+    name: offerRoot3.name,
     offerGroup: offerRoot3.offerGroup,
     offerId: offerRoot3._id,
     orderId: orderOfferRoot3._id,
@@ -282,6 +289,8 @@ export async function initMocks(
   } as unknown as ISubscription<ObjectId>;
 
   const subscriptionPendingChild3_1: ISubscription<ObjectId> = {
+    cycle: offerChild3_1.cycle,
+    name: offerChild3_1.name,
     offerGroup: offerChild3_1.offerGroup,
     offerId: offerChild3_1._id,
     orderId: orderOfferPendingChild3_1._id,
@@ -291,6 +300,8 @@ export async function initMocks(
   } as unknown as ISubscription<ObjectId>;
 
   const subscriptionRefusedChild3_2: ISubscription<ObjectId> = {
+    cycle: offerChild3_2.cycle,
+    name: offerChild3_2.name,
     offerGroup: offerChild3_2.offerGroup,
     offerId: offerChild3_2._id,
     orderId: orderOfferRefusedChild3_2._id,

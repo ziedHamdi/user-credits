@@ -32,6 +32,7 @@ interface MongoConnectionAndServer {
 async function launchMongoMemoryDb(): Promise<MongoConnectionAndServer> {
   const mongoMemoryServer = await MongoMemoryServer.create();
   const uri = mongoMemoryServer.getUri();
+  console.log("connection uri: ", mongoMemoryServer.getUri());
   // Set up the MongoDB connection
   const connection: Connection = mongoose.createConnection(uri);
   return { connection, mongoMemoryServer } as MongoConnectionAndServer;

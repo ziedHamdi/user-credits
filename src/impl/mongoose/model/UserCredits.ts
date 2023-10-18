@@ -28,6 +28,7 @@ const subscriptionSchema = new Schema<
     ],
     type: String,
   },
+  name: { required: true, type: String },
   /**
    * Detailed documentation in interface @IOffer.offerGroup
    */
