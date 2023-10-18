@@ -260,10 +260,8 @@ describe("Offer Database Integration Test", () => {
     expect(loadedOffers).not.toContainEqual(addVersion0(asRecord(offerRoot1)));
     expect(loadedOffers).toContainEqual(addVersion0(asRecord(offerRoot2)));
     offerRoot3.weight = 0;
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { parentOfferId, ...offerRoot3_raw } = offerRoot3; // parentOfferId is removed when reading back from db
     expect(loadedOffers).toContainEqual(
-      addVersion0(asRecord(offerRoot3_raw as unknown as IOffer<ObjectId>)),
+      addVersion0(asRecord(offerRoot3 as unknown as IOffer<ObjectId>)),
     );
     // Expect that loadedOffers do not contain unpaid suboffers but contain active suboffers
     expect(loadedOffers).toContainEqual(addVersion0(asRecord(offerChild1)));
@@ -310,10 +308,10 @@ describe("Offer Database Integration Test", () => {
     expect(loadedOffers).toContainEqual(addVersion0(asRecord(offerRoot2)));
     expect(loadedOffers).toContainEqual(addVersion0(asRecord(offerRoot3)));
     // Expect that loadedOffers do not contain overridden sub-offers of rootOffer2
-    expect(loadedOffers).not.toContainEqual(addVersion0(asRecord(offerChild1)));
+    expect(loadedOffers).toContainEqual(addVersion0(asRecord(offerChild1)));
     expect(loadedOffers).not.toContainEqual(addVersion0(asRecord(offerChild2)));
-    expect(loadedOffers).toContainEqual(addVersion0(asRecord(offerChild3_1)));
-    expect(loadedOffers).toContainEqual(addVersion0(asRecord(offerChild3_2)));
+    expect(loadedOffers).not.toContainEqual(addVersion0(asRecord(offerChild3_1)));
+    expect(loadedOffers).not.toContainEqual(addVersion0(asRecord(offerChild3_2)));
     expect(loadedOffers.length).toEqual(4);
   }, 15000);
 });

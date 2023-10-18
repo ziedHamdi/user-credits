@@ -47,10 +47,10 @@ export async function initMocks(
     name: "100 tokens for 100$",
     offerGroup: "ai",
     overridingKey: "100tokens",
-    parentOfferId: undefined, // To be updated below
     price: 100,
     quantityLimit: 200,
     tokenCount: 100,
+    weight: 0,
   } as unknown as IOffer<ObjectId>;
 
   const offerRoot2: IOffer<ObjectId> = {
@@ -60,10 +60,10 @@ export async function initMocks(
     kind: "subscription",
     name: "Starter",
     offerGroup: "subscriptions",
-    parentOfferId: undefined, // To be updated below
     price: 50,
     quantityLimit: 5,
     tokenCount: 0,
+    weight: 0,
   } as unknown as IOffer<ObjectId>;
 
   const offerRoot3: IOffer<ObjectId> = {
@@ -73,10 +73,10 @@ export async function initMocks(
     kind: "subscription",
     name: "Supplement",
     offerGroup: "subscriptions",
-    parentOfferId: undefined, // To be updated below
     price: 20,
     quantityLimit: 10,
     tokenCount: 0,
+    weight: 0,
   } as unknown as IOffer<ObjectId>;
 
   const offerChild1: IOffer<ObjectId> = {
@@ -261,7 +261,6 @@ export async function initMocks(
     starts: new Date(),
     status: "paid",
     tokens: offerRoot1.tokenCount,
-    weight: offerRoot1.weight,
   } as unknown as ISubscription<ObjectId>;
 
   const subscriptionPaidRoot2: ISubscription<ObjectId> = {
@@ -271,7 +270,6 @@ export async function initMocks(
     starts: new Date(),
     status: "paid",
     tokens: offerRoot2.tokenCount,
-    weight: offerRoot2.weight,
   } as unknown as ISubscription<ObjectId>;
 
   const subscriptionPaidRoot3: ISubscription<ObjectId> = {
@@ -281,7 +279,6 @@ export async function initMocks(
     starts: new Date(),
     status: "paid",
     tokens: offerRoot3.tokenCount,
-    weight: offerRoot3.weight,
   } as unknown as ISubscription<ObjectId>;
 
   const subscriptionPendingChild3_1: ISubscription<ObjectId> = {
@@ -291,7 +288,6 @@ export async function initMocks(
     starts: new Date(),
     status: "pending",
     tokens: offerChild3_1.tokenCount,
-    weight: offerChild3_1.weight,
   } as unknown as ISubscription<ObjectId>;
 
   const subscriptionRefusedChild3_2: ISubscription<ObjectId> = {
@@ -301,7 +297,6 @@ export async function initMocks(
     starts: new Date(),
     status: "refused",
     tokens: offerChild3_2.tokenCount,
-    weight: offerChild3_2.weight,
   } as unknown as ISubscription<ObjectId>;
 
   const daoFactoryMock: IDaoFactory<ObjectId> =
