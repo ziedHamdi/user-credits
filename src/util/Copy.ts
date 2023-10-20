@@ -30,7 +30,7 @@ export function copyFieldsWhenMatching<S extends object, T extends object>(
     const matches = toReturn.filter((target) => {
       return equalFields.every((field) => {
         // eslint-disable-next-line no-prototype-builtins
-        if (source.hasOwnProperty(field) && target.hasOwnProperty(field)) {
+        if (source.hasOwnProperty(field)) {
           return (
             // dirty assertion to hack TS
             customEquals(
