@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
     "declaration": true,
-    "outDir": "dist"
+    "outDir": "dist",
+    "module": "CommonJS"
   },
   "exclude": ["coverage", "dist", "node_modules", "test"],
   "extends": "@tsconfig/recommended/tsconfig.json",

@@ -1,6 +1,6 @@
 export * from "./db/dao";
-export { IOffer } from "./db/model";
 export * from "./db/model";
+export { OfferCycle } from "./db/model/IOffer";
 export * from "./errors";
 export { connectToDb } from "./impl/mongoose/connection";
 export { MongooseDaoFactory } from "./impl/mongoose/dao/MongooseDaoFactory";
