@@ -2,7 +2,7 @@
   "compilerOptions": {
     "declaration": true,
     "outDir": "dist",
-    "module": "CommonJS"
+    "module": "ESNext"
   },
   "exclude": ["coverage", "dist", "node_modules", "test"],
   "extends": "@tsconfig/recommended/tsconfig.json",
