@@ -5,6 +5,7 @@
   "license": "MIT",
   "description": "user-credits is an open-source library designed to simplify the implementation of pay-as-you-go features in your web or mobile applications. Credit flow is managed locally instead of being sent back and forth to payment platforms as Stripe, in addition, you own your data without paying the price of long development hours.",
   "main": "./dist/index.js",
+  "module": "./dist/index.js",
   "exports": {
     ".": {
       "import": "./dist/index.js",
