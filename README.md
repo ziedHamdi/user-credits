@@ -1,172 +1,140 @@
-# UserCredits
+# credit-flow-ui Library Readme
 
-UserCredits is an open-source library designed to simplify the implementation of pay-as-you-go features in your web or mobile applications. Whether you're building a subscription-based service, a digital marketplace, or an e-commerce platform, UserCredits provides a flexible and technology-agnostic solution to manage user credits and token-based payments.
+## Introduction
+
+credit-flow-ui is an open-source library designed to simplify the creation of offer and ordering-related screens in web applications. Whether you're building a subscription-based service, a digital marketplace, or an e-commerce platform, credit-flow-ui provides flexible and technology-agnostic solutions for handling user orders and offers. While the primary implementation is in Svelte, the library is adaptable to other view technologies, making it a versatile choice for your projects.
+
+## Table of Contents
+
+- [Getting Started](#getting-started)
+- [Usage](#usage)
+- [Resolver](#resolver)
+- [Element Builder](#element-builder)
+- [Example Implementation](#example-implementation)
+- [Contributing](#contributing)
+- [License](#license)
+
 
 ## Features
 
-- **Token Abstraction:** UserCredits introduces the concept of tokens, which abstracts real-world currency to provide flexibility in pricing models. Users can purchase tokens that can be used to pay for services, products, or subscriptions.
+### Screens and Process Flows
 
-  - **Real-Time Credit Tracking:** Keep track of your users' token balances and consumption in real time. Users can easily view their credit history and remaining tokens.
+credit-flow-ui includes screens and process flows for handling offers, offer groups, order management, payment tracking, and credit consumption. The library's flexibility allows it to be used with various view technologies, such as React, Vue, or others, empowering you to build UIs according to your preferred technology.
 
-  - **Payment Integration:** UserCredits is designed to integrate seamlessly with popular payment gateways, starting with Stripe. Accept payments from your users for token purchases or services rendered.
+### Offers and Offer Groups
 
-  - **Flexible Offers and Subscriptions:** Customize your pricing, discounts, and subscription durations for different offers using the `offer.overridingKey` and `weight` options. These features allow you to create tailored subscription plans, making it easier for users to enjoy lower prices on related offers.
+- **Offers:** With credit-flow-ui, you can create and manage offers, allowing you to define different pricing models, discounts, and customizations. It includes features like offer overriding, enabling tailored pricing for specific user groups or offer groups.
 
-  - **Offer Group Logic:** With the `offer.offerGroup` feature, users can subscribe to multiple offers and services simultaneously while keeping each offer's token balance separated from the others. Conceptually related offers can share the same `offerGroup` value, allowing you to compute the expiry date accordingly. For example, offers in the group 'mobileTV' can offer weekly, monthly, and yearly subscriptions. If a user subscribes for a month and later opts for a yearly subscription while the month hasn't ended, the expiry date of the subscription will combine both durations, providing a seamless and flexible experience.
+- **Offer Groups:** Examples of offer groups include monthly or yearly billing with sale prices for yearly billing or exclusive offers for users who subscribe to a specific offer group, such as "Insurance" or "Online Course."
 
-  - **Multi-Currency Support:** Easily display orders and prices in multiple currencies to accommodate a global audience. While currency conversion is not built-in, UserCredits offers seamless integration to sync and manage international payments effortlessly.
+### Order Management and Payment
 
-## Architecture
+- **Order and Payment:** Users can easily order and pay for offers through credit-flow-ui. The library handles the entire order and payment process, allowing users to follow the progress and confirmation of their payments.
 
-UserCredits is designed with a modular architecture that simplifies development by abstracting the complexities of both database interactions and payment processing libraries. The architecture consists of distinct layers, each with its unique role:
+- **Subscription Management:** credit-flow-ui supports different use cases of offers, including subscription-based offers, consulting offers, and token-based offers.
 
-**1. Declarative Interfaces**
-At the core of UserCredits, you'll find a set of declarative interfaces that define the project's concepts and abstractions.
+### Token-Based Offers
 
-**2. Technology-Agnostic Logic**
-The next layer implements technology-agnostic logic, providing methods for creating orders, managing special offers based on user subscriptions, and handling various payment-related operations and monitoring.
+- **Token-Based Offers:** Token-based offers provide users with a certain number of credits. These credits can be consumed by related services or products. Users can track their credit consumption for each offer they've purchased.
 
-**3. Implementation Layer**
-Each of these layers can be changed without any adaptations needed on the other:
+- **Stats and Monitoring:** credit-flow-ui offers detailed statistics and monitoring capabilities, allowing users to see the current state of each token-based offer, making it easy to keep track of their credit usage.
 
-- **Database Abstraction:** Beneath the technology-agnostic logic, a database implementation is in place, currently using Mongoose and MongoDB. Importantly, adding support for other databases is straightforward. You can create Data Access Objects (DAOs) and schemas that adhere to the abstract concepts defined in the first layer. These implementations are utilized by the second layer, which remains unaware of the underlying database specifics.
+### Multi-Currency Support
 
-  - **Payment Platform Integration:** The final layer serves as a bridge to payment platforms like Stripe. It encapsulates the intricacies of payment operations, allowing UserCredits to seamlessly interact with different payment providers.
-
-All these layers are efficiently managed through Inversion of Control (IoC) principles, leveraging the Awilix library. The end result is a user-friendly and adaptable library that abstracts away the complexities of database and payment integration.
-
-UserCredits provides developers with a single, unified facade interface, simplifying their interactions with the library and shielding them from intricate implementation details. This design encourages easy adaptation to various projects and technologies.
+credit-flow-ui allows you to display orders and prices in multiple currencies, making it suitable for a global audience. While currency conversion is not built-in, credit-flow-ui offers seamless integration to sync and manage international payments effortlessly.
 
 ## Get Started
 
-To start using UserCredits in your project, follow the installation and usage instructions in the [blog series](https://dev.to/zhamdi/architecting-pay-as-you-go-magic-usercredits-winning-formula-4ace).
+To start using credit-flow-ui in your project, follow the installation and usage instructions in the documentation.
 
+# Using credit-flow-ui
 
-# Using UserCredits
-
-UserCredits provides two key interfaces to manage payments, subscriptions, and credits in your application: `IService` and `IPaymentClient`. These interfaces are designed to simplify the integration of payment processing and user credit management while remaining framework-agnostic.
-
-## IService Interface
-
-The `IService` interface is your entry point to user credit management and offer handling. It abstracts complex operations for user-specific offers and subscriptions. To use it, follow these steps:
-
-### 1. Create an Instance
-
-Instantiate the `Service` class, passing in the necessary dependencies:
-
-```javascript
-const service = new Service(daoFactory, defaultCurrency);
-```
-
-### 2. Load User Offers
-
-Load user-specific offers, applying overriding logic for suboffers:
-
-```javascript
-const offers = await service.loadOffers(userId);
-```
-
-### 3. Create an Order
-
-Create an order for a user to purchase an offer:
-
-```javascript
-const order = await service.createOrder(offerId, userId);
-```
-
-### 4. Check Subscription Status
-
-Check if a user is already subscribed to a specific offer:
-
-```javascript
-const existingSubscription = await service.isUserAlreadySubscribed(userId, offerId);
-```
-
-### 5. Get User Credits
-
-Retrieve user credits for a given user. User credits represent a list of credits grouped by offerGroup, allowing users to consume credits within each group independently of others. Each offerGroup contains activated offers with their respective start and expiry dates, along with the associated tokens.
-
-```javascript
-const userCredits = await service.getUserCredits(userId);
-```
-
-## IPaymentClient Interface
-
-The `IPaymentClient` interface abstracts payment processing operations. It allows you to integrate payment gateways seamlessly without locking your application to a specific technology. To use it, follow these steps:
-
-### 1. Create an Instance
-
-Instantiate a class implementing the `IPaymentClient` interface, providing the required configurations:
-
-```javascript
-const paymentClient = new MyPaymentClient(config);
-```
-
-### 2. Execute Payment
-
-Execute a payment and handle the payment execution status:
-
-```javascript
-const updatedOrder = await paymentClient.afterPaymentExecuted(order);
-```
-
-### 3. Check User Balance
-
-Check a user's balance before processing payments:
-
-```javascript
-const balance = await paymentClient.checkUserBalance(userId);
-```
-
-### 4. Create Payment Intent
-
-Create a payment intent to handle transactions:
-
-```javascript
-const paymentIntent = await paymentClient.createPaymentIntent(order);
-```
-
-### 5. Handle Webhooks
-
-Handle payment-related webhooks securely:
-
-```javascript
-paymentClient.handleWebhook(eventPayload, webhookSecret);
-```
-
-By leveraging the `IService` and `IPaymentClient` interfaces, you can seamlessly manage user credits, subscriptions, and payments in your application while remaining flexible and adaptable to various technologies.
-
-
-## Testing
-We are using the project mongodb-memory-server to run an in memory mongodb for tests. Which generates the following warning
-
-`(node:36336) ExperimentalWarning: VM Modules is an experimental feature and might change at any time`
-
-### Prerequisites
-Jest must be launched with the node option `--experimental-vm-modules` also to enable ecma6 syntax in config files
-#### From the console:
-here's an example of how to add that param from console:
-`node --experimental-vm-modules node_modules/jest/bin/jest.js test/db/dao/IOfferDao.test.ts --testNamePattern="it() test name"
-`
-Or `node --experimental-vm-modules node_modules/jest/bin/jest.js`
-
-### IOC
-Because of parallel processes to access mongodb in Jest, we were obliged to create multiple simultaneous in memory mongodb instances to avoid inconsistencies in saved data between different tests.
-Therefore, we enabled multiple simultaneous connections to mongodb through mongoose as described in https://mongoosejs.com/docs/connections.html#multiple_connections.
-To adapt to that constraint, TestContainerSingleton.getInstance() now accepts a singleton:boolean parameter to tell it if it has to be a singleton or a prototype (on false value). See the file testContainer.ts for reference
-
-### Timeout bug
-There's a bug in MongoMemoryServer taking too long to execute. See:
-https://github.com/nodkz/mongodb-memory-server/issues/323
+credit-flow-ui provides a versatile set of features for creating screens and process flows related to offers, offer groups, order management, and payment processing. It's designed to be adaptable to various view technologies, making it a valuable addition to your web application projects.
 
 ## Contributing
 
-UserCredits is an open-source project, and we welcome contributions from the community. Whether you want to add new features, improve documentation, or report issues, your help is valuable. Feel free to [contact me](https://twitter.com/zhamdi) or to fork the project.
+credit-flow-ui is an open-source project, and we welcome contributions from the community. Whether you want to add new features, improve documentation, or report issues, your help is valuable. Feel free to [contact me](https://twitter.com/zhamdi) or to fork the project.
 
 ## License
 
-UserCredits is released under the [MIT License](https://github.com/ziedHamdi/UserCredits/blob/master/LICENSE). Feel free to use it in your projects, commercial or otherwise.
+credit-flow-ui is released under the [MIT License](https://github.com/ziedHamdi/credit-flow-ui/blob/master/LICENSE). Feel free to use it in your projects, commercial or otherwise.
+
+
+
+
+## Getting Started
+
+To start using the credit-flow-ui, follow these simple steps:
+
+1. Clone the repository: `git clone https://github.com/ziedHamdi/svelte-user-credits`
+2. Install the library: `npm install credit-flow-ui`
+3. Include the library in your project: `import { Resolver, ElementBuilder } from 'credit-flow-ui';`
+4. Initialize the resolver and element builder:
+
+```javascript
+const resolver = new Resolver();
+const elementBuilder = new ElementBuilder();
+```
+
+Now you're ready to start using the credit-flow-ui in your project.
+
+## Usage
+
+The credit-flow-ui's primary goal is to enable you to define how data should be represented in a UI-agnostic manner. It provides two essential components, Resolver and Element Builder, to achieve this goal.
+
+### Resolver
+
+The Resolver is at the core of credit-flow-ui. It allows you to resolve data and define how it should be presented based on a given domain. Here's how you can use it:
+
+```javascript
+import { Resolver } from 'credit-flow-ui';
+
+const resolver = new Resolver();
+
+// To resolve an offer
+const offerData = {/* Your offer data here */};
+const offerProps = resolver.getObject({ type: 'Offer' }, offerData);
+```
+
+### Element Builder
+
+Element Builder is an abstraction layer that handles the data-to-UI transformation of each field individually. It allows you to define how each field should be presented, including default values. Here's how you can use it:
+
+```javascript
+import { ElementBuilder } from 'credit-flow-ui';
+
+const elementBuilder = new ElementBuilder();
+
+// Build properties for an element
+const elementProps = elementBuilder.buildElementProps('div', data, 'my-element-class');
+
+// Build properties for a list of elements
+const listProps = elementBuilder.buildListBlockProps('ul', listData, 'my-list-class');
+
+// Transform data to a string representation
+const stringValue = elementBuilder.asString(data);
+```
+
+## Example Implementation
+
+The credit-flow-ui offers a practical example for implementing offer-related screens in a UI-agnostic way. You can adapt this example to your specific use case. For full details, please refer to the example implementation in the source code.
+
+## Contributing
+
+credit-flow-ui is an open-source project, and we welcome contributions from the community. If you'd like to contribute, please follow our [contribution guidelines](CONTRIBUTING.md).
+
+## License
+
+credit-flow-ui is licensed under the MIT License. You can find the full license details in the [LICENSE](LICENSE) file.
+
+We hope you find credit-flow-ui useful for your project. If you have any questions or need assistance, please don't hesitate to reach out to us.
+
+Happy coding with credit-flow-ui! 🚀
 
 ---
 
-[![GitHub stars](https://img.shields.io/github/stars/ziedHamdi/UserCredits?style=social)](https://github.com/ziedHamdi/UserCredits/stargazers)
+[GitHub Repository](https://github.com/your-organization/credit-flow-ui)
+
+[API Documentation](https://credit-flow-ui-docs.com/api)
+
+[User Guide](https://credit-flow-ui-docs.com/guide)
