@@ -1,0 +1,56 @@
+{
+  "name": "test-vite-ts",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "user-credits is an open-source library designed to simplify the implementation of pay-as-you-go features in your web or mobile applications. Credit flow is managed locally instead of being sent back and forth to payment platforms as Stripe, in addition, you own your data without paying the price of long development hours.",
+  "scripts": {
+    "buildX": "rm -rf ./dist && npx tsc",
+    "build": "rmdir /s /q .\\dist & tsc & vite build",
+    "buildTrace": "rmdir /s /q .\\dist & tsc --traceResolution & vite build",
+    "build:watch": "tsc & vite build --watch",
+    "lint": "npx eslint --fix .",
+    "prepublishOnly": "npm run lint && npm run build && npm test",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage --coverageDirectory='coverage'",
+    "dev": "vite"
+  },
+  "keywords": [
+    "user-credits",
+    "credit-flow",
+    "credits-balance",
+    "payment-screens"
+  ],
+  "exports": {
+    ".": {
+      "import": "./dist/test-vite-ts.js",
+      "require": "./dist/test-vite-ts.js"
+    }
+  },
+  "main": "./dist/test-vite-ts.js",
+  "module": "./dist/test-vite-ts.js",
+  "typings": "./dist/test-vite-ts.ts",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "dependencies": {
+    "awilix": "^9.0.0",
+    "bson": "^6.1.0",
+    "dotenv": "^16.3.1",
+    "mongoose": "^7.5.3",
+    "stripe": "^13.9.0"
+  },
+  "devDependencies": {
+    "@rollup/plugin-typescript": "^11.1.5",
+    "@types/jest": "^29.5.6",
+    "@types/node": "^20.8.9",
+    "jest": "^29.7.0",
+    "prettier": "3.0.3",
+    "rollup-plugin-typescript-paths": "^1.4.0",
+    "ts-jest": "^29.1.1",
+    "tslib": "^2.4.0",
+    "typescript": "^5.0.2",
+    "vite": "^4.4.5",
+    "vite-plugin-dts": "^3.6.2"
+  }
+}
