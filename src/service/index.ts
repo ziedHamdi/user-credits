@@ -1,5 +1,5 @@
 export { BaseService } from "./BaseService";
-export { IConfigReader } from "./config/IConfigReader";
-export { IPaymentClient } from "./IPaymentClient";
-export { IService } from "./IService";
+export type { IConfigReader } from "./config/IConfigReader";
+export type { IPaymentClient } from "./IPaymentClient";
+export type { IService } from "./IService";
 export { PaymentService } from "./PaymentService";

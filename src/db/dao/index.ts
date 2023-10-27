@@ -1,8 +1,8 @@
 // index.ts
 
-export { IBaseDao } from "./IBaseDao";
-export { IDaoFactory } from "./IDaoFactory";
-export { IOfferDao } from "./IOfferDao";
-export { IOrderDao } from "./IOrderDao";
-export { ITokenTimetableDao } from "./ITokenTimetableDao";
-export { IUserCreditsDao } from "./IUserCreditsDao";
+export type { IBaseDao } from "./IBaseDao";
+export type { IDaoFactory } from "./IDaoFactory";
+export type { IOfferDao } from "./IOfferDao";
+export type { IOrderDao } from "./IOrderDao";
+export type { ITokenTimetableDao } from "./ITokenTimetableDao";
+export type { IUserCreditsDao } from "./IUserCreditsDao";

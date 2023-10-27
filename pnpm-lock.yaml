@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   awilix:
-    specifier: ^8.0.1
-    version: 8.0.1
+    specifier: ^9.0.0
+    version: 9.0.0
   bson:
     specifier: ^6.1.0
     version: 6.1.0
@@ -2170,9 +2170,9 @@ packages:
       tslib: 2.6.2
     dev: true
 
-  /awilix@8.0.1:
-    resolution: {integrity: sha512-zDSp4R204scvQIDb2GMoWigzXemn0+3AKKIAt543T9v2h7lmoypvkmcx1W/Jet/nm27R1N1AsqrsYVviAR9KrA==}
-    engines: {node: '>=12.0.0'}
+  /awilix@9.0.0:
+    resolution: {integrity: sha512-DVhdT1sbCCjGBvJbNKJaPSh+JVvgzUV0Rbdq3r3/MqxDgm7e/zs8aAhWI8O8nFNFvUYFtJPqWsFldyzC2rpMnA==}
+    engines: {node: '>=14.0.0'}
     dependencies:
       camel-case: 4.1.2
       fast-glob: 3.3.1
