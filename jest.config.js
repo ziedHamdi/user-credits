@@ -1,4 +1,13 @@
-module.exports = {
-    preset: 'ts-jest',
-    testEnvironment: 'jsdom',
+export default {
+  globalSetup: "<rootDir>/test/config/jest/globalSetup.js",
+
+  // Other Jest configuration options...
+  preset: "ts-jest",
+  // Specify your global setup file
+  setupFilesAfterEnv: ["<rootDir>/test/config/jest/setupBeforeAll.js"],
+
+  testEnvironment: "node",
+  testMatch: ["**/test/**/*.ts?(x)", "**/?(*.)+(spec|test).ts?(x)"],
+  testPathIgnorePatterns: ["extend", "mock", "config"],
+  transform: {},
 };

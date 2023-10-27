@@ -18,8 +18,11 @@
     "baseUrl": "./",
     "paths": {
       "~/*": ["src/*"]
-    }
+    },
+    "types": ["reflect-metadata", "jest"],
+    "typeRoots": ["./types", "./node_modules/@types"]
   },
   "include": ["./src"],
-  "exclude": ["node_modules"]
+  "exclude": ["coverage", "dist", "node_modules", "test"],
+  "extends": "@tsconfig/recommended/tsconfig.json"
 }
