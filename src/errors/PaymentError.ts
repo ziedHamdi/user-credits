@@ -8,5 +8,6 @@ export class PaymentError<
     public originalError?: E,
   ) {
     super(message, originalError);
+    Object.setPrototypeOf(this, PaymentError.prototype);
   }
 }

@@ -5,6 +5,8 @@ export class AlreadySubscribedError extends Error {
 
   constructor(message: string, conflictingOrder: IMongooseOrder | null = null) {
     super(message);
+    Object.setPrototypeOf(this, AlreadySubscribedError.prototype);
+
     this.name = "AlreadySubscribedError";
     this.conflictingOrder = conflictingOrder;
   }

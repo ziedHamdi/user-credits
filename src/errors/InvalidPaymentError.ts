@@ -24,5 +24,6 @@ export class InvalidPaymentError<
     } as PaymentErrorDetails<E>,
   ) {
     super(message, options.originalError);
+    Object.setPrototypeOf(this, InvalidPaymentError.prototype);
   }
 }

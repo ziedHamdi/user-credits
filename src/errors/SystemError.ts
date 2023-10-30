@@ -6,5 +6,6 @@ export class SystemError<E extends Error | undefined> extends BaseError<E> {
     public originalError?: E,
   ) {
     super(message, originalError);
+    Object.setPrototypeOf(this, SystemError.prototype);
   }
 }
