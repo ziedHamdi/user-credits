@@ -8,7 +8,7 @@ import { IMongooseUserCredits } from "../model/UserCredits";
 import { BaseMongooseDao } from "./BaseMongooseDao";
 
 export class UserCreditsDao
-  extends BaseMongooseDao<IMongooseUserCredits>
+  extends BaseMongooseDao<IMongooseUserCredits, IUserCredits<ObjectId>>
   implements IUserCreditsDao<ObjectId, IMongooseUserCredits>
 {
   constructor(connection: Connection) {
