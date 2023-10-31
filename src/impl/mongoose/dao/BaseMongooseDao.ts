@@ -47,7 +47,6 @@ export class BaseMongooseDao<D extends Document, A extends BaseEntity<ObjectId>>
   }
 
   build(entry: object): D {
-    console.log(this.model);
     return this.model.build(entry as A);
   }
 

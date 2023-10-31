@@ -25,7 +25,7 @@ import {
   newObjectId,
   ObjectId,
 } from "../../service/mocks/BaseService.mocks";
-import { prefillOffersForLoading } from "../mongoose/mocks/loadOfferPrefill";
+import { prefillOffersForLoading } from "../mongoose/mocks/loadOffersTestsPrefill";
 
 class ExtendedBaseService<K extends MinimalId> extends BaseService<K> {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -315,7 +315,7 @@ describe("Offer Database Integration Test", () => {
   }, 15000);
 });
 
-describe("OfferDao", () => {
+describe("OfferDao specific methods", () => {
   let mongooseDaoFactory: IDaoFactory<ObjectId>;
   let mongoMemoryServer: MongoMemoryServer;
   let connection: Connection;
@@ -368,12 +368,12 @@ describe("OfferDao", () => {
   // Test loading sub-group offers
   describe("loadSubGroupOffers", () => {
     it("should load sub-offers based on parentOfferGroup", async () => {
-      const parentOfferGroup = "VIP";
+      const parentOfferGroup = "EarlyBird";
       const subGroupOffers =
         await offerDao.loadSubGroupOffers(parentOfferGroup);
       // Write your Jest assertions to check if the sub-group offers were loaded correctly
       expect(Array.isArray(subGroupOffers)).toBe(true);
-      expect(subGroupOffers.length).toBeGreaterThan(0);
+      expect(subGroupOffers.length).toBe(3);
     });
 
     // Add more test cases for different scenarios
