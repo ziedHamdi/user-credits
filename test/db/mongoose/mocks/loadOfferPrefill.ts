@@ -1,6 +1,6 @@
-import type { IOffer, IOfferDao } from "../../../src";
-import { IDaoFactory } from "../../../src";
-import { newObjectId, ObjectId } from "../../service/mocks/BaseService.mocks";
+import type { IOffer, IOfferDao } from "../../../../src";
+import { IDaoFactory } from "../../../../src";
+import { newObjectId, ObjectId } from "../../../service/mocks/BaseService.mocks";
 
 export async function prefillOffersForLoading(
   daoFactory: IDaoFactory<ObjectId>,
@@ -35,7 +35,7 @@ export async function prefillOffersForLoading(
 }
 
 async function saveOffer(
-  offerDao: IOfferDao<ObjectId, IOffer<ObjectId>, IOffer<ObjectId>>,
+  offerDao: IOfferDao<ObjectId, IOffer<ObjectId>>,
   mods: Partial<IOffer<ObjectId>>,
   fixMods: Partial<IOffer<ObjectId>> = {},
 ): Promise<IOffer<ObjectId>> {
@@ -43,7 +43,7 @@ async function saveOffer(
     _id: newObjectId(),
     cycle: "monthly",
     hasSubOffers: false, // This offer has no sub-offers
-    kind: "subscriptions",
+    kind: "subscription",
     name: "Free",
     offerGroup: "standard",
     overridingKey: "free",
@@ -64,7 +64,7 @@ async function saveOffer(
 }
 
 async function saveMonthlyStandard(
-  offerDao: IOfferDao<ObjectId, IOffer<ObjectId>, IOffer<ObjectId>>,
+  offerDao: IOfferDao<ObjectId, IOffer<ObjectId>>,
 ) {
   await saveOffer(offerDao, {
     name: "Startup",
@@ -86,7 +86,7 @@ async function saveMonthlyStandard(
 }
 
 async function saveMonthlyStandardVIP(
-  offerDao: IOfferDao<ObjectId, IOffer<ObjectId>, IOffer<ObjectId>>,
+  offerDao: IOfferDao<ObjectId, IOffer<ObjectId>>,
   monthlyEnterpriseRegular: IOffer<ObjectId>,
 ) {
   const fix = {
@@ -131,7 +131,7 @@ async function saveMonthlyStandardVIP(
 }
 
 async function saveYearlyStandard(
-  offerDao: IOfferDao<ObjectId, IOffer<ObjectId>, IOffer<ObjectId>>,
+  offerDao: IOfferDao<ObjectId, IOffer<ObjectId>>,
 ) {
   const fix = {
     cycle: "yearly", // ends at the end of the year
@@ -168,7 +168,7 @@ async function saveYearlyStandard(
 }
 
 async function saveYearlyVIP(
-  offerDao: IOfferDao<ObjectId, IOffer<ObjectId>, IOffer<ObjectId>>,
+  offerDao: IOfferDao<ObjectId, IOffer<ObjectId>>,
   yearlyEnterpriseRegular: IOffer<ObjectId>,
 ) {
   const fix = {
@@ -236,7 +236,7 @@ async function saveMonthlyEarlyBird(
 }
 
 async function saveMonthlyEarlyBirdVIP(
-  offerDao: IOfferDao<ObjectId, IOffer<ObjectId>, IOffer<ObjectId>>,
+  offerDao: IOfferDao<ObjectId, IOffer<ObjectId>>,
   monthlyEarlyBird: IOffer<ObjectId>,
 ) {
   const fix = {
@@ -319,7 +319,7 @@ async function saveYearlyEarlyBirdVIP(
 }
 
 async function saveYearlyEarlyBird(
-  offerDao: IOfferDao<ObjectId, IOffer<ObjectId>, IOffer<ObjectId>>,
+  offerDao: IOfferDao<ObjectId, IOffer<ObjectId>>,
 ) {
   const fix = {
     cycle: "yearly", // ends at the end of the year

@@ -1,4 +1,9 @@
 export interface IBaseDao<D extends object> {
+  /**
+   * Used to construct an instance of a document from a raw object
+   * @param D
+   */
+  build(attr: object): D;
   // Count documents that match a query
   count(query: object): Promise<number>;
 

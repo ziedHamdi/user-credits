@@ -1,10 +1,10 @@
 import { Connection, Types } from "mongoose";
 type ObjectId = Types.ObjectId;
 
-import { IOfferDao } from "../../../db/dao/IOfferDao";
-import { IOffer } from "../../../db/model";
+import type { IFindOffersParams, IOfferDao } from "../../../db/dao/IOfferDao";
+import type { IOffer } from "../../../db/model";
 import { Offer } from "../model";
-import { IMongooseOffer } from "../model/Offer";
+import type { IMongooseOffer } from "../model/Offer";
 import { BaseMongooseDao } from "./BaseMongooseDao";
 
 export class OfferDao
@@ -29,5 +29,33 @@ export class OfferDao
   ): Promise<IMongooseOffer[]> {
     // Use find() to get sub-offers based on offerGroup and parentOfferGroup
     return this.find({ parentOfferGroup });
+  }
+
+  async loadOffers(
+    params: IFindOffersParams<ObjectId>,
+  ): Promise<IMongooseOffer[]> {
+    const query = {} as unknown as IOffer<ObjectId>;
+
+    if (params.offerGroup) {
+      query.offerGroup = params.offerGroup;
+    }
+
+    if (params.parentOfferGroup) {
+      query.parentOfferGroup = params.parentOfferGroup;
+    }
+
+    if (params.parentOfferId) {
+      query.parentOfferId = params.parentOfferId;
+    }
+
+    if (params.allTags) {
+      // Use $all operator to match all provided tags
+      query.tags = { $all: params.tags } as unknown as string[]; // obliged to ignore
+    } else {
+      // Use $in operator to match any of the provided tags
+      query.tags = { $in: params.tags } as unknown as string[]; // obliged to ignore
+    }
+
+    return this.find(query);
   }
 }

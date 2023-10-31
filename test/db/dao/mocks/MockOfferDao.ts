@@ -1,8 +1,9 @@
 import { Types } from "mongoose";
 type ObjectId = Types.ObjectId;
 
-import { IOfferDao } from "../../../../src/db/dao";
-import { IOffer } from "../../../../src/db/model";
+import type { IOfferDao } from "../../../../src/db/dao";
+import type { IFindOffersParams } from "../../../../src/db/dao/IOfferDao";
+import type { IOffer } from "../../../../src/db/model";
 import { MockBaseDao } from "./MockBaseDao";
 
 export class MockOfferDao
@@ -24,4 +25,10 @@ export class MockOfferDao
   public loadSubOffers = jest.fn(
     (): Promise<IOffer<ObjectId>[]> => Promise.resolve([]),
   );
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  loadOffers(params: IFindOffersParams<ObjectId>): Promise<IOffer<ObjectId>[]> {
+    return Promise.resolve([]);
+  }
+
 }

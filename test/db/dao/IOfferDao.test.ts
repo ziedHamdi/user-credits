@@ -25,7 +25,7 @@ import {
   newObjectId,
   ObjectId,
 } from "../../service/mocks/BaseService.mocks";
-import { prefillOffersForLoading } from "../mongoose/loadOfferPrefill";
+import { prefillOffersForLoading } from "../mongoose/mocks/loadOfferPrefill";
 
 class ExtendedBaseService<K extends MinimalId> extends BaseService<K> {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -319,7 +319,7 @@ describe("OfferDao", () => {
   let mongooseDaoFactory: IDaoFactory<ObjectId>;
   let mongoMemoryServer: MongoMemoryServer;
   let connection: Connection;
-  let offerDao: IOfferDao<ObjectId, IMongooseOffer, IOffer<ObjectId>>;
+  let offerDao: IOfferDao<ObjectId, IMongooseOffer>;
   let parentIdOffers: IOffer<ObjectId>[];
 
   beforeEach(async () => {
@@ -328,7 +328,7 @@ describe("OfferDao", () => {
     ({ connection, mongoMemoryServer, mongooseDaoFactory } = mocks);
     offerDao = mongooseDaoFactory.getOfferDao() as IOfferDao<
       ObjectId,
-      IMongooseOffer, IOffer<ObjectId>
+      IMongooseOffer
     >;
     ({ parentIdOffers } = await prefillOffersForLoading(mongooseDaoFactory));
   });

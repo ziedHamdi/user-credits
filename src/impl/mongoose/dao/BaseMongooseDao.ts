@@ -22,15 +22,15 @@ export interface EntityModel<D extends Document, A extends BaseEntity<ObjectId>>
 export class BaseMongooseDao<D extends Document, A extends BaseEntity<ObjectId>>
   implements IBaseDao<D>
 {
-  model: EntityModel<D, A>;
+  model: EntityModel<D, A> & Model<D>;
 
   constructor(connection: Connection, schema: Schema<D>, name: string) {
-    this.model = connection.model<D, EntityModel<D, A>>(name, schema, name);
-    const Entity = this.model;
     // Enrich the schema with a build method that constructs a mongoose Document from a BaseEntity
     schema.statics.build = (attr: A) => {
-      return new Entity(attr);
+      return new Entity(attr); // Even if it's declared before it knows what is Entity, it works as it loads that at the first call.
     };
+    this.model = connection.model<D, EntityModel<D, A>>(name, schema, name);
+    const Entity = this.model;
   }
 
   // Wrap a method with try-catch and throw SystemError on error
@@ -44,6 +44,11 @@ export class BaseMongooseDao<D extends Document, A extends BaseEntity<ObjectId>>
       const errorMessage = `Error in ${this.constructor.name}.${methodName}`;
       throw new SystemError(errorMessage, err as Error);
     }
+  }
+
+  build(entry: object): D {
+    console.log(this.model);
+    return this.model.build(entry as A);
   }
 
   // Find document by ID
