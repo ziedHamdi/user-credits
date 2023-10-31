@@ -5,7 +5,7 @@ import expect from "expect";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import { Connection } from "mongoose";
 
-import { IDaoFactory } from "../../../src/db/dao";
+import { IDaoFactory, IOfferDao } from "../../../src/db/dao";
 import {
   IOffer,
   IOrder,
@@ -14,6 +14,7 @@ import {
   MinimalId,
 } from "../../../src/db/model";
 import { IActivatedOffer } from "../../../src/db/model/IUserCredits";
+import { IMongooseOffer } from "../../../src/impl/mongoose/model/Offer";
 import { BaseService } from "../../../src/service/BaseService";
 import { copyFieldsWhenMatching } from "../../../src/util/Copy";
 // eslint-disable-next-line no-unused-vars,@typescript-eslint/no-unused-vars
@@ -24,6 +25,7 @@ import {
   newObjectId,
   ObjectId,
 } from "../../service/mocks/BaseService.mocks";
+import { prefillOffersForLoading } from "../mongoose/loadOfferPrefill";
 
 class ExtendedBaseService<K extends MinimalId> extends BaseService<K> {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -311,4 +313,84 @@ describe("Offer Database Integration Test", () => {
     );
     expect(loadedOffers.length).toEqual(4);
   }, 15000);
+});
+
+describe("OfferDao", () => {
+  let mongooseDaoFactory: IDaoFactory<ObjectId>;
+  let mongoMemoryServer: MongoMemoryServer;
+  let connection: Connection;
+  let offerDao: IOfferDao<ObjectId, IMongooseOffer, IOffer<ObjectId>>;
+  let parentIdOffers: IOffer<ObjectId>[];
+
+  beforeEach(async () => {
+    // Initialize mocks and dependencies here.
+    const mocks = await initMocks(false);
+    ({ connection, mongoMemoryServer, mongooseDaoFactory } = mocks);
+    offerDao = mongooseDaoFactory.getOfferDao() as IOfferDao<
+      ObjectId,
+      IMongooseOffer, IOffer<ObjectId>
+    >;
+    ({ parentIdOffers } = await prefillOffersForLoading(mongooseDaoFactory));
+  });
+
+  afterEach(async () => {
+    await mongoMemoryServer.stop(false);
+    await connection.close();
+  });
+
+  // Test loading tagged offers
+  describe("loadTaggedOffers", () => {
+    it("should load offers with specific tags", async () => {
+      const tagsToLoad = ["subscription", "monthly"];
+      const offers = await offerDao.loadTaggedOffers(tagsToLoad);
+      // Write your Jest assertions to check if the offers were loaded correctly
+      expect(Array.isArray(offers)).toBe(true);
+      expect(offers.length).toBeGreaterThan(0);
+    });
+
+    // Add more test cases for different scenarios
+  });
+
+  // Test loading sub-offers
+  describe("loadSubOffers", () => {
+    it("should load sub-offers for a parent offer", async () => {
+      // Insert a parent offer first
+      const parentOfferId = parentIdOffers[0]._id;
+      const subOffers = await offerDao.loadSubOffers(parentOfferId);
+      // Write your Jest assertions to check if the sub-offers were loaded correctly
+      expect(Array.isArray(subOffers)).toBe(true);
+      expect(subOffers.length).toBeGreaterThan(0);
+    });
+
+    // Add more test cases for different scenarios
+  });
+
+  // Test loading sub-group offers
+  describe("loadSubGroupOffers", () => {
+    it("should load sub-offers based on parentOfferGroup", async () => {
+      const parentOfferGroup = "VIP";
+      const subGroupOffers =
+        await offerDao.loadSubGroupOffers(parentOfferGroup);
+      // Write your Jest assertions to check if the sub-group offers were loaded correctly
+      expect(Array.isArray(subGroupOffers)).toBe(true);
+      expect(subGroupOffers.length).toBeGreaterThan(0);
+    });
+
+    // Add more test cases for different scenarios
+  });
+
+  // Test loading offers based on query parameters
+  describe("loadOffers", () => {
+    it("should load offers based on query parameters", async () => {
+      const params = {
+        allTags: true,
+        offerGroup: "standard",
+        tags: ["subscription", "monthly"],
+      };
+      const offers = await offerDao.loadOffers(params);
+      // Write your Jest assertions to check if the offers were loaded correctly
+      expect(Array.isArray(offers)).toBe(true);
+      expect(offers.length).toBeGreaterThan(0);
+    });
+  });
 });
