@@ -17,6 +17,19 @@ export type OfferCycle =
  */
 export interface IOffer<K extends MinimalId> extends BaseEntity<K> {
   /**
+   * Method to set offers as children of this offer based on offerGroup
+   * @param childIds
+   * @param safeMode
+   */
+  asGroupChildren(childIds: IOffer<K>[], safeMode?: boolean): void;
+
+  /**
+   * Method to set offers as children of this offer based on _id
+   * @param childIds
+   * @param safeMode
+   */
+  asOfferChildren(childIds: IOffer<K>[], safeMode?: boolean): void;
+  /**
    * Only allowed to have a value when cycle=custom. Expresses the order duration before expiry in seconds.
    */
   customCycle: number | null;
@@ -89,10 +102,12 @@ export interface IOffer<K extends MinimalId> extends BaseEntity<K> {
    * and only one of these tag value for the other offers ("monthly" or "yearly").
    */
   tags: string[];
+
   /**
    * How many tokens this offer attributes to the user when purchased
    */
   tokenCount: number | null;
+
   /**
    * This field works in conjunction with @field( overridingKey ): when two overrides conflict, the one with the higher
    * @field( weight ) is picked.

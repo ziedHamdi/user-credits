@@ -50,4 +50,38 @@ const offerSchema = new Schema<IMongooseOffer>({
   weight: { default: 0, type: Number },
 });
 
+// Add instance methods to your Mongoose schema
+offerSchema.methods.asOfferChildren = function (
+  childOffers: IMongooseOffer[],
+  safeMode = true,
+) {
+  this.hasSubOffers = true;
+
+  for (const childOffer of childOffers) {
+    if (safeMode && this.parentOfferId) {
+      throw new Error(`Offer ${this._id} already has a parent. To override, pass safeMode = false`);
+    }
+    childOffer.parentOfferId = this._id;
+  }
+};
+
+offerSchema.methods.asGroupChildren = function (
+  childOffers: IMongooseOffer[],
+  safeMode = true,
+) {
+  if (!this.offerGroup) {
+    throw new Error(`Offer ${this._id} doesn't have an offerGroup. Can't associate offer group children to it`);
+  }
+
+  this.hasSubGroupOffers = true;
+
+  for (const childOffer of childOffers) {
+    if (safeMode && childOffer.parentOfferGroup) {
+      throw new Error(`Offer ${this._id} already has a parent group. To override, pass safeMode = false`);
+    }
+
+    childOffer.parentOfferGroup = this.offerGroup;
+  }
+};
+
 export default offerSchema;
