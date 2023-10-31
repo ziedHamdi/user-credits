@@ -315,6 +315,10 @@ describe("Offer Database Integration Test", () => {
   }, 15000);
 });
 
+function offerNames(offers: IMongooseOffer[]) {
+  return offers.map((offer) => offer.name );
+}
+
 describe("OfferDao specific methods", () => {
   let mongooseDaoFactory: IDaoFactory<ObjectId>;
   let mongoMemoryServer: MongoMemoryServer;
@@ -348,7 +352,6 @@ describe("OfferDao specific methods", () => {
       expect(offers.length).toBeGreaterThan(0);
     });
 
-    // Add more test cases for different scenarios
   });
 
   // Test loading sub-offers
@@ -390,7 +393,31 @@ describe("OfferDao specific methods", () => {
       const offers = await offerDao.loadOffers(params);
       // Write your Jest assertions to check if the offers were loaded correctly
       expect(Array.isArray(offers)).toBe(true);
-      expect(offers.length).toBeGreaterThan(0);
+      expect(offerNames(offers)).toEqual(expect.arrayContaining(["Free", "Startup", "Team", "Enterprise"]));
+      expect(offers.length).toBe(4);
+    });
+    it("should load offers based on null query parameters", async () => {
+      const params = {
+        allTags: true,
+        parentId: null,
+        tags: ["subscription", "monthly"],
+      };
+      const offers = await offerDao.loadOffers(params);
+      // Write your Jest assertions to check if the offers were loaded correctly
+      expect(Array.isArray(offers)).toBe(true);
+      expect(offerNames(offers)).toEqual(["Free", "Startup", "Team", "Enterprise", "Early bird", "Early Bird Startup", "Early Bird Team", "Early Bird Enterprise",]);
+      expect(offers.length).toBe(8);
+    });
+    it("should load offers based on OR conditino for tags if not present query parameters", async () => {
+      const params = {
+        allTags: false,
+        parentId: null,
+        tags: ["subscription", "monthly"],
+      };
+      const offers = await offerDao.loadOffers(params);
+      // Write your Jest assertions to check if the offers were loaded correctly
+      expect(Array.isArray(offers)).toBe(true);
+      expect(offers.length).toBe(14);
     });
   });
 });

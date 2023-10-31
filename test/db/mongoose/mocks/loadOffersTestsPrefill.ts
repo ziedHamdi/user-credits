@@ -103,11 +103,10 @@ export async function prefillOffersForLoading(
   await saveYearlyEarlyBird(offerDao);
   // -------------------- Early Bird Enterprise subscriptions exclusive offers for yearly subscriptions -------------------
   await saveYearlyEarlyBirdVIP(offerDao);
+
+  // console.log("Inserted offers:", await offerDao.find({}));
   return {
-    parentIdOffers: [
-      monthlyEnterpriseRegular,
-      yearlyEnterpriseRegular,
-    ],
+    parentIdOffers: [monthlyEnterpriseRegular, yearlyEnterpriseRegular],
   };
 }
 
@@ -289,27 +288,45 @@ async function saveYearlyVIP(
 async function saveMonthlyEarlyBird(
   offerDao: IOfferDao<ObjectId, IOffer<ObjectId>>,
 ) {
-  await saveOffer(offerDao, {
-    name: "Early bird",
+  const fix = {
     offerGroup: "EarlyBird",
-    overridingKey: "free",
-    tokenCount: 1000,
-  });
-  await saveOffer(offerDao, {
-    name: "Early Bird Startup",
-    overridingKey: "Startup",
-    price: 19,
-  });
-  await saveOffer(offerDao, {
-    name: "Early Bird Team",
-    overridingKey: "Team",
-    price: 39,
-  });
-  const monthlyEarlyBird = await saveOffer(offerDao, {
-    name: "Early Bird Enterprise",
-    overridingKey: "Enterprise",
-    price: 99,
-  });
+  } as Partial<IOffer<ObjectId>>;
+  await saveOffer(
+    offerDao,
+    {
+      name: "Early bird",
+      overridingKey: "free",
+      tokenCount: 1000,
+    },
+    fix,
+  );
+  await saveOffer(
+    offerDao,
+    {
+      name: "Early Bird Startup",
+      overridingKey: "Startup",
+      price: 19,
+    },
+    fix,
+  );
+  await saveOffer(
+    offerDao,
+    {
+      name: "Early Bird Team",
+      overridingKey: "Team",
+      price: 39,
+    },
+    fix,
+  );
+  const monthlyEarlyBird = await saveOffer(
+    offerDao,
+    {
+      name: "Early Bird Enterprise",
+      overridingKey: "Enterprise",
+      price: 99,
+    },
+    fix,
+  );
   return monthlyEarlyBird;
 }
 
@@ -404,6 +421,7 @@ async function saveYearlyEarlyBird(
     offerDao,
     {
       name: "Early Bird Startup",
+      offerGroup: "EarlyBird",
       overridingKey: "Startup",
       price: 1900,
     },

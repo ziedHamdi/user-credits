@@ -1,4 +1,5 @@
 import { Connection, Types } from "mongoose";
+
 type ObjectId = Types.ObjectId;
 
 import type { IFindOffersParams, IOfferDao } from "../../../db/dao/IOfferDao";
@@ -9,8 +10,8 @@ import { BaseMongooseDao } from "./BaseMongooseDao";
 
 export class OfferDao
   extends BaseMongooseDao<IMongooseOffer, IOffer<ObjectId>>
-  implements IOfferDao<ObjectId, IMongooseOffer>
-{
+  implements IOfferDao<ObjectId, IMongooseOffer> {
+
   constructor(connection: Connection) {
     super(connection, Offer, "offer");
   }
@@ -25,14 +26,14 @@ export class OfferDao
   }
 
   async loadSubGroupOffers(
-    parentOfferGroup: string,
+    parentOfferGroup: string
   ): Promise<IMongooseOffer[]> {
     // Use find() to get sub-offers based on offerGroup and parentOfferGroup
     return this.find({ parentOfferGroup });
   }
 
   async loadOffers(
-    params: IFindOffersParams<ObjectId>,
+    params: IFindOffersParams<ObjectId>
   ): Promise<IMongooseOffer[]> {
     const query = {} as unknown as IOffer<ObjectId>;
 

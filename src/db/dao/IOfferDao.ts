@@ -11,6 +11,7 @@ export interface IFindOffersParams<K extends MinimalId> {
 
 export interface IOfferDao<K extends MinimalId, D extends IOffer<K>>
   extends IBaseDao<D> {
+
   /**
    * loads offers
    * @param params}
@@ -23,8 +24,8 @@ export interface IOfferDao<K extends MinimalId, D extends IOffer<K>>
    */
   loadSubGroupOffers(parentOfferGroup: string): Promise<D[]>;
   /**
-   * loads offers that's parentOfferId is equal to the param.
-   * @param parentOfferId To load root offers, pass null
+   * loads offers that's parentOfferId is equal to the param
+   * @param parentOfferGroup
    */
   loadSubOffers(parentOfferId: K): Promise<D[]>;
   /**
