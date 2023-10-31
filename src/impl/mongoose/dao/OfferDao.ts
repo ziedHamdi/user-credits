@@ -15,8 +15,19 @@ export class OfferDao
     super(connection, Offer, "offer");
   }
 
+  async loadTaggedOffers(tags: string[]): Promise<IMongooseOffer[]> {
+    return this.find({ tags: { $all: tags } });
+  }
+
   async loadSubOffers(parentOfferId: ObjectId): Promise<IMongooseOffer[]> {
-    // Use find() to get sub-offers based on the parentOfferId
+    // Use find() to get sub-offers based on _id and parentOfferId
     return this.find({ parentOfferId });
+  }
+
+  async loadSubGroupOffers(
+    parentOfferGroup: string,
+  ): Promise<IMongooseOffer[]> {
+    // Use find() to get sub-offers based on offerGroup and parentOfferGroup
+    return this.find({ parentOfferGroup });
   }
 }

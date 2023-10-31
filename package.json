@@ -29,7 +29,7 @@
     "buildTrace": "rmdir /s /q .\\dist & npx tsc --traceResolution",
     "lint": "npx eslint --fix .",
     "prepublishOnly": "npm run lint && npm run build && npm test",
-    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage --coverageDirectory='coverage'"
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watchAll --no-cache --coverage --coverageDirectory='coverage'"
   },
   "devDependencies": {
     "@jest/globals": "^29.7.0",

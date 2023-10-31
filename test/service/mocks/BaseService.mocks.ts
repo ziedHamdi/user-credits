@@ -49,6 +49,7 @@ export async function initMocks(
     overridingKey: "100tokens",
     price: 100,
     quantityLimit: 200,
+    tags: [],
     tokenCount: 100,
     weight: 0,
   } as unknown as IOffer<ObjectId>;
@@ -62,6 +63,7 @@ export async function initMocks(
     offerGroup: "subscriptions",
     price: 50,
     quantityLimit: 5,
+    tags: [],
     tokenCount: 0,
     weight: 0,
   } as unknown as IOffer<ObjectId>;
@@ -75,6 +77,7 @@ export async function initMocks(
     offerGroup: "subscriptions",
     price: 20,
     quantityLimit: 10,
+    tags: [],
     tokenCount: 0,
     weight: 0,
   } as unknown as IOffer<ObjectId>;
@@ -89,6 +92,7 @@ export async function initMocks(
     overridingKey: "50tokens",
     parentOfferId: offerRoot2._id, // is a sub-offer of Starter offer
     price: 40,
+    tags: [],
     tokenCount: 50,
     weight: 1,
   } as unknown as IOffer<ObjectId>;
@@ -103,6 +107,7 @@ export async function initMocks(
     overridingKey: "100tokens",
     parentOfferId: offerRoot2._id, // is a sub-offer of Starter offer overrides the 100tokens offer
     price: 70,
+    tags: [],
     tokenCount: 100,
     weight: 1,
   } as unknown as IOffer<ObjectId>;
@@ -117,6 +122,7 @@ export async function initMocks(
     overridingKey: "50tokens",
     parentOfferId: offerRoot3._id, // is a sub-offer of Starter offer
     price: 30,
+    tags: [],
     tokenCount: 50,
     weight: 2,
   } as unknown as IOffer<ObjectId>;
@@ -131,6 +137,7 @@ export async function initMocks(
     overridingKey: "100tokens",
     parentOfferId: offerRoot3._id, // is a sub-offer of Starter offer overrides the 100tokens offer
     price: 60,
+    tags: [],
     tokenCount: 100,
     weight: 2,
   } as unknown as IOffer<ObjectId>;
