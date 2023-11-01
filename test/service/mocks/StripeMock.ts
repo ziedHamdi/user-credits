@@ -1,4 +1,4 @@
-import { IOrder, MinimalId } from "../../../src/db/model";
+import { IOrder, IMinimalId } from "../../../src/db/model";
 import {
   IPaymentClient,
   WebhookEventPayload,
@@ -9,7 +9,7 @@ export const MOCK_VALUES = {
   paymentIntentSecretAsPaid: "IntentAsPaid",
 };
 
-export class StripeMock<K extends MinimalId> implements IPaymentClient<K> {
+export class StripeMock<K extends IMinimalId> implements IPaymentClient<K> {
   private readonly currency: string;
 
   constructor() {

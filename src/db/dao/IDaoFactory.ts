@@ -1,4 +1,4 @@
-import { MinimalId } from "../model";
+import { IMinimalId } from "../model";
 import { IOffer } from "../model/IOffer";
 import { IOrder } from "../model/IOrder";
 import { ITokenTimetable } from "../model/ITokenTimetable";
@@ -10,7 +10,7 @@ import {
   IUserCreditsDao,
 } from "./index";
 
-export interface IDaoFactory<K extends MinimalId> {
+export interface IDaoFactory<K extends IMinimalId> {
   getOfferDao(): IOfferDao<K, IOffer<K>>;
   getOrderDao(): IOrderDao<K, IOrder<K>>;
   getTokenTimetableDao(): ITokenTimetableDao<K, ITokenTimetable<K>>;

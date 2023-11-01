@@ -1,8 +1,8 @@
-import { MinimalId } from "../model";
+import { IMinimalId } from "../model";
 import { ITokenTimetable } from "../model/ITokenTimetable";
 import { IBaseDao } from "./IBaseDao";
 
 export interface ITokenTimetableDao<
-  K extends MinimalId,
+  K extends IMinimalId,
   D extends ITokenTimetable<K>,
 > extends IBaseDao<D> {}

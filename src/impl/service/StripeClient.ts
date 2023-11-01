@@ -1,6 +1,6 @@
 import Stripe from "stripe";
 
-import { IOrder, MinimalId } from "../../db/model";
+import { IOrder, IMinimalId } from "../../db/model";
 import { PaymentError } from "../../errors";
 import { IConfigReader } from "../../service/config/IConfigReader";
 import {
@@ -17,7 +17,7 @@ import { IOrderStatus } from "../../db/model/IOrderStatus";
  * The strategy is then to store the order, and create new intents if the payment failed or was abandoned.
  * The IOrder.paymentIntentId is therefore a value that can change as long as the status is not "paid"
  */
-export class StripeClient<K extends MinimalId> implements IPaymentClient<K> {
+export class StripeClient<K extends IMinimalId> implements IPaymentClient<K> {
   private readonly stripe: Stripe;
   private readonly currency: string;
 

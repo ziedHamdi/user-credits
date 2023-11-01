@@ -3,6 +3,6 @@
  *
  * FIXME Add equals(id1:MinimalId, id2:MinimalId) as a utility method to verify equality
  */
-export interface MinimalId {
+export interface IMinimalId {
   toString(): string;
 }

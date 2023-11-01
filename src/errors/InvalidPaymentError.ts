@@ -1,4 +1,4 @@
-import { MinimalId } from "../db/model";
+import { IMinimalId } from "../db/model";
 import { PaymentError } from "./PaymentError";
 
 export enum PaymentErrorCode {
@@ -10,7 +10,7 @@ export enum PaymentErrorCode {
 
 export interface PaymentErrorDetails<E extends Error | undefined = undefined> {
   errorCode?: PaymentErrorCode;
-  orderId?: MinimalId;
+  orderId?: IMinimalId;
   originalError?: E;
 }
 

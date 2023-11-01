@@ -1,13 +1,13 @@
 import { IBaseEntity } from "./IBaseEntity";
 import { IActivatedOffer } from "./IActivatedOffer";
 import { ISubscription } from "./ISubscription";
-import { MinimalId } from "./MinimalId";
+import { IMinimalId } from "./IMinimalId";
 
 /**
  * Interface representing user credits on multiple offerGroups.
  * @param K - The type of foreign keys (used for all foreign key types).
  */
-export interface IUserCredits<K extends MinimalId> extends IBaseEntity<K> {
+export interface IUserCredits<K extends IMinimalId> extends IBaseEntity<K> {
   /**
    * An array of activated offers. There's at most one offer per order with status "paid".
    * The offerGroup value is used to group multiple offers belonging to the same service.

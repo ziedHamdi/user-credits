@@ -8,7 +8,7 @@ import {
   IOrder,
   ISubscription,
   IUserCredits,
-  MinimalId,
+  IMinimalId,
 } from "../../src/db/model"; // Import the actual path
 import { InvalidOrderError } from "../../src/errors";
 import { BaseService } from "../../src/service/BaseService"; //IMPROVEMENT Should use { IPayment } and add a secondary interface instead
@@ -16,7 +16,7 @@ import { BaseService } from "../../src/service/BaseService"; //IMPROVEMENT Shoul
 import { toHaveSameFields } from "../extend/sameObjects";
 import { initMocks, ObjectId } from "./mocks/BaseService.mocks";
 
-class ExtendedBaseService<K extends MinimalId> extends BaseService<K> {
+class ExtendedBaseService<K extends IMinimalId> extends BaseService<K> {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   afterExecute(order: IOrder<K>): Promise<IUserCredits<K>> {
     return Promise.resolve(undefined as unknown as IUserCredits<K>);

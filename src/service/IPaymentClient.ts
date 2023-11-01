@@ -1,4 +1,4 @@
-import { IOrder, MinimalId } from "../db/model";
+import { IOrder, IMinimalId } from "../db/model";
 
 export interface WebhookEventPayload {
   body: string;
@@ -17,7 +17,7 @@ export interface WebhookEventPayload {
  * these calls.
  * @param K The type of foreign keys (used for all foreign keys type).
  */
-export interface IPaymentClient<K extends MinimalId> {
+export interface IPaymentClient<K extends IMinimalId> {
   /**
    * This method is called by the UserCredits library after a payment has been executed, whether it was successful or not.
    * It allows the payment client to handle any post-payment logic.

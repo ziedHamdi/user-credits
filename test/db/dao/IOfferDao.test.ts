@@ -11,7 +11,7 @@ import {
   IOrder,
   ISubscription,
   IUserCredits,
-  MinimalId,
+  IMinimalId,
 } from "../../../src/db/model";
 import { IActivatedOffer } from "../../../src/db/model/IActivatedOffer";
 import { IMongooseOffer } from "../../../src/impl/mongoose/model/Offer";
@@ -27,7 +27,7 @@ import {
 } from "../../service/mocks/BaseService.mocks";
 import { prefillOffersForLoading } from "../mongoose/mocks/loadOffersTestsPrefill";
 
-class ExtendedBaseService<K extends MinimalId> extends BaseService<K> {
+class ExtendedBaseService<K extends IMinimalId> extends BaseService<K> {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   afterExecute(order: IOrder<K>): Promise<IUserCredits<K>> {
     return Promise.resolve(undefined as unknown as IUserCredits<K>);

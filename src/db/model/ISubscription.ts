@@ -1,12 +1,12 @@
 import { IBaseEntity } from "./IBaseEntity";
 import { OfferCycle } from "./IOffer";
-import { MinimalId } from "./MinimalId";
+import { IMinimalId } from "./IMinimalId";
 
 /**
  * Interface representing a subscription.
  * @param K - The type of foreign keys (used for all foreign key types).
  */
-export interface ISubscription<K extends MinimalId> extends IBaseEntity<K> {
+export interface ISubscription<K extends IMinimalId> extends IBaseEntity<K> {
   /**
    * The custom cycle duration in seconds, only applicable when cycle is 'custom'.
    */

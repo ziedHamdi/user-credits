@@ -11,14 +11,14 @@ import {
   ISubscription,
   ITokenTimetable,
   IUserCredits,
-  MinimalId,
+  IMinimalId,
 } from "../db/model";
 import { OfferCycle } from "../db/model/IOffer";
 import { InvalidOrderError, PaymentError } from "../errors";
 import { addDays, addMonths, addSeconds, addYears } from "../util/Dates";
 import { IService } from "./IService";
 
-export abstract class BaseService<K extends MinimalId> implements IService<K> {
+export abstract class BaseService<K extends IMinimalId> implements IService<K> {
   protected daoFactory: IDaoFactory<K>;
 
   protected readonly offerDao: IOfferDao<K, IOffer<K>>;

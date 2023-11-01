@@ -1,12 +1,12 @@
 import { IBaseEntity } from "./IBaseEntity";
 import { OfferCycle } from "./IOffer";
-import { MinimalId } from "./MinimalId";
+import { IMinimalId } from "./IMinimalId";
 import { IOrderStatus } from "./IOrderStatus";
 
 /**
  * @param K the type of foreign keys (is used for all foreign keys type)
  */
-export interface IOrder<K extends MinimalId> extends IBaseEntity<K> {
+export interface IOrder<K extends IMinimalId> extends IBaseEntity<K> {
   country: string | null;
   createdAt: Date;
   currency: string;

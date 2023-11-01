@@ -1,5 +1,5 @@
 import { IDaoFactory } from "../db/dao";
-import { IOrder, ISubscription, IUserCredits, MinimalId } from "../db/model";
+import { IOrder, ISubscription, IUserCredits, IMinimalId } from "../db/model";
 import { IActivatedOffer } from "../db/model/IActivatedOffer";
 import { EntityNotFoundError, PaymentError } from "../errors";
 import {
@@ -10,7 +10,7 @@ import {
 import { BaseService } from "./BaseService";
 import { IPaymentClient } from "./IPaymentClient";
 
-export class PaymentService<K extends MinimalId> extends BaseService<K> {
+export class PaymentService<K extends IMinimalId> extends BaseService<K> {
   constructor(
     daoFactory: IDaoFactory<K>,
     protected paymentClient: IPaymentClient<K>,

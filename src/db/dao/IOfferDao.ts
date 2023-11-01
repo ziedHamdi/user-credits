@@ -1,7 +1,7 @@
-import { IOffer, MinimalId } from "../model";
+import { IOffer, IMinimalId } from "../model";
 import { IBaseDao } from "./IBaseDao";
 
-export interface IFindOffersParams<K extends MinimalId> {
+export interface IFindOffersParams<K extends IMinimalId> {
   allTags?: boolean;
   offerGroup?: string[];
   parentOfferGroup?: string;
@@ -9,7 +9,7 @@ export interface IFindOffersParams<K extends MinimalId> {
   tags?: string[];
 }
 
-export interface IOfferDao<K extends MinimalId, D extends IOffer<K>>
+export interface IOfferDao<K extends IMinimalId, D extends IOffer<K>>
   extends IBaseDao<D> {
   /**
    * loads offers
