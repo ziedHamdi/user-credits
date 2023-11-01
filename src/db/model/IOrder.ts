@@ -19,7 +19,7 @@ export interface IOrder<K extends MinimalId> extends BaseEntity<K> {
   cycle: OfferCycle;
   history: [OrderStatus] | null;
   /** Check documentation in @IOffer */
-  offerGroup: string;
+  offerGroup: string[];
   offerId: K;
   /**
    * This field value can change if an intent is abandoned: a new intent can be created to complete the payment.

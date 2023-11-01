@@ -38,7 +38,7 @@ export class OfferDao
     const query = {} as unknown as IOffer<ObjectId>;
 
     if (params.offerGroup) {
-      query.offerGroup = params.offerGroup;
+      query.offerGroup = { $all: params.offerGroup } as unknown as string[]; // obliged to ignore
     }
 
     if (params.parentOfferGroup) {

@@ -34,7 +34,12 @@ const offerSchema = new Schema<IMongooseOffer>({
   /**
    * Detailed documentation in interface @IOffer.offerGroup
    */
-  offerGroup: { required: true, type: String },
+  offerGroup: {
+    required: function () {
+      return this.offerGroup.length > 0;
+    },
+    type: [String],
+  },
   overridingKey: String,
   parentOfferGroup: String,
   parentOfferId: {
@@ -80,6 +85,7 @@ offerSchema.methods.asGroupChildren = function (
       throw new Error(`Offer ${this._id} already has a parent group. To override, pass safeMode = false`);
     }
 
+    //FIXME check if parentOfferGroup should be an array too
     childOffer.parentOfferGroup = this.offerGroup;
   }
 };

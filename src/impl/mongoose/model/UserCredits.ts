@@ -2,11 +2,9 @@ import { Types } from "mongoose";
 type ObjectId = Types.ObjectId;
 import { Document, Model, Schema } from "mongoose";
 
-import {
-  IActivatedOffer,
-  ISubscription,
-  IUserCredits,
-} from "../../../db/model/IUserCredits";
+import { ISubscription } from "../../../db/model";
+import { IActivatedOffer } from "../../../db/model/IActivatedOffer";
+import { IUserCredits } from "../../../db/model/IUserCredits";
 
 export type IMongooseUserCredits = IUserCredits<ObjectId> & Document;
 
@@ -32,7 +30,12 @@ const subscriptionSchema = new Schema<
   /**
    * Detailed documentation in interface @IOffer.offerGroup
    */
-  offerGroup: { required: true, type: String },
+  offerGroup: {
+    required: function () {
+      return this.offerGroup.length > 0;
+    },
+    type: [String],
+  },
   offerId: {
     ref: "offer",
     required: true,

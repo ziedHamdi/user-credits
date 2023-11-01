@@ -45,7 +45,7 @@ export async function initMocks(
     hasSubOffers: false, // This offer has no sub-offers
     kind: "tokens",
     name: "100 tokens for 100$",
-    offerGroup: "ai",
+    offerGroup: ["ai"],
     overridingKey: "100tokens",
     price: 100,
     quantityLimit: 200,
@@ -60,7 +60,7 @@ export async function initMocks(
     hasSubOffers: true, // This offer has sub-offers
     kind: "subscription",
     name: "Starter",
-    offerGroup: "subscriptions",
+    offerGroup: ["subscriptions"],
     price: 50,
     quantityLimit: 5,
     tags: [],
@@ -74,7 +74,7 @@ export async function initMocks(
     hasSubOffers: true, // This offer has sub-offers
     kind: "subscription",
     name: "Supplement",
-    offerGroup: "subscriptions",
+    offerGroup: ["subscriptions"],
     price: 20,
     quantityLimit: 10,
     tags: [],
@@ -88,7 +88,7 @@ export async function initMocks(
     hasSubOffers: false, // This offer has no sub-offers
     kind: "tokens",
     name: "20% off on 50 tokens",
-    offerGroup: "ai",
+    offerGroup: ["ai"],
     overridingKey: "50tokens",
     parentOfferId: offerRoot2._id, // is a sub-offer of Starter offer
     price: 40,
@@ -103,7 +103,7 @@ export async function initMocks(
     hasSubOffers: false, // This offer has no sub-offers
     kind: "tokens",
     name: "30% off on 100 tokens",
-    offerGroup: "ai",
+    offerGroup: ["ai"],
     overridingKey: "100tokens",
     parentOfferId: offerRoot2._id, // is a sub-offer of Starter offer overrides the 100tokens offer
     price: 70,
@@ -118,7 +118,7 @@ export async function initMocks(
     hasSubOffers: false, // This offer has no sub-offers
     kind: "tokens",
     name: "30% off on 50 tokens",
-    offerGroup: "ai",
+    offerGroup: ["ai"],
     overridingKey: "50tokens",
     parentOfferId: offerRoot3._id, // is a sub-offer of Starter offer
     price: 30,
@@ -133,7 +133,7 @@ export async function initMocks(
     hasSubOffers: false, // This offer has no sub-offers
     kind: "tokens",
     name: "40% off on 100 tokens",
-    offerGroup: "ai",
+    offerGroup: ["ai"],
     overridingKey: "100tokens",
     parentOfferId: offerRoot3._id, // is a sub-offer of Starter offer overrides the 100tokens offer
     price: 60,
@@ -154,7 +154,7 @@ export async function initMocks(
         status: "pending",
       },
     ],
-    offerGroup: "mockOfferGroup",
+    offerGroup: ["mockOfferGroup"],
     offerId: offerRoot1._id, // Mock ObjectId for offer
     paymentIntentId: "mockPaymentIntentId",
     paymentIntentSecret: "mockPaymentIntentSecret",
@@ -178,7 +178,7 @@ export async function initMocks(
         status: "pending",
       },
     ],
-    offerGroup: "mockOfferGroup",
+    offerGroup: ["mockOfferGroup"],
     offerId: offerRoot2._id, // Mock ObjectId for offer
     paymentIntentId: "mockPaymentIntentId",
     paymentIntentSecret: "mockPaymentIntentSecret",
@@ -202,7 +202,7 @@ export async function initMocks(
         status: "pending",
       },
     ],
-    offerGroup: "mockOfferGroup",
+    offerGroup: ["mockOfferGroup"],
     offerId: offerRoot3._id, // Mock ObjectId for offer
     paymentIntentId: "mockPaymentIntentId",
     paymentIntentSecret: "mockPaymentIntentSecret",
@@ -226,7 +226,7 @@ export async function initMocks(
         status: "pending",
       },
     ],
-    offerGroup: "mockOfferGroup",
+    offerGroup: ["mockOfferGroup"],
     offerId: offerChild3_1._id, // Mock ObjectId for offer
     paymentIntentId: "mockPaymentIntentId",
     paymentIntentSecret: "mockPaymentIntentSecret",
@@ -250,7 +250,7 @@ export async function initMocks(
         status: "refused",
       },
     ],
-    offerGroup: "mockOfferGroup",
+    offerGroup: ["mockOfferGroup"],
     offerId: offerChild3_2._id, // Mock ObjectId for offer
     paymentIntentId: "mockPaymentIntentId",
     paymentIntentSecret: "mockPaymentIntentSecret",

@@ -13,7 +13,6 @@ import {
   IUserCredits,
   MinimalId,
 } from "../../../src/db/model";
-import { IActivatedOffer } from "../../../src/db/model/IUserCredits";
 import { IMongooseOffer } from "../../../src/impl/mongoose/model/Offer";
 import { BaseService } from "../../../src/service/BaseService";
 import { copyFieldsWhenMatching } from "../../../src/util/Copy";
@@ -26,6 +25,7 @@ import {
   ObjectId,
 } from "../../service/mocks/BaseService.mocks";
 import { prefillOffersForLoading } from "../mongoose/mocks/loadOffersTestsPrefill";
+import { IActivatedOffer } from "../../../src/db/model/IActivatedOffer";
 
 class ExtendedBaseService<K extends MinimalId> extends BaseService<K> {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -387,7 +387,7 @@ describe("OfferDao specific methods", () => {
     it("should load offers based on query parameters", async () => {
       const params = {
         allTags: true,
-        offerGroup: "standard",
+        offerGroup: ["standard"],
         tags: ["subscription", "monthly"],
       };
       const offers = await offerDao.loadOffers(params);
