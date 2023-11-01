@@ -1,12 +1,7 @@
 import { IBaseEntity } from "./IBaseEntity";
 import { OfferCycle } from "./IOffer";
 import { MinimalId } from "./MinimalId";
-
-export interface IOrderStatus {
-  date: Date;
-  message: string;
-  status: "pending" | "paid" | "refused" | "error";
-}
+import { IOrderStatus } from "./IOrderStatus";
 
 /**
  * @param K the type of foreign keys (is used for all foreign keys type)

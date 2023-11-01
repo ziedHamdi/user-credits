@@ -1,13 +1,13 @@
 import Stripe from "stripe";
 
 import { IOrder, MinimalId } from "../../db/model";
-import { IOrderStatus } from "../../db/model/IOrder";
 import { PaymentError } from "../../errors";
 import { IConfigReader } from "../../service/config/IConfigReader";
 import {
   IPaymentClient,
   WebhookEventPayload,
 } from "../../service/IPaymentClient";
+import { IOrderStatus } from "../../db/model/IOrderStatus";
 
 /**
  * This class abstracts out all stripe-specific objects by handling both calls to the stripe endpoint, and webhooks parsing. Results will be in the format of this project interfaces.
