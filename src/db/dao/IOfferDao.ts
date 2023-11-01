@@ -11,7 +11,6 @@ export interface IFindOffersParams<K extends MinimalId> {
 
 export interface IOfferDao<K extends MinimalId, D extends IOffer<K>>
   extends IBaseDao<D> {
-
   /**
    * loads offers
    * @param params}

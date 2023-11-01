@@ -30,5 +30,4 @@ export class MockOfferDao
   loadOffers(params: IFindOffersParams<ObjectId>): Promise<IOffer<ObjectId>[]> {
     return Promise.resolve([]);
   }
-
 }

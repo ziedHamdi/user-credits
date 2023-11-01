@@ -13,6 +13,7 @@ import {
   IUserCredits,
   MinimalId,
 } from "../../../src/db/model";
+import { IActivatedOffer } from "../../../src/db/model/IActivatedOffer";
 import { IMongooseOffer } from "../../../src/impl/mongoose/model/Offer";
 import { BaseService } from "../../../src/service/BaseService";
 import { copyFieldsWhenMatching } from "../../../src/util/Copy";
@@ -25,7 +26,6 @@ import {
   ObjectId,
 } from "../../service/mocks/BaseService.mocks";
 import { prefillOffersForLoading } from "../mongoose/mocks/loadOffersTestsPrefill";
-import { IActivatedOffer } from "../../../src/db/model/IActivatedOffer";
 
 class ExtendedBaseService<K extends MinimalId> extends BaseService<K> {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -316,7 +316,7 @@ describe("Offer Database Integration Test", () => {
 });
 
 function offerNames(offers: IMongooseOffer[]) {
-  return offers.map((offer) => offer.name );
+  return offers.map((offer) => offer.name);
 }
 
 describe("OfferDao specific methods", () => {
@@ -351,7 +351,6 @@ describe("OfferDao specific methods", () => {
       expect(Array.isArray(offers)).toBe(true);
       expect(offers.length).toBeGreaterThan(0);
     });
-
   });
 
   // Test loading sub-offers
@@ -393,7 +392,9 @@ describe("OfferDao specific methods", () => {
       const offers = await offerDao.loadOffers(params);
       // Write your Jest assertions to check if the offers were loaded correctly
       expect(Array.isArray(offers)).toBe(true);
-      expect(offerNames(offers)).toEqual(expect.arrayContaining(["Free", "Startup", "Team", "Enterprise"]));
+      expect(offerNames(offers)).toEqual(
+        expect.arrayContaining(["Free", "Startup", "Team", "Enterprise"]),
+      );
       expect(offers.length).toBe(4);
     });
     it("should load offers based on null query parameters", async () => {
@@ -405,7 +406,16 @@ describe("OfferDao specific methods", () => {
       const offers = await offerDao.loadOffers(params);
       // Write your Jest assertions to check if the offers were loaded correctly
       expect(Array.isArray(offers)).toBe(true);
-      expect(offerNames(offers)).toEqual(["Free", "Startup", "Team", "Enterprise", "Early bird", "Early Bird Startup", "Early Bird Team", "Early Bird Enterprise",]);
+      expect(offerNames(offers)).toEqual([
+        "Free",
+        "Startup",
+        "Team",
+        "Enterprise",
+        "Early bird",
+        "Early Bird Startup",
+        "Early Bird Team",
+        "Early Bird Enterprise",
+      ]);
       expect(offers.length).toBe(8);
     });
     it("should load offers based on OR conditino for tags if not present query parameters", async () => {

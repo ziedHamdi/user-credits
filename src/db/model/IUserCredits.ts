@@ -1,7 +1,7 @@
 import { BaseEntity } from "./BaseEntity";
-import { MinimalId } from "./MinimalId";
-import { ISubscription } from "./ISubscription";
 import { IActivatedOffer } from "./IActivatedOffer";
+import { ISubscription } from "./ISubscription";
+import { MinimalId } from "./MinimalId";
 
 /**
  * Interface representing user credits on multiple offerGroups.

@@ -10,6 +10,7 @@ import {
   ISubscription,
   IUserCredits,
 } from "../../src/db/model";
+import { IActivatedOffer } from "../../src/db/model/IActivatedOffer";
 import { OrderStatus } from "../../src/db/model/IOrder";
 import { PaymentError } from "../../src/errors";
 import { IPaymentClient } from "../../src/service/IPaymentClient";
@@ -18,7 +19,6 @@ import { addMonths } from "../../src/util/Dates";
 import { TestContainerSingleton } from "../config/testContainer";
 import { initMocks, ObjectId } from "./mocks/BaseService.mocks";
 import { MOCK_VALUES } from "./mocks/StripeMock";
-import { IActivatedOffer } from "../../src/db/model/IActivatedOffer";
 
 /**
  * Temporary class to access the protected methods
@@ -243,8 +243,12 @@ describe("PaymentService.updateOfferGroup", () => {
     );
 
     // Assert
-    expect(newOffer.offerGroup).toEqual(expect.arrayContaining(order.offerGroup));
-    expect(order.offerGroup).toEqual(expect.arrayContaining(newOffer.offerGroup));
+    expect(newOffer.offerGroup).toEqual(
+      expect.arrayContaining(order.offerGroup),
+    );
+    expect(order.offerGroup).toEqual(
+      expect.arrayContaining(newOffer.offerGroup),
+    );
     expect(newOffer.tokens).toEqual((order.tokenCount || 0) * 3);
     //FIXME there's an hour of difference between the expected and found value. I have no clue from where it could come
     // expect(newOffer.expires).toEqual(

@@ -3,7 +3,7 @@ export class DuplicateMatchesError<T extends object> extends Error {
 
   constructor(message: string, duplicates: T[]) {
     super(message);
-    Object.setPrototypeOf( this, DuplicateMatchesError.prototype );
+    Object.setPrototypeOf(this, DuplicateMatchesError.prototype);
 
     this.name = "DuplicateMatchesError";
     this.duplicates = duplicates;

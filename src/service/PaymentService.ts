@@ -1,5 +1,6 @@
 import { IDaoFactory } from "../db/dao";
 import { IOrder, ISubscription, IUserCredits, MinimalId } from "../db/model";
+import { IActivatedOffer } from "../db/model/IActivatedOffer";
 import { EntityNotFoundError, PaymentError } from "../errors";
 import {
   InvalidPaymentError,
@@ -8,7 +9,6 @@ import {
 } from "../errors/InvalidPaymentError";
 import { BaseService } from "./BaseService";
 import { IPaymentClient } from "./IPaymentClient";
-import { IActivatedOffer } from "../db/model/IActivatedOffer";
 
 export class PaymentService<K extends MinimalId> extends BaseService<K> {
   constructor(
@@ -84,8 +84,11 @@ export class PaymentService<K extends MinimalId> extends BaseService<K> {
     order: IOrder<K>,
   ): IActivatedOffer {
     // Check if any element in order.offerGroup matches with userCredits.offers
-    const existingOfferIndex = userCredits.offers.findIndex((existingOffer: IActivatedOffer) =>
-      existingOffer.offerGroup.some((group) => order.offerGroup.includes(group))
+    const existingOfferIndex = userCredits.offers.findIndex(
+      (existingOffer: IActivatedOffer) =>
+        existingOffer.offerGroup.some((group) =>
+          order.offerGroup.includes(group),
+        ),
     );
 
     if (existingOfferIndex !== -1) {
