@@ -1,3 +1,4 @@
+[< Previous: offers explained](/docs/offers_explained.md) |----------------|----------------| [Next: orders explained >](/docs/orders_explained.md)
 # Unlocking Offers and Managing Overrides
 
 In the world of UserCredits, the journey continues as we delve into the fascinating realm of orders. If you're just joining us, we recommend reading our previous article on orders to get up to speed: [UserCredits - Understanding Orders](/docs/offers_explained.md).
@@ -66,3 +67,4 @@ However, we can envision scenarios where multiple offers are unlocked by various
 ### Weight
 This is when the `weight` field comes into play, allowing for prioritization. Sub-offers with higher `weight` values take precedence. In cases where two conflicting offers have identical `weight` values, a warning message is recorded in the logs, indicating the conflicting offers' IDs. Nevertheless, one (_unpredictable_) of them is selected, and no error is raised, providing flexibility for users to make purchases even if the offer hierarchy is not yet fully refined.
 
+[< Previous: offers explained](/docs/offers_explained.md) |----------------|----------------| [Next: orders explained >](/docs/orders_explained.md)

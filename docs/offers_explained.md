@@ -1,3 +1,5 @@
+[Next > offer loading explained](/docs/offer_loading_explained.md)
+
 # Welcome to the Offer Guide Case Study
 
 In this guide, we'll explore how to create a compelling subscription offer ecosystem for your business. Imagine you're at the helm of a startup, let's call it WonderAI, and you're looking to attract your first customers, including early adopters. Your goal is to entice them with a set of enticing offers that not only make sense but also deliver real value.
@@ -78,3 +80,5 @@ Now, let's shift our focus to the "**Early Bird**" offer groups, which **all** u
 Now, let's discuss how to incorporate a free subscription offer into the mix. This is a strategic move for WonderAI to gather user emails and connect with them through compelling irresistible offers.
 
 The free subscription offer comes with three essential tags: "subscription," "monthly," and "yearly." If the perks for early adopters align with those of "standard" customers, it's possible to include a fourth tag, "earlybird." This tag ensures that you can locate the free subscription offer in any query that searches for root offers. However, for better organization as your customer base grows, it's recommended to create a separate offer exclusively for "Early Birds." This approach facilitates easy management and access, particularly as your customer numbers increase, which is something I wish for you now that you know how to serve them well.
+
+[Next > offer loading explained](/docs/offer_loading_explained.md)

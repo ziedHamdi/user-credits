@@ -1,3 +1,5 @@
+[< Previous: offer loading explained](/docs/offer_loading_explained.md)
+
 # Purchasing Offers and Managing User Credits
 
 In this section, we delve into the process of a customer selecting and purchasing an offer and explore the subsequent changes in persisted data.
@@ -176,7 +178,4 @@ export interface OrderStatus {
 
 In summary, when a customer decides to purchase an offer, the `createOrder` method is used, and data is updated to reflect the intention to purchase in the form of an `ISubscription`. Once the payment is made, the offer transitions to an active state as an `IActivatedOffer`. This mechanism forms the core of the user credits system, allowing for smooth management of subscriptions and offers.
 
-```
-
-Please let me know if you'd like any further revisions or additions.
-
+[< Previous: offer loading explained](/docs/offer_loading_explained.md)

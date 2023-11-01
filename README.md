@@ -16,7 +16,9 @@ user-credits is an open-source library designed to simplify the creation of offe
 
 #Usage
 To understand how the library works, it is recommended to read the following documents:
-- [Offers](/docs/offers_explained.md)
+- [Offers explained](/docs/offers_explained.md) 
+- [Offer loading explained](/docs/offer_loading_explained.md)
+- [Orders explained](/docs/orders_explained.md)
 
 ## Features
 
