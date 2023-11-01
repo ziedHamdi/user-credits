@@ -14,6 +14,9 @@ user-credits is an open-source library designed to simplify the creation of offe
 - [Contributing](#contributing)
 - [License](#license)
 
+#Usage
+To understand how the library works, it is recommended to read the following documents:
+- [Offers](/docs/offers_explained.md)
 
 ## Features
 

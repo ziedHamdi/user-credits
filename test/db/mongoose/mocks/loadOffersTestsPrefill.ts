@@ -176,9 +176,7 @@ async function saveMonthlyStandardVIP(
     {
       cycle: "yearly", // ends at the end of the year
       name: "1 VIP event",
-
       overridingKey: "1vip",
-
       price: 200,
       tokenCount: 1, // one event
     },
