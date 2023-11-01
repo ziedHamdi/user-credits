@@ -1,4 +1,4 @@
-import { BaseEntity } from "./BaseEntity";
+import { IBaseEntity } from "./IBaseEntity";
 import { MinimalId } from "./MinimalId";
 
 export type OfferCycle =
@@ -15,7 +15,7 @@ export type OfferCycle =
 /**
  * @param K the type of foreign keys (is used for all foreign keys type)
  */
-export interface IOffer<K extends MinimalId> extends BaseEntity<K> {
+export interface IOffer<K extends MinimalId> extends IBaseEntity<K> {
   /**
    * Method to set offers as children of this offer based on offerGroup
    * @param childIds

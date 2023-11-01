@@ -1,8 +1,8 @@
-import { BaseEntity } from "./BaseEntity";
+import { IBaseEntity } from "./IBaseEntity";
 import { OfferCycle } from "./IOffer";
 import { MinimalId } from "./MinimalId";
 
-export interface OrderStatus {
+export interface IOrderStatus {
   date: Date;
   message: string;
   status: "pending" | "paid" | "refused" | "error";
@@ -11,13 +11,13 @@ export interface OrderStatus {
 /**
  * @param K the type of foreign keys (is used for all foreign keys type)
  */
-export interface IOrder<K extends MinimalId> extends BaseEntity<K> {
+export interface IOrder<K extends MinimalId> extends IBaseEntity<K> {
   country: string | null;
   createdAt: Date;
   currency: string;
   customCycle: number | null;
   cycle: OfferCycle;
-  history: [OrderStatus] | null;
+  history: [IOrderStatus] | null;
   /** Check documentation in @IOffer */
   offerGroup: string[];
   offerId: K;

@@ -1,5 +1,5 @@
 import { IOrder, MinimalId } from "../../../src/db/model";
-import { OrderStatus } from "../../../src/db/model/IOrder";
+import { IOrderStatus } from "../../../src/db/model/IOrder";
 import {
   IPaymentClient,
   WebhookEventPayload,
@@ -30,13 +30,13 @@ export class StripeMock<K extends MinimalId> implements IPaymentClient<K> {
       this.addHistoryItem(order, {
         message: "Payment succeeded",
         status: "paid",
-      } as OrderStatus);
+      } as IOrderStatus);
     } else {
       order.status = "refused";
       this.addHistoryItem(order, {
         message: "Payment failed",
         status: "refused",
-      } as OrderStatus);
+      } as IOrderStatus);
     }
     return order;
   }
@@ -60,9 +60,9 @@ export class StripeMock<K extends MinimalId> implements IPaymentClient<K> {
     return mockEvent;
   }
 
-  private addHistoryItem(order: IOrder<K>, historyItem: OrderStatus) {
+  private addHistoryItem(order: IOrder<K>, historyItem: IOrderStatus) {
     if (!order.history) {
-      order.history = [] as unknown as [OrderStatus];
+      order.history = [] as unknown as [IOrderStatus];
     }
     historyItem.date = new Date();
     order.history.push(historyItem);

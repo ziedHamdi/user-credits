@@ -2,11 +2,11 @@ import { Types } from "mongoose";
 type ObjectId = Types.ObjectId;
 import { Document, Schema } from "mongoose";
 
-import { IOrder, OrderStatus } from "../../../db/model/IOrder";
+import { IOrder, IOrderStatus } from "../../../db/model/IOrder";
 
 export type IMongooseOrder = IOrder<ObjectId> & Document;
 
-const orderStatusSchema = new Schema<OrderStatus>({
+const orderStatusSchema = new Schema<IOrderStatus>({
   date: Date,
   message: String,
   status: {

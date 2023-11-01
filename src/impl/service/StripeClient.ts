@@ -1,7 +1,7 @@
 import Stripe from "stripe";
 
 import { IOrder, MinimalId } from "../../db/model";
-import { OrderStatus } from "../../db/model/IOrder";
+import { IOrderStatus } from "../../db/model/IOrder";
 import { PaymentError } from "../../errors";
 import { IConfigReader } from "../../service/config/IConfigReader";
 import {
@@ -82,7 +82,7 @@ export class StripeClient<K extends MinimalId> implements IPaymentClient<K> {
           this.addHistoryItem(order, {
             message: "Payment succeeded",
             status: "paid",
-          } as OrderStatus);
+          } as IOrderStatus);
           break;
 
         case "requires_payment_method":
@@ -92,7 +92,7 @@ export class StripeClient<K extends MinimalId> implements IPaymentClient<K> {
           this.addHistoryItem(order, {
             message: "Payment method issues",
             status: "refused",
-          } as OrderStatus);
+          } as IOrderStatus);
           break;
 
         case "requires_action":
@@ -103,7 +103,7 @@ export class StripeClient<K extends MinimalId> implements IPaymentClient<K> {
               "Payment requires an action we don't handle: " +
               intent.next_action,
             status: "error",
-          } as OrderStatus);
+          } as IOrderStatus);
           break;
 
         // Handle other payment intent statuses as needed
@@ -117,9 +117,9 @@ export class StripeClient<K extends MinimalId> implements IPaymentClient<K> {
     }
   }
 
-  private addHistoryItem(order: IOrder<K>, historyItem: OrderStatus) {
+  private addHistoryItem(order: IOrder<K>, historyItem: IOrderStatus) {
     if (!order.history) {
-      order.history = [] as unknown as [OrderStatus];
+      order.history = [] as unknown as [IOrderStatus];
     }
     historyItem.date = historyItem.date ?? new Date();
 

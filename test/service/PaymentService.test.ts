@@ -11,7 +11,7 @@ import {
   IUserCredits,
 } from "../../src/db/model";
 import { IActivatedOffer } from "../../src/db/model/IActivatedOffer";
-import { OrderStatus } from "../../src/db/model/IOrder";
+import { IOrderStatus } from "../../src/db/model/IOrder";
 import { PaymentError } from "../../src/errors";
 import { IPaymentClient } from "../../src/service/IPaymentClient";
 import { PaymentService } from "../../src/service/PaymentService";
@@ -119,7 +119,7 @@ describe("PaymentService", () => {
     // Mock `getUserCredits` to return a userCredits object with a matching subscription
     const userCreditsMock: IUserCredits<ObjectId> = {
       markModified: jest.fn(), // Mock the markModified function
-      offers: [] as unknown as [OrderStatus],
+      offers: [] as unknown as [IOrderStatus],
       save: jest.fn(), // Mock the save function
       subscriptions: [subscriptionPaidRoot1] as unknown as [
         ISubscription<ObjectId>,
@@ -196,7 +196,7 @@ describe("PaymentService.updateOfferGroup", () => {
     const userId = order.userId;
     userCredits = {
       offers: [] as unknown as [IActivatedOffer],
-      subscriptions: [] as unknown as [OrderStatus],
+      subscriptions: [] as unknown as [IOrderStatus],
       userId,
     } as unknown as IUserCredits<ObjectId>;
   });

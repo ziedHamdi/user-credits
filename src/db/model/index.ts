@@ -1,6 +1,6 @@
 // index.ts
 
-export type { BaseEntity } from "./BaseEntity";
+export type { IBaseEntity } from "./IBaseEntity";
 export type { IOffer } from "./IOffer";
 export type { IOrder } from "./IOrder";
 export { ISubscription } from "./ISubscription";

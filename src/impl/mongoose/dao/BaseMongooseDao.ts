@@ -1,7 +1,7 @@
 import { Connection, Document, Model, Schema } from "mongoose";
 
 import { IBaseDao } from "../../../db/dao";
-import { BaseEntity } from "../../../db/model";
+import { IBaseEntity } from "../../../db/model";
 import { SystemError } from "../../../errors";
 import type { ObjectId } from "../TypeDefs";
 
@@ -10,7 +10,7 @@ import type { ObjectId } from "../TypeDefs";
  * @param <A> stands for the object attributes (the fields of an entity before creation)
  * @param <D> stands for the entity attributes (the fields of an entity after creation in mongoose)
  */
-export interface EntityModel<D extends Document, A extends BaseEntity<ObjectId>>
+export interface EntityModel<D extends Document, A extends IBaseEntity<ObjectId>>
   extends Model<D> {
   build(attr: A): D;
 }
@@ -19,7 +19,7 @@ export interface EntityModel<D extends Document, A extends BaseEntity<ObjectId>>
  * @param <A> stands for the object attributes (the fields of an entity before creation)
  * @param <D> stands for the entity attributes (the fields of an entity after creation in mongoose)
  */
-export class BaseMongooseDao<D extends Document, A extends BaseEntity<ObjectId>>
+export class BaseMongooseDao<D extends Document, A extends IBaseEntity<ObjectId>>
   implements IBaseDao<D>
 {
   model: EntityModel<D, A> & Model<D>;
