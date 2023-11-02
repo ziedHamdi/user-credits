@@ -1,5 +1,5 @@
 import { IDaoFactory } from "../db/dao";
-import { IOffer, IOrder, IMinimalId } from "../db/model";
+import { IMinimalId, IOffer, IOrder } from "../db/model";
 import { IUserCredits } from "../db/model/IUserCredits";
 
 /**
@@ -40,13 +40,16 @@ export interface IService<K extends IMinimalId> {
   getDaoFactory(): IDaoFactory<K>;
 
   /**
-   * Retrieves a list of offers and user-exclusive offers based on a user's unique identifier.
+   * Retrieves a list of filtered anonymous offers and user-exclusive offers based on a user's unique identifier.
    * Exclusive offers become visible to users after they purchase a basic offer with the status 'paid'.
    * Exclusive offers can be overridden by other purchased offers using the `overridingKey` and `weight` properties,
    * allowing for customization of pricing and duration.
    *
+   * Please read {@link /docs/offer_loading_explained.md} for a detailed explanation.
+   *
    * @param userId The unique identifier of the user.
+   * @param envTags The tags to filter the base offers with.
    * @returns A promise that resolves to an array of offers available to the user.
    */
-  loadOffers(userId: unknown): Promise<IOffer<K>[]>;
+  loadOffers(userId: unknown, envTags: string[]): Promise<IOffer<K>[]>;
 }

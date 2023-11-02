@@ -41,12 +41,10 @@ export class OfferDao
       query.offerGroup = params.offerGroup;
     }
 
-    if (params.parentOfferGroup) {
-      query.parentOfferGroup = params.parentOfferGroup;
-    }
-
-    if (params.parentOfferId) {
-      query.parentOfferId = params.parentOfferId;
+    if (params.purchasedOfferGroups) {
+      query.unlockedBy = {
+        $in: params.purchasedOfferGroups,
+      } as unknown as string[]; // needed cast to use $in
     }
 
     if (params.allTags) {

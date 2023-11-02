@@ -153,7 +153,7 @@ async function saveMonthlyStandard(
     price: 99,
   });
   const monthlyEnterpriseRegular = await saveOffer(offerDao, {
-    hasSubOffers: true, // this offer has exclusive subOffers for VIP access
+    hasDependentOffers: true, // this offer has exclusive subOffers for VIP access
     name: "Enterprise",
     overridingKey: "Enterprise",
     price: 249,
@@ -333,9 +333,9 @@ async function saveMonthlyEarlyBirdVIP(
 ) {
   const fix = {
     cycle: "yearly", // ends at the end of the year
-    parentOfferGroup: "EarlyBird",
+    unlockedBy: "EarlyBird",
     tags: ["exclusive", "vip"],
-  } as Partial<IOffer<ObjectId>>;
+  } as unknown as Partial<IOffer<ObjectId>>;
   await saveOffer(
     offerDao,
     {
@@ -372,9 +372,9 @@ async function saveYearlyEarlyBirdVIP(
 ) {
   const fix = {
     cycle: "yearly", // ends at the end of the year
-    parentOfferGroup: "EarlyBirdYearly",
+    unlockedBy: "EarlyBirdYearly",
     tags: ["exclusive", "vip"],
-  } as Partial<IOffer<ObjectId>>;
+  } as unknown as Partial<IOffer<ObjectId>>;
   await saveOffer(
     offerDao,
     {

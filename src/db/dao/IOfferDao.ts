@@ -1,11 +1,10 @@
-import { IOffer, IMinimalId } from "../model";
-import { IBaseDao } from "./IBaseDao";
+import type { IMinimalId, IOffer } from "../model";
+import type { IBaseDao } from "./IBaseDao";
 
 export interface IFindOffersParams<K extends IMinimalId> {
   allTags?: boolean;
   offerGroup?: string;
-  parentOfferGroup?: string;
-  parentOfferId?: K;
+  purchasedOfferGroups?: string[];
   tags?: string[];
 }
 

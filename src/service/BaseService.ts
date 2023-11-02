@@ -6,12 +6,12 @@ import {
   IUserCreditsDao,
 } from "../db/dao";
 import {
+  IMinimalId,
   IOffer,
   IOrder,
   ISubscription,
   ITokenTimetable,
   IUserCredits,
-  IMinimalId,
 } from "../db/model";
 import { OfferCycle } from "../db/model/IOffer";
 import { InvalidOrderError, PaymentError } from "../errors";
@@ -50,16 +50,20 @@ export abstract class BaseService<K extends IMinimalId> implements IService<K> {
    * @param userId The user's ID.
    * @returns A promise that resolves to an array of merged offers.
    */
-  async loadOffers(userId: K | null): Promise<IOffer<K>[]> {
+  async loadOffers(userId: K | null, envTags?: string[]): Promise<IOffer<K>[]> {
     if (!userId) {
-      return this.getRegularOffers();
+      return await this.getRegularOffers(envTags);
     }
-
     const activeSubscriptions = await this.getActiveSubscriptions(userId);
-    const subOffers = await this.getSubOffers(activeSubscriptions);
-    const regularOffers = await this.getRegularOffers();
+    const purchasedOfferGroups: string[] = activeSubscriptions.map(
+      (subs) => subs.offerGroup,
+    );
+    const dependentOffers = await this.offerDao.loadOffers({
+      purchasedOfferGroups,
+    });
+    const regularOffers = await this.getRegularOffers(envTags);
 
-    const mergedOffers = this.mergeOffers(regularOffers, subOffers);
+    const mergedOffers = this.mergeOffers(regularOffers, dependentOffers);
 
     return mergedOffers;
   }
@@ -140,67 +144,60 @@ export abstract class BaseService<K extends IMinimalId> implements IService<K> {
   }
 
   /**
-   * Get "regular" offers without suboffers.
+   * Get "regular" offers without dependent offers.
    * @returns A promise that resolves to an array of "regular" offers.
    */
-  async getRegularOffers(): Promise<IOffer<K>[]> {
-    return this.offerDao.find({ parentOfferId: null });
+  async getRegularOffers(envTags?: string[]): Promise<IOffer<K>[]> {
+    // this is the simplest offer case where a user only declared some offers and some dependent offers: we make sure to filter out dependent offers
+    if (!envTags) return this.offerDao.find({ unlockedBy: { $size: 0 } });
+
+    return await this.offerDao.loadOffers({
+      allTags: true,
+      tags: envTags,
+    });
   }
 
   /**
-   * Merge "regular" offers with suboffers, applying overriding logic.
+   * Merge "regular" offers with unlockedOffers, applying overriding logic.
    *
-   * Suboffers that have the same overridingKey as a root offer override them (keeping only the promotional exclusive offers).
-   * So the method returns an intersection of regularOffers and subOffers that intersect on the value of overridingKey.
+   * Unlocked Offers (by a purchase) that have the same overridingKey as a regular offer override them (keeping only the promotional exclusive offers).
+   * So the method returns an intersection of regularOffers and unlockedOffers that intersect on the value of overridingKey.
    *
-   * Exclusive offers have a weight, in case two sub offers conflict, the one with the highest weight overrides the others.
+   * Exclusive offers have a weight, in case two unlocked offers conflict, the one with the highest weight overrides the others.
    * @param regularOffers An array of "regular" offers.
-   * @param subOffers An array of suboffers.
+   * @param unlockedOffers An array of suboffers.
    * @returns An array of merged offers.
    */
-  mergeOffers(regularOffers: IOffer<K>[], subOffers: IOffer<K>[]): IOffer<K>[] {
-    // Create a Map to store subOffers by their overridingKey
-    const subOffersMap = new Map<string, IOffer<K>>();
+  mergeOffers(
+    regularOffers: IOffer<K>[],
+    unlockedOffers: IOffer<K>[],
+  ): IOffer<K>[] {
+    // Create a Map to store unlockedOffers by their overridingKey
+    const unlockedOffersMap = new Map<string, IOffer<K>>();
 
-    // Populate the subOffersMap with subOffers, overriding duplicates
-    for (const subOffer of subOffers) {
-      const existingSubOffer = subOffersMap.get(subOffer.overridingKey);
+    // Populate the unlockedOffersMap with unlockedOffers, overriding duplicates
+    for (const unlockedOffer of unlockedOffers) {
+      const existingSubOffer = unlockedOffersMap.get(
+        unlockedOffer.overridingKey,
+      );
       if (
         !existingSubOffer ||
-        subOffer.weight > (existingSubOffer.weight || 0)
+        unlockedOffer.weight > (existingSubOffer.weight || 0)
       ) {
-        subOffersMap.set(subOffer.overridingKey, subOffer);
+        unlockedOffersMap.set(unlockedOffer.overridingKey, unlockedOffer);
       }
     }
 
-    // Filter regularOffers to keep only those that are not overridden by subOffers
+    // Filter regularOffers to keep only those that are not overridden by unlockedOffers
     const mergedOffers = regularOffers.filter((regularOffer) => {
-      const subOffer = subOffersMap.get(regularOffer.overridingKey);
+      const subOffer = unlockedOffersMap.get(regularOffer.overridingKey);
       return !subOffer; // Exclude offers overridden by suboffers
     });
 
-    // Add the subOffers to the mergedOffers
-    mergedOffers.push(...Array.from(subOffersMap.values()));
+    // Add the unlockedOffers to the mergedOffers
+    mergedOffers.push(...Array.from(unlockedOffersMap.values()));
 
     return mergedOffers;
-  }
-
-  /**
-   * Group suboffers by their parentOfferId.
-   * @param subOffers An array of suboffers.
-   * @returns An object where keys are parentOfferIds and values are arrays of suboffers.
-   */
-  groupSubOffersByParent(subOffers: IOffer<K>[]): Record<string, IOffer<K>[]> {
-    return subOffers.reduce(
-      (acc, subOffer) => {
-        if (!acc[subOffer.parentOfferId.toString()]) {
-          acc[subOffer.parentOfferId.toString()] = [];
-        }
-        acc[subOffer.parentOfferId.toString()].push(subOffer);
-        return acc;
-      },
-      {} as Record<string, IOffer<K>[]>,
-    );
   }
 
   async isUserAlreadySubscribed(

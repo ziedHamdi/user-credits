@@ -16,19 +16,14 @@ export type OfferCycle =
  * @param K the type of foreign keys (is used for all foreign keys type)
  */
 export interface IOffer<K extends IMinimalId> extends IBaseEntity<K> {
-  /**
-   * Method to set offers as children of this offer based on offerGroup
-   * @param childIds
-   * @param safeMode
-   */
-  asGroupChildren(childIds: IOffer<K>[], safeMode?: boolean): void;
+  asDependentOfferGroups(offerGroups: string[], reset = true): string[];
 
   /**
-   * Method to set offers as children of this offer based on _id
-   * @param childIds
-   * @param safeMode
+   * Method to set offers this offer depends on
+   * @param dependsOnOffers this offer unlocks only on purchase of at least one item of these offers groups
+   * @param reset if true resets dependencies, otherwise adds the ones not already referenced
    */
-  asOfferChildren(childIds: IOffer<K>[], safeMode?: boolean): void;
+  asDependentOffers(dependsOnOffers: IOffer<K>[], reset?: boolean): string[];
   /**
    * Only allowed to have a value when cycle=custom. Expresses the order duration before expiry in seconds.
    */
@@ -38,19 +33,10 @@ export interface IOffer<K extends IMinimalId> extends IBaseEntity<K> {
    */
   cycle: OfferCycle;
   /**
-   * If has a non null value, triggers a databse load of the subOffers of the current @field( offerGroup )
-   *
-   * @see offerGroup on how to group offers of the same kind
-   * @see parentOfferGroup on how to define children of the current group
+   * If true, signals that it unlocks other offers when purchased: check the {@link unlockedBy} field.
    */
-  hasSubGroupOffers: unknown;
-  /**
-   * Indicates information about exclusive offers tied to this offer. If true, a subscription to this offer unlocks
-   * exclusive offers that will have their parentId equal to this offer's _id (this is just an indication to tell if
-   * a request to find subOffers has to be launched).
-   * You might also be interested in subOffers of an offerGroup, which work along with the @field( parentOfferGroup )
-   */
-  hasSubOffers: unknown;
+  hasDependentOffers: boolean;
+
   kind: "subscription" | "tokens" | "expertise";
   name: string;
   /**
@@ -60,29 +46,12 @@ export interface IOffer<K extends IMinimalId> extends IBaseEntity<K> {
    * eg. TV on mobile. The offers related to TV that merge should have another value for offerGroup.
    * The expiration date of the corresponding offer will be computed from the last date of the same offerGroup.
    *
-   * If a subscription to this offerGroup unlocks other offer, use the @field( parentOfferGroup ) to denote them
-   * and put a value to the @field( hasSubGroupOffers )
+   * If a subscription to this offerGroup unlocks other offer, use the {@link unlockedBy} field to denote them
+   * and change the value of {@link hasDependentOffers} to true.
    */
   offerGroup: string;
   /**if an exclusive offer has the same key as a regular one, the exclusive offer will override the regular*/
   overridingKey: string;
-  /**
-   * Similarly as the parentId that is used to unlock offers if a specific offer is purchased. This field is used along
-   * with @field( offerGroup ) and @field( hasSubGroupOffers ) to unlock offers if a 'kind' of offer is purchased.
-   *
-   * @see offerGroup (the value of the parent of this subOffer). Check the field doc to understand why you may need to
-   * group offers
-   * @see hasSubGroupOffers if you decide to create subOffers of an offer group.
-   */
-  parentOfferGroup: string;
-  /**
-   * If an offer can only be purchased when a parentOffer is purchased (like VIP offers, or early adopters for example),
-   * Use this field along with the following fields
-   *
-   * @see hasSubOffers in the parent offer to trigger a database search for subOffers.
-   * @see _id use _id as the value for this field
-   */
-  parentOfferId: K;
   /**
    * This field allows highlighting an offer for example with the text: "recommended". It is declared as a number to
    * allow multiple possibilities of highlighting eg. "recommended"=1, "best seller"=2
@@ -107,10 +76,15 @@ export interface IOffer<K extends IMinimalId> extends IBaseEntity<K> {
    * How many tokens this offer attributes to the user when purchased
    */
   tokenCount: number | null;
-
   /**
-   * This field works in conjunction with @field( overridingKey ): when two overrides conflict, the one with the higher
-   * @field( weight ) is picked.
+   * An array of offerGroup values informing about which purchased offers unlock access to this offer.
+   * For better performance, an offer that unlocks at least one other offer when purchased is marked with
+   * {@link hasDependentOffers}=true
+   */
+  unlockedBy: string[];
+  /**
+   * This field works in conjunction with {@link overridingKey}: when two overrides conflict, the one with the higher
+   * {@link weight} is picked.
    */
   weight: number;
 }

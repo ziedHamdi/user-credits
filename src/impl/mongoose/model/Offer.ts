@@ -23,8 +23,7 @@ const offerSchema = new Schema<IMongooseOffer>({
     ],
     type: String,
   },
-  hasSubGroupOffers: { type: Boolean },
-  hasSubOffers: { type: Boolean },
+  hasDependentOffers: { type: Boolean },
   kind: {
     enum: ["subscription", "tokens", "expertise"],
     required: true,
@@ -36,58 +35,53 @@ const offerSchema = new Schema<IMongooseOffer>({
    */
   offerGroup: { required: true, type: String },
   overridingKey: String,
-  parentOfferGroup: String,
-  parentOfferId: {
-    ref: "offer",
-    required: false,
-    type: Schema.Types.ObjectId,
-  },
   popular: { type: Number },
   price: { required: true, type: Number },
   quantityLimit: Number,
-  tags: { type: [String] },
+  tags: { default: [], type: [String] },
   tokenCount: { required: true, type: Number },
+  unlockedBy: { default: [], type: [String] },
   weight: { default: 0, type: Number },
 });
 
 // Add instance methods to your Mongoose schema
-offerSchema.methods.asOfferChildren = function (
-  childOffers: IMongooseOffer[],
-  safeMode = true,
-) {
-  this.hasSubOffers = true;
+offerSchema.methods.asDependentOffers = function (
+  dependsOnOffers: IMongooseOffer[],
+  reset = true,
+): string[] {
+  if (reset) this.unlockedBy = [];
+  const distinctOfferGroups = new Set<string>(this.unlockedBy);
 
-  for (const childOffer of childOffers) {
-    if (safeMode && this.parentOfferId) {
-      throw new Error(
-        `Offer ${this._id} already has a parent. To override, pass safeMode = false`,
-      );
-    }
-    childOffer.parentOfferId = this._id;
+  dependsOnOffers.forEach((offer) => {
+    distinctOfferGroups.add(offer.offerGroup);
+  });
+
+  if (distinctOfferGroups.size == 0) {
+    this.hasDependentOffers = this.unlockedBy.length > 0;
   }
+
+  // Iterate through the dependsOnOffers and add offerGroups to the Set
+  dependsOnOffers.forEach((offer) => {
+    distinctOfferGroups.add(offer.offerGroup);
+  });
+
+  this.unlockedBy = Array.from(distinctOfferGroups);
+  return this.unlockedBy;
 };
 
-offerSchema.methods.asGroupChildren = function (
-  childOffers: IMongooseOffer[],
-  safeMode = true,
-) {
-  if (!this.offerGroup) {
-    throw new Error(
-      `Offer ${this._id} doesn't have an offerGroup. Can't associate offer group children to it`,
-    );
+offerSchema.methods.asDependentOfferGroups = function (
+  offerGroups: string[],
+  reset = true,
+): string[] {
+  if (reset) this.unlockedBy = [];
+  const distinctOfferGroups = new Set([...offerGroups, ...this.unlockedBy]);
+
+  if (distinctOfferGroups.size == 0) {
+    this.hasDependentOffers = this.unlockedBy.length > 0;
   }
 
-  this.hasSubGroupOffers = true;
-
-  for (const childOffer of childOffers) {
-    if (safeMode && childOffer.parentOfferGroup) {
-      throw new Error(
-        `Offer ${this._id} already has a parent group. To override, pass safeMode = false`,
-      );
-    }
-
-    childOffer.parentOfferGroup = this.offerGroup;
-  }
+  this.unlockedBy = Array.from(distinctOfferGroups);
+  return this.unlockedBy;
 };
 
 export default offerSchema;
