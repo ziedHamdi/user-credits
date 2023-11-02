@@ -5,79 +5,197 @@ import {
   ObjectId,
 } from "../../../service/mocks/BaseService.mocks";
 
+const baseRootOffer = {
+  _id: newObjectId(),
+  cycle: "monthly",
+  hasSubOffers: false, // This offer has no sub-offers
+  kind: "subscription",
+  name: "Free",
+  overridingKey: "free",
+  price: 0,
+  quantityLimit: null,
+  tags: ["subscription", "monthly"],
+  tokenCount: 100,
+  weight: 0,
+} as unknown as IOffer<ObjectId>;
+
+/* eslint-disable */
+export const enum OFFER_GROUP {
+  Free = "Free",
+  // Standard offers
+  Startup = "Startup",
+  Enterprise = "Entreprise",
+  ScaleUp = "ScaleUp",
+  // Early Bird offers
+  EbStartup = "EbStartup",
+  EbEnterprise = "EbEntreprise",
+  EbScaleUp = "EbScaleUp",
+  // Exclusive offers unlocked on certain subscriptions
+  VipEventTalk = "VipEventTalk",
+  VipSeoBackLinks = "VipSeoBackLinks",
+}
+
+
+const MOCKS: Map<OFFER_GROUP, object> = new Map();
+MOCKS.set(OFFER_GROUP.Free, {});
+MOCKS.set(OFFER_GROUP.Startup, {
+  common: {},
+  monthly: {
+    price: 49,
+    tags: ["subscription", "standard", "monthly"]
+  },
+  yearly: {
+    price: 490,
+    tags: ["subscription", "standard", "yearly"]
+  }
+});
+MOCKS.set(OFFER_GROUP.Enterprise, {
+  common: {},
+  monthly: {
+    price: 99,
+    tags: ["subscription", "standard", "monthly"]
+  },
+  yearly: {
+    price: 990,
+    tags: ["subscription", "standard", "yearly"]
+  }
+});
+MOCKS.set(OFFER_GROUP.ScaleUp, {
+  common: {},
+  monthly: {
+    price: 99,
+    tags: ["subscription", "standard", "monthly"]
+  },
+  yearly: {
+    price: 990,
+    tags: ["subscription", "standard", "yearly"]
+  }
+});
+MOCKS.set(OFFER_GROUP.EbStartup, {
+  common: {},
+  monthly: {
+    price: 49,
+    tags: ["subscription", "EarlyBird", "monthly"]
+  },
+  yearly: {
+    price: 490,
+    tags: ["subscription", "EarlyBird", "yearly"]
+  }
+});
+MOCKS.set(OFFER_GROUP.EbEnterprise, {
+  common: {},
+  monthly: {
+    price: 99,
+    tags: ["subscription", "EarlyBird", "monthly"]
+  },
+  yearly: {
+    price: 990,
+    tags: ["subscription", "EarlyBird", "yearly"]
+  }
+});
+MOCKS.set(OFFER_GROUP.EbScaleUp, {
+  common: {},
+  monthly: {
+    price: 99,
+    tags: ["subscription", "EarlyBird", "monthly"]
+  },
+  yearly: {
+    price: 990,
+    tags: ["subscription", "EarlyBird", "yearly"]
+  }
+});
+MOCKS.set(OFFER_GROUP.VipEventTalk, {
+  common: {
+    cycle: "yearly", // ends at the end of the year
+    offerGroup: "VIP_TALK",
+    tags: ["vip"]
+  },
+  _1talk: {
+    name: "1 VIP event",
+    overridingKey: "1vip",
+    price: 160,
+    tokenCount: 1 // one event
+  },
+  _3talk: {
+    name: "1 VIP event",
+    overridingKey: "1vip",
+    price: 320,
+    tokenCount: 3 // one event
+  },
+  _7_talk: {
+    name: "1 VIP event",
+    overridingKey: "1vip",
+    price: 640,
+    tokenCount: 7 // one event
+  }
+});
+MOCKS.set(OFFER_GROUP.VipSeoBackLinks, {
+  common: {
+    cycle: "monthly", // ends at the end of the year
+    offerGroup: "VIP_BACK_LINK",
+    tags: ["vip"]
+  },
+  _1_article: {
+    name: "1 article/month",
+    overridingKey: "1link",
+    price: 640,
+    tokenCount: 1 // one event
+  },
+  _2_articles: {
+    name: "2 articles/month",
+    overridingKey: "2links",
+    price: 1280,
+    tokenCount: 2 // one event
+  }
+});
+
+/* eslint-enable */
+async function preparePredefinedOffer(
+  offerDao: IOfferDao<ObjectId, IOffer<ObjectId>>,
+  offerGroup: OFFER_GROUP,
+  specific?: string,
+) {
+  const mockDef = MOCKS.get(offerGroup);
+  const { common, monthly, yearly } = mockDef as Record<
+    string,
+    Record<string, unknown>
+  >;
+  let otherFields: Record<string, unknown>;
+
+  if (specific == null) {
+    otherFields = {};
+  } else if (specific == "m") {
+    otherFields = monthly;
+    otherFields.offerGroup = offerGroup;
+    otherFields.cycle = "monthly";
+    otherFields.overridingKey = "monthly-" + offerGroup;
+  } else if (specific == "y") {
+    otherFields = yearly;
+    otherFields.offerGroup = offerGroup;
+    otherFields.cycle = "yearly";
+    otherFields.overridingKey = "yearly-" + offerGroup;
+  } else {
+    otherFields = mockDef?.[specific] as Record<string, unknown>;
+    if (otherFields == null) {
+      console.warn(
+        "No special field found in mock ",
+        offerGroup,
+        " with key: ",
+        specific,
+      );
+    }
+  }
+  const offer = offerDao.build({
+    ...baseRootOffer,
+    ...common,
+    ...otherFields,
+  });
+
+  return offer;
+}
+
 /**
- * This test will fill the following structure using the _id, parentId fields:
- *
- *       |
- *       [Free] (tags: ["subscription", "monthly"])
- *       |
- *       [Startup] (tags: ["subscription", "monthly"])
- *       |
- *       [Team] (tags: ["subscription", "monthly"])
- *       |
- *       [Enterprise] (tags: ["subscription", "monthly"])
- *       |
- *       |   ├── [1 VIP event] (tags: ["exclusive", "vip"])
- *       |   |
- *       |   ├── [2 VIP events] (tags: ["exclusive", "vip"])
- *       |   |
- *       |   └── [unlimited VIP events] (tags: ["exclusive", "vip"])
- *       |
- *       [Startup] (tags: ["subscription", "yearly"])
- *       |
- *       [Team] (tags: ["subscription", "yearly"])
- *       |
- *       [Enterprise] (tags: ["subscription", "yearly"])
- *       |
- *       |   ├── [1 VIP event] (tags: ["exclusive", "vip"])
- *       |   |
- *       |   ├── [2 VIP events] (tags: ["exclusive", "vip"])
- *       |   |
- *       |   └── [unlimited VIP events] (tags: ["exclusive", "vip"])
- *       |
- *       [Early bird] (tags: ["subscription", "monthly"])
- *       |
- *       [Early Bird Startup] (tags: ["subscription", "monthly"])
- *       |
- *       [Early Bird Team] (tags: ["subscription", "monthly"])
- *       |
- *       [Early Bird Enterprise] (tags: ["subscription", "monthly"])
- *       |
- *       [1 VIP event] (tags: ["exclusive", "vip"])
- *       |
- *       [2 VIP events] (tags: ["exclusive", "vip"])
- *       |
- *       [unlimited VIP events] (tags: ["exclusive", "vip"])
- *       |
- *       [Early Bird Startup] (tags: ["subscription", "yearly"])
- *       |
- *       [Early Bird Team] (tags: ["subscription", "yearly"])
- *       |
- *       [Early Bird Enterprise] (tags: ["subscription", "yearly"])
- *       |
- *       [1 VIP event] (tags: ["exclusive", "vip"])
- *       |
- *       [2 VIP events] (tags: ["exclusive", "vip"])
- *       |
- *       [unlimited VIP events] (tags: ["exclusive", "vip"])
- *
- *
- * This structure is represented using _id and parentId fields.
- *
- * Now, let's represent a similar structure using offerGroup and parentOfferGroup pairs:
- *
- [Early Bird]
- │
- ├── [Early Bird "Startup", "Team" and/or "Enterprise"] (tags: ["subscription", "monthly"], offerGroup: "EarlyBird")
- │   │
- │   ├── [1 VIP event] (tags: ["exclusive", "vip"], parentOfferGroup: "EarlyBird")
- │   │
- │   ├── [2 VIP events] (tags: ["exclusive", "vip"], parentOfferGroup: "EarlyBird")
- │   │
- │   └── [unlimited VIP events] (tags: ["exclusive", "vip"], parentOfferGroup: "EarlyBird")
- │
- *
- * This structure is represented using offerGroup and parentOfferGroup pairs.
+ * This test reproduces the structure described in {@link /docs/offers_explained}
  *
  * @param daoFactory
  */
@@ -85,363 +203,55 @@ export async function prefillOffersForLoading(
   daoFactory: IDaoFactory<ObjectId>,
 ) {
   const offerDao = daoFactory.getOfferDao();
+  /* eslint-disable */
   // -------------------- free forever-basic subscription -------------------
-  await saveOffer(offerDao, {});
-  // -------------------- standard monthly subscriptions -------------------
-  const monthlyEnterpriseRegular = await saveMonthlyStandard(offerDao);
-  // -------------------- Enterprise subscriptions exclusive offers -------------------
-  await saveMonthlyStandardVIP(offerDao, monthlyEnterpriseRegular);
-  // -------------------- standard yearly subscriptions -------------------
-  const yearlyEnterpriseRegular = await saveYearlyStandard(offerDao);
-  // -------------------- Enterprise subscriptions exclusive offers -------------------
-  await saveYearlyVIP(offerDao, yearlyEnterpriseRegular);
-  // -------------------- Early bird subscriptions offers for life: override standard subscriptions and give exclusive offers -------------------
-  await saveMonthlyEarlyBird(offerDao);
-  // -------------------- Early Bird Enterprise subscriptions exclusive offers -------------------
-  await saveMonthlyEarlyBirdVIP(offerDao);
-  // -------------------- Early Bird yearly subscriptions -------------------
-  await saveYearlyEarlyBird(offerDao);
-  // -------------------- Early Bird Enterprise subscriptions exclusive offers for yearly subscriptions -------------------
-  await saveYearlyEarlyBirdVIP(offerDao);
+  const free = await preparePredefinedOffer(offerDao, OFFER_GROUP.Free);
+// -------------------- standard subscriptions -------------------
+  const startupM = await preparePredefinedOffer(offerDao, OFFER_GROUP.Startup, "m");
+  const startupY = await preparePredefinedOffer(offerDao, OFFER_GROUP.Startup, "y");
+  const enterpriseM = await preparePredefinedOffer(offerDao, OFFER_GROUP.Enterprise, "m");
+  const enterpriseY = await preparePredefinedOffer(offerDao, OFFER_GROUP.Enterprise, "y");
+  const scaleUpM = await preparePredefinedOffer(offerDao, OFFER_GROUP.ScaleUp, "m");
+  const scaleUpY = await preparePredefinedOffer(offerDao, OFFER_GROUP.ScaleUp, "y");
+// -------------------- EarlyBird subscriptions -------------------
+  const ebStartupM = await preparePredefinedOffer(offerDao, OFFER_GROUP.EbStartup, "m");
+  const ebStartupY = await preparePredefinedOffer(offerDao, OFFER_GROUP.EbStartup, "y");
+  const ebEnterpriseM = await preparePredefinedOffer(offerDao, OFFER_GROUP.EbEnterprise, "m");
+  const ebEnterpriseY = await preparePredefinedOffer(offerDao, OFFER_GROUP.EbEnterprise, "y");
+  const ebScaleUpM = await preparePredefinedOffer(offerDao, OFFER_GROUP.EbScaleUp, "m");
+  const ebScaleUpY = await preparePredefinedOffer(offerDao, OFFER_GROUP.EbScaleUp, "y");
 
-  // console.log("Inserted offers:", await offerDao.find({}));
+  // -------------------- VIP exclusive offers -------------------
+  const vipEventTalk_1talk = await preparePredefinedOffer(offerDao, OFFER_GROUP.VipEventTalk, "_1talk");
+  const vipEventTalk_3talks = await preparePredefinedOffer(offerDao, OFFER_GROUP.VipEventTalk, "_3talks");
+  const vipEventTalk_7talks = await preparePredefinedOffer(offerDao, OFFER_GROUP.VipEventTalk, "_7talks");
+
+  const vipSeoBackLinks_1_article = await preparePredefinedOffer(offerDao, OFFER_GROUP.VipSeoBackLinks, "_1_article");
+  const vipSeoBackLinks_2_articles = await preparePredefinedOffer(offerDao, OFFER_GROUP.VipSeoBackLinks, "_2_articles");
+
+  const vipDependsOnOffers = [scaleUpM, scaleUpY, ebStartupM, ebStartupY, ebEnterpriseM, ebEnterpriseY, ebScaleUpM, ebScaleUpY];
+  // -------------------- VIP exclusive offers Talks-------------------
+  const vipEventTalkOfferGroups = vipEventTalk_1talk.asUnlockingOffers(vipDependsOnOffers);
+  vipEventTalk_3talks.asUnlockingOffers(vipDependsOnOffers);
+  vipEventTalk_7talks.asUnlockingOffers(vipDependsOnOffers);
+  // -------------------- VIP exclusive offers BackLinks-------------------
+  const vipSeoBackLinkOfferGroups = vipSeoBackLinks_1_article.asUnlockingOffers(vipDependsOnOffers);
+  vipSeoBackLinks_2_articles.asUnlockingOffers(vipDependsOnOffers);
+
+  const allOffers = [...vipDependsOnOffers, enterpriseM, enterpriseY, startupM, startupY, vipEventTalk_1talk, vipEventTalk_3talks, vipEventTalk_7talks, vipSeoBackLinks_1_article, vipSeoBackLinks_2_articles];
+  /* eslint-enable */
+
+  // now save all the prepared data
+  await Promise.all(
+    allOffers.map(async (offer) => {
+      await offer.save();
+    }),
+  );
+
+  console.log("Inserted offers:", await offerDao.find({}));
   return {
-    parentIdOffers: [monthlyEnterpriseRegular, yearlyEnterpriseRegular],
+    allOffers,
+    vipEventTalkOfferGroups,
+    vipSeoBackLinkOfferGroups,
   };
-}
-
-async function saveOffer(
-  offerDao: IOfferDao<ObjectId, IOffer<ObjectId>>,
-  mods: Partial<IOffer<ObjectId>>,
-  fixMods: Partial<IOffer<ObjectId>> = {},
-): Promise<IOffer<ObjectId>> {
-  const baseRootOffer = {
-    _id: newObjectId(),
-    cycle: "monthly",
-    hasSubOffers: false, // This offer has no sub-offers
-    kind: "subscription",
-    name: "Free",
-    offerGroup: "standard",
-    overridingKey: "free",
-    price: 0,
-    quantityLimit: null,
-    tags: ["subscription", "monthly"],
-    tokenCount: 100,
-    weight: 0,
-  } as unknown as IOffer<ObjectId>;
-
-  const offer = offerDao.build({
-    ...baseRootOffer,
-    ...mods,
-    ...fixMods,
-  });
-  await offer.save();
-  return offer;
-}
-
-async function saveMonthlyStandard(
-  offerDao: IOfferDao<ObjectId, IOffer<ObjectId>>,
-) {
-  await saveOffer(offerDao, {
-    name: "Startup",
-    overridingKey: "Startup",
-    price: 49,
-  });
-  await saveOffer(offerDao, {
-    name: "Team",
-    overridingKey: "Team",
-    price: 99,
-  });
-  const monthlyEnterpriseRegular = await saveOffer(offerDao, {
-    hasDependentOffers: true, // this offer has exclusive subOffers for VIP access
-    name: "Enterprise",
-    overridingKey: "Enterprise",
-    price: 249,
-  });
-  return monthlyEnterpriseRegular;
-}
-
-async function saveMonthlyStandardVIP(
-  offerDao: IOfferDao<ObjectId, IOffer<ObjectId>>,
-  monthlyEnterpriseRegular: IOffer<ObjectId>,
-) {
-  const fix = {
-    cycle: "yearly", // ends at the end of the year
-    offerGroup: "VIP",
-    parentOfferId: monthlyEnterpriseRegular._id,
-    tags: ["exclusive", "vip"],
-  } as Partial<IOffer<ObjectId>>;
-  await saveOffer(
-    offerDao,
-    {
-      cycle: "yearly", // ends at the end of the year
-      name: "1 VIP event",
-      overridingKey: "1vip",
-      price: 200,
-      tokenCount: 1, // one event
-    },
-    fix,
-  );
-  await saveOffer(
-    offerDao,
-    {
-      name: "2 VIP events",
-      overridingKey: "2vip",
-      price: 300,
-      tokenCount: 2,
-    },
-    fix,
-  );
-  await saveOffer(
-    offerDao,
-    {
-      name: "unlimited VIP events",
-      overridingKey: "1000vip",
-      price: 500,
-      tokenCount: 1000, // meaning unlimited entries
-    },
-    fix,
-  );
-}
-
-async function saveYearlyStandard(
-  offerDao: IOfferDao<ObjectId, IOffer<ObjectId>>,
-) {
-  const fix = {
-    cycle: "yearly", // ends at the end of the year
-    tags: ["subscription", "yearly"],
-  } as Partial<IOffer<ObjectId>>;
-  await saveOffer(
-    offerDao,
-    {
-      name: "Startup",
-      overridingKey: "Startup",
-      price: 490,
-    },
-    fix,
-  );
-  await saveOffer(
-    offerDao,
-    {
-      name: "Team",
-      overridingKey: "Team",
-      price: 990,
-    },
-    fix,
-  );
-  const yearlyEnterpriseRegular = await saveOffer(
-    offerDao,
-    {
-      name: "Enterprise",
-      overridingKey: "Enterprise",
-      price: 2490,
-    },
-    fix,
-  );
-  return yearlyEnterpriseRegular;
-}
-
-async function saveYearlyVIP(
-  offerDao: IOfferDao<ObjectId, IOffer<ObjectId>>,
-  yearlyEnterpriseRegular: IOffer<ObjectId>,
-) {
-  const fix = {
-    cycle: "yearly", // ends at the end of the year
-    offerGroup: "VIP",
-    parentOfferId: yearlyEnterpriseRegular._id,
-    tags: ["exclusive", "vip"],
-  } as Partial<IOffer<ObjectId>>;
-  await saveOffer(
-    offerDao,
-    {
-      name: "1 VIP event",
-      overridingKey: "1vip",
-      price: 160,
-      tokenCount: 1, // one event
-    },
-    fix,
-  );
-  await saveOffer(
-    offerDao,
-    {
-      name: "2 VIP events",
-      overridingKey: "2vip",
-      price: 240,
-      tokenCount: 2,
-    },
-    fix,
-  );
-  await saveOffer(
-    offerDao,
-    {
-      name: "unlimited VIP events",
-      overridingKey: "1000vip",
-      price: 400,
-      tokenCount: 1000, // meaning unlimited entries
-    },
-    fix,
-  );
-}
-
-async function saveMonthlyEarlyBird(
-  offerDao: IOfferDao<ObjectId, IOffer<ObjectId>>,
-) {
-  const fix = {
-    offerGroup: "EarlyBird",
-  } as Partial<IOffer<ObjectId>>;
-  await saveOffer(
-    offerDao,
-    {
-      name: "Early bird",
-      overridingKey: "free",
-      tokenCount: 1000,
-    },
-    fix,
-  );
-  await saveOffer(
-    offerDao,
-    {
-      name: "Early Bird Startup",
-      overridingKey: "Startup",
-      price: 19,
-    },
-    fix,
-  );
-  await saveOffer(
-    offerDao,
-    {
-      name: "Early Bird Team",
-      overridingKey: "Team",
-      price: 39,
-    },
-    fix,
-  );
-  const monthlyEarlyBird = await saveOffer(
-    offerDao,
-    {
-      name: "Early Bird Enterprise",
-      overridingKey: "Enterprise",
-      price: 99,
-    },
-    fix,
-  );
-  return monthlyEarlyBird;
-}
-
-async function saveMonthlyEarlyBirdVIP(
-  offerDao: IOfferDao<ObjectId, IOffer<ObjectId>>,
-) {
-  const fix = {
-    cycle: "yearly", // ends at the end of the year
-    unlockedBy: "EarlyBird",
-    tags: ["exclusive", "vip"],
-  } as unknown as Partial<IOffer<ObjectId>>;
-  await saveOffer(
-    offerDao,
-    {
-      name: "1 Early Bird VIP event / year",
-      overridingKey: "1vip",
-      price: 200,
-      tokenCount: 1, // one event
-    },
-    fix,
-  );
-  await saveOffer(
-    offerDao,
-    {
-      name: "2 Early Bird VIP events / year",
-      overridingKey: "2vip",
-      price: 300,
-      tokenCount: 2,
-    },
-    fix,
-  );
-  await saveOffer(
-    offerDao,
-    {
-      name: "unlimited Early Bird VIP events",
-      overridingKey: "1000vip",
-      price: 500,
-      tokenCount: 1000, // meaning unlimited entries
-    },
-    fix,
-  );
-}
-async function saveYearlyEarlyBirdVIP(
-  offerDao: IOfferDao<ObjectId, IOffer<ObjectId>>,
-) {
-  const fix = {
-    cycle: "yearly", // ends at the end of the year
-    unlockedBy: "EarlyBirdYearly",
-    tags: ["exclusive", "vip"],
-  } as unknown as Partial<IOffer<ObjectId>>;
-  await saveOffer(
-    offerDao,
-    {
-      name: "1 VIP event",
-      overridingKey: "1vip",
-      price: 50,
-      tokenCount: 1, // one event
-    },
-    fix,
-  );
-  await saveOffer(
-    offerDao,
-    {
-      name: "2 VIP events",
-      overridingKey: "2vip",
-      price: 75,
-      tokenCount: 2,
-    },
-    fix,
-  );
-  await saveOffer(
-    offerDao,
-    {
-      name: "unlimited VIP events",
-      overridingKey: "1000vip",
-      price: 125,
-      tokenCount: 1000, // meaning unlimited entries
-    },
-    fix,
-  );
-}
-
-async function saveYearlyEarlyBird(
-  offerDao: IOfferDao<ObjectId, IOffer<ObjectId>>,
-) {
-  const fix = {
-    cycle: "yearly", // ends at the end of the year
-    offerGroup: "EarlyBirdYearly",
-    tags: ["subscription", "yearly"],
-  } as Partial<IOffer<ObjectId>>;
-  await saveOffer(
-    offerDao,
-    {
-      name: "Early Bird Startup",
-      offerGroup: "EarlyBird",
-      overridingKey: "Startup",
-      price: 1900,
-    },
-    fix,
-  );
-  await saveOffer(
-    offerDao,
-    {
-      name: "Early Bird Team",
-      overridingKey: "Team",
-      price: 3900,
-    },
-    fix,
-  );
-  const yearlyEarlyBirdEnterprise = await saveOffer(
-    offerDao,
-    {
-      name: "Early Bird Enterprise",
-      overridingKey: "Enterprise",
-      price: 990,
-    },
-    fix,
-  );
-  return yearlyEarlyBirdEnterprise;
 }

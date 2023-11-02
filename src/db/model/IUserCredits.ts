@@ -1,7 +1,7 @@
-import { IBaseEntity } from "./IBaseEntity";
 import { IActivatedOffer } from "./IActivatedOffer";
-import { ISubscription } from "./ISubscription";
+import { IBaseEntity } from "./IBaseEntity";
 import { IMinimalId } from "./IMinimalId";
+import { ISubscription } from "./ISubscription";
 
 /**
  * Interface representing user credits on multiple offerGroups.

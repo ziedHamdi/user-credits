@@ -1,9 +1,9 @@
-import { IOrder, IMinimalId } from "../../../src/db/model";
+import { IMinimalId, IOrder } from "../../../src/db/model";
+import { IOrderStatus } from "../../../src/db/model/IOrderStatus";
 import {
   IPaymentClient,
   WebhookEventPayload,
 } from "../../../src/service/IPaymentClient";
-import { IOrderStatus } from "../../../src/db/model/IOrderStatus";
 
 export const MOCK_VALUES = {
   paymentIntentSecretAsPaid: "IntentAsPaid",

@@ -10,8 +10,10 @@ import type { ObjectId } from "../TypeDefs";
  * @param <A> stands for the object attributes (the fields of an entity before creation)
  * @param <D> stands for the entity attributes (the fields of an entity after creation in mongoose)
  */
-export interface EntityModel<D extends Document, A extends IBaseEntity<ObjectId>>
-  extends Model<D> {
+export interface EntityModel<
+  D extends Document,
+  A extends IBaseEntity<ObjectId>,
+> extends Model<D> {
   build(attr: A): D;
 }
 
@@ -19,8 +21,10 @@ export interface EntityModel<D extends Document, A extends IBaseEntity<ObjectId>
  * @param <A> stands for the object attributes (the fields of an entity before creation)
  * @param <D> stands for the entity attributes (the fields of an entity after creation in mongoose)
  */
-export class BaseMongooseDao<D extends Document, A extends IBaseEntity<ObjectId>>
-  implements IBaseDao<D>
+export class BaseMongooseDao<
+  D extends Document,
+  A extends IBaseEntity<ObjectId>,
+> implements IBaseDao<D>
 {
   model: EntityModel<D, A> & Model<D>;
 

@@ -2,7 +2,7 @@ import { Types } from "mongoose";
 type ObjectId = Types.ObjectId;
 import { Document, Schema } from "mongoose";
 
-import { IOrder} from "../../../db/model/IOrder";
+import { IOrder } from "../../../db/model/IOrder";
 import { IOrderStatus } from "../../../db/model/IOrderStatus";
 
 export type IMongooseOrder = IOrder<ObjectId> & Document;

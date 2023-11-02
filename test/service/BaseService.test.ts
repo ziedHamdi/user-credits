@@ -4,11 +4,11 @@ import expect from "expect";
 
 import { IDaoFactory } from "../../src/db/dao"; // Import the actual path
 import {
+  IMinimalId,
   IOffer,
   IOrder,
   ISubscription,
   IUserCredits,
-  IMinimalId,
 } from "../../src/db/model"; // Import the actual path
 import { InvalidOrderError } from "../../src/errors";
 import { BaseService } from "../../src/service/BaseService"; //IMPROVEMENT Should use { IPayment } and add a secondary interface instead

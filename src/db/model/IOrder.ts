@@ -1,6 +1,6 @@
 import { IBaseEntity } from "./IBaseEntity";
-import { OfferCycle } from "./IOffer";
 import { IMinimalId } from "./IMinimalId";
+import { OfferCycle } from "./IOffer";
 import { IOrderStatus } from "./IOrderStatus";
 
 /**

@@ -7,11 +7,11 @@ import { Connection } from "mongoose";
 
 import { IDaoFactory, IOfferDao } from "../../../src/db/dao";
 import {
+  IMinimalId,
   IOffer,
   IOrder,
   ISubscription,
   IUserCredits,
-  IMinimalId,
 } from "../../../src/db/model";
 import { IActivatedOffer } from "../../../src/db/model/IActivatedOffer";
 import { IMongooseOffer } from "../../../src/impl/mongoose/model/Offer";
@@ -25,7 +25,10 @@ import {
   newObjectId,
   ObjectId,
 } from "../../service/mocks/BaseService.mocks";
-import { prefillOffersForLoading } from "../mongoose/mocks/loadOffersTestsPrefill";
+import {
+  OFFER_GROUP,
+  prefillOffersForLoading,
+} from "../mongoose/mocks/loadOffersTestsPrefill";
 
 class ExtendedBaseService<K extends IMinimalId> extends BaseService<K> {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -324,7 +327,9 @@ describe("OfferDao specific methods", () => {
   let mongoMemoryServer: MongoMemoryServer;
   let connection: Connection;
   let offerDao: IOfferDao<ObjectId, IMongooseOffer>;
-  let parentIdOffers: IOffer<ObjectId>[];
+  let allOffers: IOffer<ObjectId>[];
+  let vipEventTalkOfferGroups: string[];
+  let vipSeoBackLinkOfferGroups: string[];
 
   beforeEach(async () => {
     // Initialize mocks and dependencies here.
@@ -334,7 +339,8 @@ describe("OfferDao specific methods", () => {
       ObjectId,
       IMongooseOffer
     >;
-    ({ parentIdOffers } = await prefillOffersForLoading(mongooseDaoFactory));
+    ({ allOffers, vipEventTalkOfferGroups, vipSeoBackLinkOfferGroups } =
+      await prefillOffersForLoading(mongooseDaoFactory));
   });
 
   afterEach(async () => {
@@ -344,24 +350,51 @@ describe("OfferDao specific methods", () => {
 
   // Test loading tagged offers
   describe("loadTaggedOffers", () => {
+    it("should by default load offers that do not depend on any others", async () => {
+      const offers = await offerDao.loadOffers({});
+      // Write your Jest assertions to check if the offers were loaded correctly
+      expect(Array.isArray(offers)).toBe(true);
+      expect(offers.length).toBe(12);
+    });
+  });
+
+  // Test loading tagged offers
+  describe("loadTaggedOffers", () => {
     it("should load offers with specific tags", async () => {
       const tagsToLoad = ["subscription", "monthly"];
       const offers = await offerDao.loadTaggedOffers(tagsToLoad);
       // Write your Jest assertions to check if the offers were loaded correctly
       expect(Array.isArray(offers)).toBe(true);
-      expect(offers.length).toBeGreaterThan(0);
+      expect(offers.length).toBe(6);
     });
   });
 
   // Test loading sub-offers
   describe("loadSubOffers", () => {
-    it("should load sub-offers for a parent offer", async () => {
+    it("should not find sub-offers for a parent without any", async () => {
       // Insert a parent offer first
-      const parentOfferId = parentIdOffers[0]._id;
-      const subOffers = await offerDao.loadSubOffers(parentOfferId);
+      const subOffers = await offerDao.loadSubGroupOffers(OFFER_GROUP.Startup);
       // Write your Jest assertions to check if the sub-offers were loaded correctly
       expect(Array.isArray(subOffers)).toBe(true);
-      expect(subOffers.length).toBeGreaterThan(0);
+      expect(subOffers.length).toBe(0);
+    });
+
+    it("should not find sub-offers for a parent without any", async () => {
+      // Insert a parent offer first
+      const subOffers = await offerDao.loadSubGroupOffers(OFFER_GROUP.ScaleUp);
+      // Write your Jest assertions to check if the sub-offers were loaded correctly
+      expect(Array.isArray(subOffers)).toBe(true);
+      expect(subOffers.length).toBe(5);
+    });
+
+    it("should not find sub-offers for a parent without any", async () => {
+      // Insert a parent offer first
+      const subOffers = await offerDao.loadSubGroupOffers(
+        OFFER_GROUP.EbStartup,
+      );
+      // Write your Jest assertions to check if the sub-offers were loaded correctly
+      expect(Array.isArray(subOffers)).toBe(true);
+      expect(subOffers.length).toBe(5);
     });
 
     // Add more test cases for different scenarios

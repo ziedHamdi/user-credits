@@ -5,7 +5,7 @@ import type { IOffer } from "../../../../db/model";
 import { ObjectId } from "../../TypeDefs";
 import { Offer } from "../index";
 
-describe("asDependentOfferGroups method", () => {
+describe("asUnlockingOfferGroups method", () => {
   it("should correctly attribute dependent offers, add other groups if called again without second argument, but reset and restart if set to true", () => {
     // Mock the method to avoid database interaction
 
@@ -14,9 +14,9 @@ describe("asDependentOfferGroups method", () => {
       Offer,
     ) as unknown as Model<IOffer<ObjectId>>;
     const offer = new OfferModel();
-    // offer.asDependentOfferGroups = jest.fn();
+    // offer.asUnlockingOfferGroups = jest.fn();
 
-    const result = offer.asDependentOfferGroups([
+    const result = offer.asUnlockingOfferGroups([
       "ABC",
       "ABC",
       "DEF",
@@ -27,20 +27,20 @@ describe("asDependentOfferGroups method", () => {
     expect(result).toEqual(expect.arrayContaining(["ABC", "DEF", "GHI"]));
     expect(result).toEqual(offer.unlockedBy);
 
-    offer.asDependentOfferGroups(["JKL"]);
+    offer.asUnlockingOfferGroups(["JKL"]);
     expect(offer.unlockedBy).toEqual(
       expect.arrayContaining(["ABC", "DEF", "GHI", "JKL"]),
     );
 
     //reset
-    offer.asDependentOfferGroups(["JKL"], true);
+    offer.asUnlockingOfferGroups(["JKL"], true);
     expect(offer.unlockedBy).toEqual(["JKL"]);
   });
 
   // Add more test cases as needed
 });
 
-describe("asDependentOfferGroups method", () => {
+describe("asUnlockingOffers method", () => {
   it("should correctly attribute dependent offers, add update the unlocking offers' hasDependentOffers the value 'true'", () => {
     // Mock the method to avoid database interaction
 
@@ -55,7 +55,7 @@ describe("asDependentOfferGroups method", () => {
       { offerGroup: "THREE" },
     ] as IOffer<ObjectId>[];
 
-    const result = offer.asDependentOffers(offersToUpadte);
+    const result = offer.asUnlockingOffers(offersToUpadte);
 
     expect(result).toEqual(expect.arrayContaining(["ONE", "TWO", "THREE"]));
     expect(result).toEqual(offer.unlockedBy);
@@ -64,13 +64,13 @@ describe("asDependentOfferGroups method", () => {
     );
 
     const four = { offerGroup: "FOUR" };
-    offer.asDependentOffers([four] as IOffer<ObjectId>[]);
+    offer.asUnlockingOffers([four] as IOffer<ObjectId>[]);
     expect(offer.unlockedBy).toEqual(
       expect.arrayContaining(["ONE", "TWO", "THREE", "FOUR"]),
     );
 
     //reset
-    offer.asDependentOfferGroups(["FOUR"], true);
+    offer.asUnlockingOffers([four] as IOffer<ObjectId>[], true);
     expect(offer.unlockedBy).toEqual(["FOUR"]);
   });
 

@@ -11,6 +11,7 @@ import {
   IUserCredits,
 } from "../../src/db/model";
 import { IActivatedOffer } from "../../src/db/model/IActivatedOffer";
+import { IOrderStatus } from "../../src/db/model/IOrderStatus";
 import { PaymentError } from "../../src/errors";
 import { IPaymentClient } from "../../src/service/IPaymentClient";
 import { PaymentService } from "../../src/service/PaymentService";
@@ -18,7 +19,6 @@ import { addMonths } from "../../src/util/Dates";
 import { TestContainerSingleton } from "../config/testContainer";
 import { initMocks, ObjectId } from "./mocks/BaseService.mocks";
 import { MOCK_VALUES } from "./mocks/StripeMock";
-import { IOrderStatus } from "../../src/db/model/IOrderStatus";
 
 /**
  * Temporary class to access the protected methods

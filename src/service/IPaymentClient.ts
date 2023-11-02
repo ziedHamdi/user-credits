@@ -1,4 +1,4 @@
-import { IOrder, IMinimalId } from "../db/model";
+import { IMinimalId, IOrder } from "../db/model";
 
 export interface WebhookEventPayload {
   body: string;

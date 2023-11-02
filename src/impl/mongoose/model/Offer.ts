@@ -45,7 +45,7 @@ const offerSchema = new Schema<IMongooseOffer>({
 });
 
 // Add instance methods to your Mongoose schema
-offerSchema.methods.asDependentOffers = function (
+offerSchema.methods.asUnlockingOffers = function (
   dependsOnOffers: IMongooseOffer[],
   reset = false,
 ): string[] {
@@ -57,9 +57,6 @@ offerSchema.methods.asDependentOffers = function (
     distinctOfferGroups.add(offer.offerGroup);
   });
 
-  if (distinctOfferGroups.size == 0) {
-  }
-
   // Iterate through the dependsOnOffers and add offerGroups to the Set
   dependsOnOffers.forEach((offer) => {
     distinctOfferGroups.add(offer.offerGroup);
@@ -69,7 +66,7 @@ offerSchema.methods.asDependentOffers = function (
   return this.unlockedBy;
 };
 
-offerSchema.methods.asDependentOfferGroups = function (
+offerSchema.methods.asUnlockingOfferGroups = function (
   offerGroups: string[],
   reset = false,
 ): string[] {

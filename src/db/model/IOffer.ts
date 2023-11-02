@@ -16,14 +16,14 @@ export type OfferCycle =
  * @param K the type of foreign keys (is used for all foreign keys type)
  */
 export interface IOffer<K extends IMinimalId> extends IBaseEntity<K> {
-  asDependentOfferGroups(offerGroups: string[], reset = true): string[];
+  asUnlockingOfferGroups(offerGroups: string[], reset = true): string[];
 
   /**
    * Method to set offers this offer depends on
    * @param dependsOnOffers this offer unlocks only on purchase of at least one item of these offers groups
    * @param reset if true resets dependencies, otherwise adds the ones not already referenced
    */
-  asDependentOffers(dependsOnOffers: IOffer<K>[], reset?: boolean): string[];
+  asUnlockingOffers(dependsOnOffers: IOffer<K>[], reset?: boolean): string[];
   /**
    * Only allowed to have a value when cycle=custom. Expresses the order duration before expiry in seconds.
    */
