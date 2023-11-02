@@ -62,12 +62,22 @@ Now, the user environment, influenced by their status, will determine whether to
 
 Now, let's dive into a more intricate topic: **Offer Unlocking**.
 
-# Unleashing Exclusive VIP Offers
+# Unveiling Exclusive VIP Offers
 
-Unlocking **VIP** offers for "**Standard-ScaleUp**" subscribers may appear straightforward at first glance. We could declare an offer as the child of the "**Standard**" or "**ScaleUp**" subscription, ensuring that only customers who subscribe to these offers can access the child VIP service. However, there's a catch. We have not one but two types of "**Standard**" and "**ScaleUp**" offers: **monthly** and **yearly** subscriptions. The challenge is to make our VIP offer accessible to both without creating duplicate child offers.
+In the **Standard** section, the process of unlocking **VIP** offers for "**ScaleUp**" subscribers might initially appear straightforward. One might think of designating an offer as a child of the "**ScaleUp**" subscriptions, ensuring that subscribers to these offers gain access to the VIP service. However, a complication arises. We provide two variations of "**ScaleUp**" subscriptions: **monthly** and **yearly** plans. An even bigger issue is that we desire the same **VIP** offer to be accessible to other offer groups in the "**EarlyBird**" section. How can we achieve this?
+
+To tackle this challenge, we harness the **unlockedBy** field. Instead of creating child offers (as our initial intuition might suggest), we precisely specify, for each **VIP offer**, the particular **offerGroup**(s) it is unlocked by.
+
+The "**unlockedBy**" field proves to be a versatile solution that enhances the management and accessibility of **related services** across different subscription types. Even if we refer to the unlocked offers as **sub-offers**, it's more accurate to think of them as "**unlocked by**". We are usually confined to having only two parents, and in the programming world, it's even worse: we have only one parent (or one-to-many relationships). Using the term "**parentOfferGroups**" (as initially in the library) would have been misleading as it holds a potentially long list of parents.
 
 ### Offer Group Sub-Offers
-The good news is that we've already introduced the concept of **Offer Groups** for "**ScaleUp**" subscribers. To address the differentiation between "**Standard**" and "**Early Bird**" customers, we must name these **Offer Groups** differently, for example **Startup** and **EbStartup**. This will solve our conflict.
+Within the "**EarlyBird**" section, identified by the "**Eb**" prefix, we showcase a **VIP offer** named "**EventTalk**". This offer can be unlocked by purchasing an offer from one of the three offer groups: "**EbStartup**," "**EbBusiness**," and "**EbScaleUp**" within the "**EarlyBird**" section. Moreover, it can also be unlocked by the "**ScaleUp**" offer in the "**Standard**" section, as we discussed earlier. To achieve this high degree of flexibility, we once again make use of the `unlockedBy` field.
+
+The `EventTalk.unlockedBy` field now contains an array of strings: `["EbStartup", "EbBusiness", "EbScaleUp", "ScaleUp"]`. This setup enables us to create a single offer that can be unlocked by purchasing offers from different sections, seamlessly bridging the gap between the "**EarlyBird**" and "**Standard**" sections.
+
+This approach streamlines our offer hierarchy and ensures that an offer can be associated with multiple **unlocking offers** (don't think **parent offers** :-) ). It's a powerful and versatile solution that enhances the management and organization of offers within the library.
+
+
 
 ### Groups of Offer Groups Sub-Offers
 
