@@ -47,17 +47,17 @@ const offerSchema = new Schema<IMongooseOffer>({
 // Add instance methods to your Mongoose schema
 offerSchema.methods.asDependentOffers = function (
   dependsOnOffers: IMongooseOffer[],
-  reset = true,
+  reset = false,
 ): string[] {
   if (reset) this.unlockedBy = [];
   const distinctOfferGroups = new Set<string>(this.unlockedBy);
 
   dependsOnOffers.forEach((offer) => {
+    offer.hasDependentOffers = true;
     distinctOfferGroups.add(offer.offerGroup);
   });
 
   if (distinctOfferGroups.size == 0) {
-    this.hasDependentOffers = this.unlockedBy.length > 0;
   }
 
   // Iterate through the dependsOnOffers and add offerGroups to the Set
@@ -71,14 +71,10 @@ offerSchema.methods.asDependentOffers = function (
 
 offerSchema.methods.asDependentOfferGroups = function (
   offerGroups: string[],
-  reset = true,
+  reset = false,
 ): string[] {
   if (reset) this.unlockedBy = [];
   const distinctOfferGroups = new Set([...offerGroups, ...this.unlockedBy]);
-
-  if (distinctOfferGroups.size == 0) {
-    this.hasDependentOffers = this.unlockedBy.length > 0;
-  }
 
   this.unlockedBy = Array.from(distinctOfferGroups);
   return this.unlockedBy;
