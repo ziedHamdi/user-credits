@@ -386,7 +386,7 @@ describe("OfferDao specific methods", () => {
     it("should load offers based on query parameters", async () => {
       const params = {
         allTags: true,
-        offerGroup: ["standard"],
+        offerGroup: "standard",
         tags: ["subscription", "monthly"],
       };
       const offers = await offerDao.loadOffers(params);
