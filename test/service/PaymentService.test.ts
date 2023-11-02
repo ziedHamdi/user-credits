@@ -243,12 +243,7 @@ describe("PaymentService.updateOfferGroup", () => {
     );
 
     // Assert
-    expect(newOffer.offerGroup).toEqual(
-      expect.arrayContaining(order.offerGroup),
-    );
-    expect(order.offerGroup).toEqual(
-      expect.arrayContaining(newOffer.offerGroup),
-    );
+    expect(newOffer.offerGroup).toEqual(order.offerGroup);
     expect(newOffer.tokens).toEqual((order.tokenCount || 0) * 3);
     //FIXME there's an hour of difference between the expected and found value. I have no clue from where it could come
     // expect(newOffer.expires).toEqual(

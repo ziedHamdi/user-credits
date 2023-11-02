@@ -10,7 +10,7 @@ export interface IActivatedOffer {
   /**
    * The grouping of offers to which this offer belongs.
    */
-  offerGroup: string[];
+  offerGroup: string;
 
   /**
    * The start date of the activated offer.

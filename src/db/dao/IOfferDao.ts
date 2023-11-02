@@ -3,7 +3,7 @@ import { IBaseDao } from "./IBaseDao";
 
 export interface IFindOffersParams<K extends IMinimalId> {
   allTags?: boolean;
-  offerGroup?: string[];
+  offerGroup?: string;
   parentOfferGroup?: string;
   parentOfferId?: K;
   tags?: string[];

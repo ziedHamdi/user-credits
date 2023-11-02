@@ -38,12 +38,7 @@ const orderSchema = new Schema<IMongooseOrder>(
       type: String,
     },
     history: [orderStatusSchema],
-    offerGroup: {
-      required: function () {
-        return this.offerGroup.length > 0;
-      },
-      type: [String],
-    },
+    offerGroup: { required: true, type: String },
     offerId: {
       ref: "offer",
       required: true,

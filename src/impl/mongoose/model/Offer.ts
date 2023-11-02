@@ -34,12 +34,7 @@ const offerSchema = new Schema<IMongooseOffer>({
   /**
    * Detailed documentation in interface @IOffer.offerGroup
    */
-  offerGroup: {
-    required: function () {
-      return this.offerGroup.length > 0;
-    },
-    type: [String],
-  },
+  offerGroup: { required: true, type: String },
   overridingKey: String,
   parentOfferGroup: String,
   parentOfferId: {
@@ -91,7 +86,6 @@ offerSchema.methods.asGroupChildren = function (
       );
     }
 
-    //FIXME check if parentOfferGroup should be an array too
     childOffer.parentOfferGroup = this.offerGroup;
   }
 };

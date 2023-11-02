@@ -52,21 +52,18 @@ export interface IOffer<K extends IMinimalId> extends IBaseEntity<K> {
    */
   hasSubOffers: unknown;
   kind: "subscription" | "tokens" | "expertise";
-  /**
-   * A key used to load information about the offer in front end.
-   */
   name: string;
   /**
-   * The `offerGroup` field plays a crucial role in organizing and managing subscription offers within our ecosystem.
-   * It groups distinct offers that share common properties, allowing for synchronized expiration date calculations.
-   * For instance, a "regular" subscription offer may come in various durations (e.g., weekly, monthly, quarterly).
-   * By assigning the same value to the `offerGroup` field for these offers, they are treated as a unified entity.
+   * The value of this field groups distinct offers so that the expiration date is computed jointly:
+   * For example, a "regular" subscription offer can be in different durations (week, month, trimester, etc...).
+   * To group these offers as one, use the same value for this field. Another offer could be a special service
+   * eg. TV on mobile. The offers related to TV that merge should have another value for offerGroup.
+   * The expiration date of the corresponding offer will be computed from the last date of the same offerGroup.
    *
-   * Additionally, if a subscription to this `offerGroup` unlocks other offers, you can specify them using the
-   * `parentOfferGroup` field and set a value for `hasSubGroupOffers`.
+   * If a subscription to this offerGroup unlocks other offer, use the @field( parentOfferGroup ) to denote them
+   * and put a value to the @field( hasSubGroupOffers )
    */
-  offerGroup: string[];
-
+  offerGroup: string;
   /**if an exclusive offer has the same key as a regular one, the exclusive offer will override the regular*/
   overridingKey: string;
   /**

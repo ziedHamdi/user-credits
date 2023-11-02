@@ -121,7 +121,7 @@ async function saveOffer(
     hasSubOffers: false, // This offer has no sub-offers
     kind: "subscription",
     name: "Free",
-    offerGroup: ["standard"],
+    offerGroup: "standard",
     overridingKey: "free",
     price: 0,
     quantityLimit: null,
@@ -167,7 +167,7 @@ async function saveMonthlyStandardVIP(
 ) {
   const fix = {
     cycle: "yearly", // ends at the end of the year
-    offerGroup: ["VIP"],
+    offerGroup: "VIP",
     parentOfferId: monthlyEnterpriseRegular._id,
     tags: ["exclusive", "vip"],
   } as Partial<IOffer<ObjectId>>;
@@ -247,7 +247,7 @@ async function saveYearlyVIP(
 ) {
   const fix = {
     cycle: "yearly", // ends at the end of the year
-    offerGroup: ["VIP"],
+    offerGroup: "VIP",
     parentOfferId: yearlyEnterpriseRegular._id,
     tags: ["exclusive", "vip"],
   } as Partial<IOffer<ObjectId>>;
@@ -287,7 +287,7 @@ async function saveMonthlyEarlyBird(
   offerDao: IOfferDao<ObjectId, IOffer<ObjectId>>,
 ) {
   const fix = {
-    offerGroup: ["EarlyBird"],
+    offerGroup: "EarlyBird",
   } as Partial<IOffer<ObjectId>>;
   await saveOffer(
     offerDao,
@@ -412,14 +412,14 @@ async function saveYearlyEarlyBird(
 ) {
   const fix = {
     cycle: "yearly", // ends at the end of the year
-    offerGroup: ["EarlyBirdYearly"],
+    offerGroup: "EarlyBirdYearly",
     tags: ["subscription", "yearly"],
   } as Partial<IOffer<ObjectId>>;
   await saveOffer(
     offerDao,
     {
       name: "Early Bird Startup",
-      offerGroup: ["EarlyBird"],
+      offerGroup: "EarlyBird",
       overridingKey: "Startup",
       price: 1900,
     },

@@ -21,7 +21,7 @@ export interface ISubscription<K extends IMinimalId> extends IBaseEntity<K> {
    * The grouping of offers belonging to the same service.
    * Example: "Mobile TV Basic" offer with multiple subscription options.
    */
-  offerGroup: string[];
+  offerGroup: string;
 
   /**
    * The foreign key of the associated offer.

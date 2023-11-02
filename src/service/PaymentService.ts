@@ -83,12 +83,8 @@ export class PaymentService<K extends IMinimalId> extends BaseService<K> {
     userCredits: IUserCredits<K>,
     order: IOrder<K>,
   ): IActivatedOffer {
-    // Check if any element in order.offerGroup matches with userCredits.offers
     const existingOfferIndex = userCredits.offers.findIndex(
-      (existingOffer: IActivatedOffer) =>
-        existingOffer.offerGroup.some((group) =>
-          order.offerGroup.includes(group),
-        ),
+      (offer: IActivatedOffer) => offer.offerGroup === order.offerGroup,
     );
 
     if (existingOfferIndex !== -1) {
@@ -111,7 +107,7 @@ export class PaymentService<K extends IMinimalId> extends BaseService<K> {
         order.cycle,
         order.quantity,
       ),
-      offerGroup: order.offerGroup, // Update to the array
+      offerGroup: order.offerGroup,
       starts: currentDate,
       tokens: (order.tokenCount || 0) * order.quantity,
     };
