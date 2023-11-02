@@ -77,14 +77,6 @@ The `EventTalk.unlockedBy` field now contains an array of strings: `["EbStartup"
 
 This approach streamlines our offer hierarchy and ensures that an offer can be associated with multiple **unlocking offers** (don't think **parent offers** :-) ). It's a powerful and versatile solution that enhances the management and organization of offers within the library.
 
-
-
-### Groups of Offer Groups Sub-Offers
-
-Now, let's shift our focus to the "**Early Bird**" offer groups, which **all** unlock the **VIP** offers. We're dealing with a new situation that is actually a **group of Offer Groups**! Fortunately, similar to Functional Tags, we can assign multiple values to **Offer Group**s. This means that we can designate the three groups "**EbStartup**," "**EbBusiness**," and "**EbScaleUp**" as part of a broader group named "**Early Bird**" Within this context, we can add a child offer to the "**Early Bird**" group, offering the **VIP** services, simplifying our management.
-
-> It's crucial to clarify a concept here – when we mention adding "Early Bird" to the "Startup" offer group, it's a conceptual representation. In practical terms, it involves assigning the "Early Bird" label to the `offerGroup` field for each offer within the "Startup", "Business" and "ScaleUp" groups. This duplication of information within the library's concrete implementation is a choice to enhance performance by keeping the related information in the same place for fast reading.
-
 ## Completing With Free Subscriptions
 
 Now, let's discuss how to incorporate a free subscription offer into the mix. This is a strategic move for WonderAI to gather user emails and connect with them through compelling irresistible offers.
