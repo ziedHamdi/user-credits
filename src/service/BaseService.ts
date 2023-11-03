@@ -109,8 +109,60 @@ export abstract class BaseService<K extends IMinimalId> implements IService<K> {
       total,
       userId,
     } as IOrder<K>)) as IOrder<K>;
+    await this.onOrderChange(userId, order);
 
     return order;
+  }
+
+  protected async onOrderChange(userId: K, order: IOrder<K>) {
+    let userCredits: IUserCredits<K> | null =
+      await this.userCreditsDao.findByUserId(userId);
+    if (!userCredits) {
+      const subscription: Partial<ISubscription<K>> = {
+        customCycle: order.customCycle,
+        cycle: order.cycle,
+        name: new Date().toDateString(),
+        offerGroup: order.offerGroup,
+        offerId: order.offerId,
+        orderId: order._id,
+        starts: null,
+        status: "pending",
+        tokens: order.tokenCount,
+      } as unknown as ISubscription<K>;
+      userCredits = this.userCreditsDao.build({
+        subscriptions: [subscription],
+        userId,
+      });
+    } else {
+      // Check if a subscription with the same orderId exists
+      const existingSubscription = userCredits.subscriptions.find(
+        (subscription) => subscription.orderId === order._id,
+      );
+
+      if (existingSubscription) {
+        // Update the existing subscription
+        existingSubscription.status = order.status;
+        existingSubscription.starts = order.createdAt;
+      } else {
+        // Create a new subscription and add it to the array
+        const newSubscription: Partial<ISubscription<K>> = {
+          customCycle: order.customCycle,
+          cycle: order.cycle,
+          name: new Date().toDateString(),
+          offerGroup: order.offerGroup,
+          offerId: order.offerId,
+          orderId: order._id,
+          starts: order.createdAt,
+          status: order.status,
+          tokens: order.tokenCount,
+        } as ISubscription<K>;
+
+        userCredits.subscriptions.push(
+          newSubscription as unknown as ISubscription<K>,
+        );
+      }
+    }
+    await userCredits.save();
   }
 
   /**

@@ -49,7 +49,7 @@ const subscriptionSchema = new Schema<
     required: true,
     type: String,
   },
-  tokens: { default: 0, required: true, type: Number },
+  tokens: { type: Number },
 });
 
 const activatedOfferSchema = new Schema<
@@ -58,7 +58,7 @@ const activatedOfferSchema = new Schema<
 >({
   expires: Date,
   starts: Date,
-  tokens: { default: 0, required: true, type: Number },
+  tokens: { type: Number },
 });
 
 const userCreditsSchema = new Schema<IMongooseUserCredits>(
