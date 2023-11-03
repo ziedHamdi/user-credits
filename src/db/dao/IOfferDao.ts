@@ -1,14 +1,6 @@
 import type { IMinimalId, IOffer } from "../model";
 import type { IBaseDao } from "./IBaseDao";
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export interface IFindOffersParams<K extends IMinimalId> {
-  allTags?: boolean;
-  offerGroup?: string;
-  purchasedOfferGroups?: string[];
-  tags?: string[];
-  unlockedBy?: string;
-}
+import { IFindOffersParams } from "./IFindOffersParams";
 
 export interface IOfferDao<K extends IMinimalId, D extends IOffer<K>>
   extends IBaseDao<D> {

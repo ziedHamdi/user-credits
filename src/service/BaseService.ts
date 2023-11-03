@@ -59,7 +59,7 @@ export abstract class BaseService<K extends IMinimalId> implements IService<K> {
       (subs) => subs.offerGroup,
     );
     const dependentOffers = await this.offerDao.loadOffers({
-      purchasedOfferGroups,
+      unlockedBy: purchasedOfferGroups,
     });
     const regularOffers = await this.getRegularOffers(envTags);
 

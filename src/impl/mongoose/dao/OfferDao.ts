@@ -2,11 +2,12 @@ import { Connection, Types } from "mongoose";
 
 type ObjectId = Types.ObjectId;
 
-import type { IFindOffersParams, IOfferDao } from "../../../db/dao/IOfferDao";
+import type { IOfferDao } from "../../../db/dao/IOfferDao";
 import type { IOffer } from "../../../db/model";
 import { Offer } from "../model";
 import type { IMongooseOffer } from "../model/Offer";
 import { BaseMongooseDao } from "./BaseMongooseDao";
+import { IFindOffersParams } from "../../../db/dao/IFindOffersParams";
 
 export class OfferDao
   extends BaseMongooseDao<IMongooseOffer, IOffer<ObjectId>>
@@ -36,9 +37,9 @@ export class OfferDao
       query.offerGroup = params.offerGroup;
     }
 
-    if (params.purchasedOfferGroups) {
+    if (params.unlockedBy) {
       query.unlockedBy = {
-        $in: params.purchasedOfferGroups,
+        $in: params.unlockedBy,
       } as unknown as string[]; // needed cast to use $in
     }
 

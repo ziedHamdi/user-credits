@@ -480,5 +480,48 @@ describe("OfferDao specific methods", () => {
       );
       expect(offers.length).toBe(11);
     });
+    it("should load no offers unlocked by (the standard) Startup offer group", async () => {
+      const params = {
+        unlockedBy: ["Startup"],
+      };
+      const offers = await offerDao.loadOffers(params);
+      // Write your Jest assertions to check if the offers were loaded correctly
+      expect(Array.isArray(offers)).toBe(true);
+      expect(offers.length).toBe(0);
+    });
+    it("should load 5 VIP offers unlocked by (the standard) ScaleUp offerGroup", async () => {
+      const params = {
+        unlockedBy: ["ScaleUp"],
+      };
+      const offers = await offerDao.loadOffers(params);
+      // Write your Jest assertions to check if the offers were loaded correctly
+      expect(Array.isArray(offers)).toBe(true);
+      expect(offerNames(offers)).toEqual(
+        expect.arrayContaining([
+          "1-article-month",
+          "2-articles-month",
+          "1-VIP-event",
+          "3-VIP-events",
+          "7-VIP-events",
+        ]),
+      );
+      expect(offers.length).toBe(5);
+    });
+    it("should load 3 offers under the 'VipEventTalk' offerGroup", async () => {
+      const params = {
+        offerGroup: "VipEventTalk",
+      };
+      const offers = await offerDao.loadOffers(params);
+      // Write your Jest assertions to check if the offers were loaded correctly
+      expect(Array.isArray(offers)).toBe(true);
+      expect(offerNames(offers)).toEqual(
+        expect.arrayContaining([
+          "1-VIP-event",
+          "3-VIP-events",
+          "7-VIP-events",
+        ]),
+      );
+      expect(offers.length).toBe(3);
+    });
   });
 });

@@ -2,9 +2,9 @@ import { Types } from "mongoose";
 type ObjectId = Types.ObjectId;
 
 import type { IOfferDao } from "../../../../src/db/dao";
-import type { IFindOffersParams } from "../../../../src/db/dao/IOfferDao";
 import type { IOffer } from "../../../../src/db/model";
 import { MockBaseDao } from "./MockBaseDao";
+import { IFindOffersParams } from "../../../../src/db/dao/IFindOffersParams";
 
 export class MockOfferDao
   extends MockBaseDao<IOffer<ObjectId>>
