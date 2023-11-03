@@ -2,8 +2,20 @@
 
 UserCredits is an open-source library designed to simplify the implementation of pay-as-you-go features in your web or mobile applications. Whether you're building a subscription-based service, a digital marketplace, or an e-commerce platform, UserCredits provides a flexible and technology-agnostic solution to manage user credits and token-based payments.
 
- - 
+ - [Features](#Features)
+ - [Architecture](#Architecture)
+   - [1. Declarative Interfaces](#1. Declarative Interfaces)
+   - [2. Technology-Agnostic Logic](#2. Technology-Agnostic Logic)
+   - [3. Implementation Layer](#3. Implementation Layer)
+     - [Database Abstraction](#Database Abstraction)
+     - [Payment Platform Integration](#Payment Platform Integration)
+ - [Using UserCredits](#Using UserCredits)
+   - [IService Interface](#IService Interface)
+   - [IPaymentClient Interface](#IPaymentClient Interface)
  - [Testing](#testing)
+ - [IOC](#IOC)
+ - [Contributing](#Contributing)
+ - [License](#License)
 
 ## Features
 
@@ -23,24 +35,26 @@ UserCredits is an open-source library designed to simplify the implementation of
 
 UserCredits is designed with a modular architecture that simplifies development by abstracting the complexities of both database interactions and payment processing libraries. The architecture consists of distinct layers, each with its unique role:
 
-**1. Declarative Interfaces**
+###1. Declarative Interfaces
 At the core of UserCredits, you'll find a set of declarative interfaces that define the project's concepts and abstractions.
 
-**2. Technology-Agnostic Logic**
+###2. Technology-Agnostic Logic
 The next layer implements technology-agnostic logic, providing methods for creating orders, managing special offers based on user subscriptions, and handling various payment-related operations and monitoring.
 
-**3. Implementation Layer**
+###3. Implementation Layer
 Each of these layers can be changed without any adaptations needed on the other:
 
-- **Database Abstraction:** Beneath the technology-agnostic logic, a database implementation is in place, currently using Mongoose and MongoDB. Importantly, adding support for other databases is straightforward. You can create Data Access Objects (DAOs) and schemas that adhere to the abstract concepts defined in the first layer. These implementations are utilized by the second layer, which remains unaware of the underlying database specifics.
+  - ####Database Abstraction:
+    Beneath the technology-agnostic logic, a database implementation is in place, currently using Mongoose and MongoDB. Importantly, adding support for other databases is straightforward. You can create Data Access Objects (DAOs) and schemas that adhere to the abstract concepts defined in the first layer. These implementations are utilized by the second layer, which remains unaware of the underlying database specifics.
 
-  - **Payment Platform Integration:** The final layer serves as a bridge to payment platforms like Stripe. It encapsulates the intricacies of payment operations, allowing UserCredits to seamlessly interact with different payment providers.
+  - ####Payment Platform Integration:
+    The final layer serves as a bridge to payment platforms like Stripe. It encapsulates the intricacies of payment operations, allowing UserCredits to seamlessly interact with different payment providers.
 
-All these layers are efficiently managed through Inversion of Control (IoC) principles, leveraging the Awilix library. The end result is a user-friendly and adaptable library that abstracts away the complexities of database and payment integration.
+> All these layers are efficiently managed through [Inversion of Control (IoC)](#ioc) principles, leveraging the Awilix library. The end result is a user-friendly and adaptable library that abstracts away the complexities of database and payment integration.
 
-UserCredits provides developers with a single, unified facade interface, simplifying their interactions with the library and shielding them from intricate implementation details. This design encourages easy adaptation to various projects and technologies.
+**UserCredits provides developers with a single, unified facade interface, simplifying their interactions with the library and shielding them from intricate implementation details. This design encourages easy adaptation to various projects and technologies.**
 
-## Get Started
+# Get Started
 
 To start using UserCredits in your project, follow the installation and usage instructions in the [blog series](https://dev.to/zhamdi/architecting-pay-as-you-go-magic-usercredits-winning-formula-4ace).
 
@@ -157,10 +171,6 @@ Or `node --experimental-vm-modules node_modules/jest/bin/jest.js`
 Because of parallel processes to access mongodb in Jest, we were obliged to create multiple simultaneous in memory mongodb instances to avoid inconsistencies in saved data between different tests.
 Therefore, we enabled multiple simultaneous connections to mongodb through mongoose as described in https://mongoosejs.com/docs/connections.html#multiple_connections.
 To adapt to that constraint, TestContainerSingleton.getInstance() now accepts a singleton:boolean parameter to tell it if it has to be a singleton or a prototype (on false value). See the file testContainer.ts for reference
-
-### Timeout bug
-There's a bug in MongoMemoryServer taking too long to execute. See:
-https://github.com/nodkz/mongodb-memory-server/issues/323
 
 ## Contributing
 
