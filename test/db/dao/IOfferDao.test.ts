@@ -11,7 +11,7 @@ import {
   IOffer,
   IOrder,
   ISubscription,
-  IUserCredits
+  IUserCredits,
 } from "../../../src/db/model";
 import { IActivatedOffer } from "../../../src/db/model/IActivatedOffer";
 import { IMongooseOffer } from "../../../src/impl/mongoose/model/Offer";
@@ -23,14 +23,14 @@ import { addVersion0, clearDatabase } from "../../extend/util";
 import {
   initMocks,
   newObjectId,
-  ObjectId
+  ObjectId,
 } from "../../service/mocks/BaseService.mocks";
 import {
   OFFER_GROUP,
-  prefillOffersForLoading
-} from "../mongoose/mocks/loadOffersTestsPrefill";
+  prefillOffersForTests,
+} from "../mongoose/mocks/step1_PrepareLoadOffers";
 
-class ExtendedBaseService<K extends IMinimalId> extends BaseService<K> {
+export class ExtendedBaseService<K extends IMinimalId> extends BaseService<K> {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   afterExecute(order: IOrder<K>): Promise<IUserCredits<K>> {
     return Promise.resolve(undefined as unknown as IUserCredits<K>);
@@ -86,7 +86,7 @@ async function insertOffers(
   offerChild1: IOffer<ObjectId>,
   offerChild2: IOffer<ObjectId>,
   offerChild3_1: IOffer<ObjectId>,
-  offerChild3_2: IOffer<ObjectId>
+  offerChild3_2: IOffer<ObjectId>,
 ) {
   const offerDao = service.getDaoFactory().getOfferDao();
   const createdOffer1 = await offerDao.create(offerRoot1);
@@ -103,7 +103,7 @@ async function insertOffers(
     createdChild3_2,
     createdOffer1,
     createdOffer2,
-    createdOffer3
+    createdOffer3,
   };
 }
 
@@ -144,7 +144,7 @@ describe("Offer Database Integration Test", () => {
       subscriptionPaidRoot1,
       subscriptionPaidRoot2,
       subscriptionPendingChild3_1,
-      subscriptionRefusedChild3_2
+      subscriptionRefusedChild3_2,
     } = await initMocks(false));
 
     // Create a new instance of BaseService with the mock userCreditsDao
@@ -165,7 +165,7 @@ describe("Offer Database Integration Test", () => {
       offerChild1,
       offerChild2,
       offerChild3_1,
-      offerChild3_2
+      offerChild3_2,
     );
 
     const userId = null;
@@ -189,7 +189,7 @@ describe("Offer Database Integration Test", () => {
       offerChild1,
       offerChild2,
       offerChild3_1,
-      offerChild3_2
+      offerChild3_2,
     );
 
     // Create active and unpaid subscriptions
@@ -202,10 +202,10 @@ describe("Offer Database Integration Test", () => {
         subscriptionPaidRoot1,
         subscriptionPaidRoot2,
         subscriptionPendingChild3_1,
-        subscriptionRefusedChild3_2
+        subscriptionRefusedChild3_2,
       ],
       tokens: 100,
-      userId
+      userId,
     } as unknown as IUserCredits<ObjectId>;
 
     const createdUserCredits: IUserCredits<ObjectId> = await service
@@ -215,7 +215,7 @@ describe("Offer Database Integration Test", () => {
 
     // Test the first step: Get active subscriptions
     const step1ActiveSubscriptions = await service.getActiveSubscriptions(
-      createdUserCredits.userId
+      createdUserCredits.userId,
     );
 
     expect(step1ActiveSubscriptions.length).toEqual(2);
@@ -223,7 +223,7 @@ describe("Offer Database Integration Test", () => {
       step1ActiveSubscriptions,
       [subscriptionPaidRoot1, subscriptionPaidRoot2],
       ["orderId"],
-      ["_id"]
+      ["_id"],
     );
     // Expect that step1ActiveSubscriptions contain the active subscription
     expect(step1ActiveSubscriptions).toContainEqual(subscriptionPaidRoot1);
@@ -244,11 +244,11 @@ describe("Offer Database Integration Test", () => {
     // Expect that step3RegularOffers contain the root offers
     offerRoot1.weight = 0; // add default filled by db fields
     expect(step3RegularOffers).toContainEqual(
-      addVersion0(asRecord(offerRoot1))
+      addVersion0(asRecord(offerRoot1)),
     );
     offerRoot2.weight = 0; // add default filled by db fields
     expect(step3RegularOffers).toContainEqual(
-      addVersion0(asRecord(offerRoot2))
+      addVersion0(asRecord(offerRoot2)),
     );
     expect(step3RegularOffers.length).toEqual(3);
 
@@ -259,7 +259,7 @@ describe("Offer Database Integration Test", () => {
     expect(loadedOffers).toContainEqual(addVersion0(asRecord(offerRoot2)));
     offerRoot3.weight = 0;
     expect(loadedOffers).toContainEqual(
-      addVersion0(asRecord(offerRoot3 as unknown as IOffer<ObjectId>))
+      addVersion0(asRecord(offerRoot3 as unknown as IOffer<ObjectId>)),
     );
     // Expect that loadedOffers do not contain unpaid suboffers but contain active suboffers
     expect(loadedOffers).toContainEqual(addVersion0(asRecord(offerChild1)));
@@ -276,7 +276,7 @@ describe("Offer Database Integration Test", () => {
       offerChild1,
       offerChild2,
       offerChild3_1,
-      offerChild3_2
+      offerChild3_2,
     );
 
     // Create active and unpaid subscriptions
@@ -288,10 +288,10 @@ describe("Offer Database Integration Test", () => {
         subscriptionPaidRoot1,
         subscriptionPaidRoot2,
         subscriptionPendingChild3_1,
-        subscriptionRefusedChild3_2
+        subscriptionRefusedChild3_2,
       ],
       tokens: 100,
-      userId
+      userId,
     } as unknown as IUserCredits<ObjectId>;
 
     const createdUserCredits: IUserCredits<ObjectId> = await service
@@ -309,10 +309,10 @@ describe("Offer Database Integration Test", () => {
     expect(loadedOffers).toContainEqual(addVersion0(asRecord(offerChild1)));
     expect(loadedOffers).toContainEqual(addVersion0(asRecord(offerChild2)));
     expect(loadedOffers).not.toContainEqual(
-      addVersion0(asRecord(offerChild3_1))
+      addVersion0(asRecord(offerChild3_1)),
     );
     expect(loadedOffers).not.toContainEqual(
-      addVersion0(asRecord(offerChild3_2))
+      addVersion0(asRecord(offerChild3_2)),
     );
     expect(loadedOffers.length).toEqual(4);
   }, 15000);
@@ -327,7 +327,7 @@ describe("OfferDao specific methods", () => {
   let mongoMemoryServer: MongoMemoryServer;
   let connection: Connection;
   let offerDao: IOfferDao<ObjectId, IMongooseOffer>;
-  let allOffers: IOffer<ObjectId>[];
+  let allOffers: Record<string, IOffer<ObjectId>>;
   let vipEventTalkOfferGroups: string[];
   let vipSeoBackLinkOfferGroups: string[];
 
@@ -335,10 +335,12 @@ describe("OfferDao specific methods", () => {
     // Initialize mocks and dependencies here.
     const mocks = await initMocks(false);
     ({ connection, mongoMemoryServer, mongooseDaoFactory } = mocks);
-    offerDao = mongooseDaoFactory.getOfferDao() as IOfferDao<ObjectId,
-      IMongooseOffer>;
+    offerDao = mongooseDaoFactory.getOfferDao() as IOfferDao<
+      ObjectId,
+      IMongooseOffer
+    >;
     ({ allOffers, vipEventTalkOfferGroups, vipSeoBackLinkOfferGroups } =
-      await prefillOffersForLoading(mongooseDaoFactory));
+      await prefillOffersForTests(mongooseDaoFactory));
   });
 
   afterEach(async () => {
@@ -372,8 +374,8 @@ describe("OfferDao specific methods", () => {
           "ScaleUp",
           "EbStartup",
           "EbEnterprise",
-          "EbScaleUp"
-        ])
+          "EbScaleUp",
+        ]),
       );
       expect(offers.length).toBe(7);
     });
@@ -412,7 +414,7 @@ describe("OfferDao specific methods", () => {
     });
     it("should load 13 subscription offers as in the article", async () => {
       const params = {
-        tags: ["subscription"]
+        tags: ["subscription"],
       };
       const offers = await offerDao.loadOffers(params);
       // Write your Jest assertions to check if the offers were loaded correctly
@@ -426,28 +428,28 @@ describe("OfferDao specific methods", () => {
           "ScaleUp",
           "EbStartup",
           "EbEnterprise",
-          "EbScaleUp"
-        ])
+          "EbScaleUp",
+        ]),
       );
       expect(offers.length).toBe(13);
     });
     it("should load 4 monthly standard offers using allTags constraint", async () => {
       const params = {
         allTags: true,
-        tags: ["subscription", "monthly", "standard"]
+        tags: ["subscription", "monthly", "standard"],
       };
       const offers = await offerDao.loadOffers(params);
       // Write your Jest assertions to check if the offers were loaded correctly
       expect(Array.isArray(offers)).toBe(true);
       expect(offerNames(offers)).toEqual(
-        expect.arrayContaining(["Free", "Startup", "Enterprise", "ScaleUp"])
+        expect.arrayContaining(["Free", "Startup", "Enterprise", "ScaleUp"]),
       );
       expect(offers.length).toBe(4);
     });
     it("should load offers based on OR condition for tags if not present query parameters", async () => {
       const params = {
         allTags: false,
-        tags: ["vip", "EarlyBird"]
+        tags: ["vip", "EarlyBird"],
       };
       const offers = await offerDao.loadOffers(params);
       // Write your Jest assertions to check if the offers were loaded correctly
@@ -463,14 +465,14 @@ describe("OfferDao specific methods", () => {
           "EbEnterprise",
           "1-article-month",
           "2-articles-month",
-          "7-VIP-events"
-        ])
+          "7-VIP-events",
+        ]),
       );
       expect(offers.length).toBe(11);
     });
     it("should load no offers unlocked by (the standard) Startup offer group", async () => {
       const params = {
-        unlockedBy: [OFFER_GROUP.Startup]
+        unlockedBy: [OFFER_GROUP.Startup],
       };
       const offers = await offerDao.loadOffers(params);
       // Write your Jest assertions to check if the offers were loaded correctly
@@ -479,7 +481,7 @@ describe("OfferDao specific methods", () => {
     });
     it("should load 5 VIP offers unlocked by (the standard) ScaleUp offerGroup", async () => {
       const params = {
-        unlockedBy: [OFFER_GROUP.ScaleUp]
+        unlockedBy: [OFFER_GROUP.ScaleUp],
       };
       const offers = await offerDao.loadOffers(params);
       // Write your Jest assertions to check if the offers were loaded correctly
@@ -490,20 +492,20 @@ describe("OfferDao specific methods", () => {
           "2-articles-month",
           "1-VIP-event",
           "3-VIP-events",
-          "7-VIP-events"
-        ])
+          "7-VIP-events",
+        ]),
       );
       expect(offers.length).toBe(5);
     });
     it("should load 3 offers under the 'VipEventTalk' offerGroup", async () => {
       const params = {
-        offerGroup: OFFER_GROUP.VipEventTalk
+        offerGroup: OFFER_GROUP.VipEventTalk,
       };
       const offers = await offerDao.loadOffers(params);
       // Write your Jest assertions to check if the offers were loaded correctly
       expect(Array.isArray(offers)).toBe(true);
       expect(offerNames(offers)).toEqual(
-        expect.arrayContaining(["1-VIP-event", "3-VIP-events", "7-VIP-events"])
+        expect.arrayContaining(["1-VIP-event", "3-VIP-events", "7-VIP-events"]),
       );
       expect(offers.length).toBe(3);
     });

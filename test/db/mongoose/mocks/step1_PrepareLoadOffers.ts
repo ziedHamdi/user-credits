@@ -224,7 +224,7 @@ async function preparePredefinedOffer(
  *
  * @param daoFactory
  */
-export async function prefillOffersForLoading(
+export async function prefillOffersForTests(
   daoFactory: IDaoFactory<ObjectId>,
 ) {
   const offerDao = daoFactory.getOfferDao();
@@ -263,14 +263,14 @@ export async function prefillOffersForLoading(
   const vipSeoBackLinkOfferGroups = vipSeoBackLinks_1_article.asUnlockingOffers(vipDependsOnOffers);
   vipSeoBackLinks_2_articles.asUnlockingOffers(vipDependsOnOffers);
 
-  const allOffers = [...vipDependsOnOffers, free, enterpriseM, enterpriseY, startupM, startupY, vipEventTalk_1talk, vipEventTalk_3talks, vipEventTalk_7talks, vipSeoBackLinks_1_article, vipSeoBackLinks_2_articles];
+  const allOffers = {...vipDependsOnOffers, free, enterpriseM, enterpriseY, startupM, startupY, vipEventTalk_1talk, vipEventTalk_3talks, vipEventTalk_7talks, vipSeoBackLinks_1_article, vipSeoBackLinks_2_articles} as unknown as Record<string, IOffer<ObjectId>>;
   /* eslint-enable */
 
   // now save all the prepared data
   await Promise.all(
-    allOffers.map(async (offer) => {
+    Object.values(allOffers).map(async (offer) => {
       await offer.save();
-    }),
+    })
   );
 
   console.log("Inserted offers:", await offerDao.find({}));
