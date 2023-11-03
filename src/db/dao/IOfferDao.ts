@@ -7,6 +7,7 @@ export interface IFindOffersParams<K extends IMinimalId> {
   offerGroup?: string;
   purchasedOfferGroups?: string[];
   tags?: string[];
+  unlockedBy?: string;
 }
 
 export interface IOfferDao<K extends IMinimalId, D extends IOffer<K>>
@@ -15,7 +16,7 @@ export interface IOfferDao<K extends IMinimalId, D extends IOffer<K>>
    * loads offers
    * @param params}
    */
-  loadOffers(params: IFindOffersParams<K>): Promise<D[]>;
+  loadOffers(params: IFindOffersParams<K> = {}): Promise<D[]>;
 
   /**
    * loads offers that's parentOfferGroup is equal to the param

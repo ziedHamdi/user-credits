@@ -28,7 +28,7 @@ export class OfferDao
   }
 
   async loadOffers(
-    params: IFindOffersParams<ObjectId>,
+    params: IFindOffersParams<ObjectId> = {},
   ): Promise<IMongooseOffer[]> {
     const query = {} as unknown as IOffer<ObjectId>;
 
@@ -42,14 +42,15 @@ export class OfferDao
       } as unknown as string[]; // needed cast to use $in
     }
 
-    if (params.allTags) {
-      // Use $all operator to match all provided tags
-      query.tags = { $all: params.tags } as unknown as string[]; // obliged to ignore
-    } else {
-      // Use $in operator to match any of the provided tags
-      query.tags = { $in: params.tags } as unknown as string[]; // obliged to ignore
+    if (params.tags) {
+      if (params.allTags) {
+        // Use $all operator to match all provided tags
+        query.tags = { $all: params.tags } as unknown as string[]; // obliged to ignore
+      } else {
+        // Use $in operator to match any of the provided tags
+        query.tags = { $in: params.tags } as unknown as string[]; // obliged to ignore
+      }
     }
-
     return this.find(query);
   }
 }

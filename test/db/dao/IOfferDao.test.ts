@@ -318,7 +318,7 @@ describe("Offer Database Integration Test", () => {
   }, 15000);
 });
 
-function offerNames(offers: IMongooseOffer[]) {
+function offerNames(offers: IMongooseOffer[]): string[] {
   return offers.map((offer) => offer.name);
 }
 
@@ -414,53 +414,71 @@ describe("OfferDao specific methods", () => {
     // Add more test cases for different scenarios
   });
 
-  // Test loading offers based on query parameters
-  describe("loadOffers", () => {
-    it("should load offers based on query parameters", async () => {
+  // Test loading offers based on query parameters: check the docs {@link /docs/offers_explained.md} for reference
+  describe("loadOffers from loadOffersTestsPrefill: as described in docs", () => {
+    it("should load offers based on null query parameters", async () => {
+      const offers = await offerDao.loadOffers();
+      // Write your Jest assertions to check if the offers were loaded correctly
+      expect(Array.isArray(offers)).toBe(true);
+      expect(offers.length).toBe(18);
+    });
+    it("should load 13 subscription offers as in the article", async () => {
       const params = {
-        allTags: true,
-        offerGroup: "standard",
-        tags: ["subscription", "monthly"],
+        tags: ["subscription"],
       };
       const offers = await offerDao.loadOffers(params);
       // Write your Jest assertions to check if the offers were loaded correctly
       expect(Array.isArray(offers)).toBe(true);
       expect(offerNames(offers)).toEqual(
-        expect.arrayContaining(["Free", "Startup", "Team", "Enterprise"]),
+        expect.arrayContaining([
+          // Free is only once, but the others are twice each: monthly and yearly
+          "Free",
+          "Startup",
+          "Enterprise",
+          "ScaleUp",
+          "EbStartup",
+          "EbEnterprise",
+          "EbScaleUp",
+        ]),
+      );
+      expect(offers.length).toBe(13);
+    });
+    it("should load 4 monthly standard offers using allTags constraint", async () => {
+      const params = {
+        allTags: true,
+        tags: ["subscription", "monthly", "standard"],
+      };
+      const offers = await offerDao.loadOffers(params);
+      // Write your Jest assertions to check if the offers were loaded correctly
+      expect(Array.isArray(offers)).toBe(true);
+      expect(offerNames(offers)).toEqual(
+        expect.arrayContaining(["Free", "Startup", "Enterprise", "ScaleUp"]),
       );
       expect(offers.length).toBe(4);
     });
-    it("should load offers based on null query parameters", async () => {
-      const params = {
-        allTags: true,
-        parentId: null,
-        tags: ["subscription", "monthly"],
-      };
-      const offers = await offerDao.loadOffers(params);
-      // Write your Jest assertions to check if the offers were loaded correctly
-      expect(Array.isArray(offers)).toBe(true);
-      expect(offerNames(offers)).toEqual([
-        "Free",
-        "Startup",
-        "Team",
-        "Enterprise",
-        "Early bird",
-        "Early Bird Startup",
-        "Early Bird Team",
-        "Early Bird Enterprise",
-      ]);
-      expect(offers.length).toBe(8);
-    });
-    it("should load offers based on OR conditino for tags if not present query parameters", async () => {
+    it("should load offers based on OR condition for tags if not present query parameters", async () => {
       const params = {
         allTags: false,
-        parentId: null,
-        tags: ["subscription", "monthly"],
+        tags: ["vip", "EarlyBird"],
       };
       const offers = await offerDao.loadOffers(params);
       // Write your Jest assertions to check if the offers were loaded correctly
-      expect(Array.isArray(offers)).toBe(true);
-      expect(offers.length).toBe(14);
+      expect(offerNames(offers)).toEqual(
+        expect.arrayContaining([
+          "EbStartup",
+          "EbEnterprise",
+          "EbScaleUp",
+          "EbScaleUp",
+          "EbStartup",
+          "1-VIP-event",
+          "3-VIP-events",
+          "EbEnterprise",
+          "1-article-month",
+          "2-articles-month",
+          "7-VIP-events",
+        ]),
+      );
+      expect(offers.length).toBe(11);
     });
   });
 });

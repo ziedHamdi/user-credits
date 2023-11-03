@@ -2,21 +2,19 @@ import type { IOffer, IOfferDao } from "../../../../src";
 import { IDaoFactory } from "../../../../src";
 import {
   newObjectId,
-  ObjectId
+  ObjectId,
 } from "../../../service/mocks/BaseService.mocks";
 
 const baseRootOffer = {
-  _id: newObjectId(),
   cycle: "monthly",
-  hasSubOffers: false, // This offer has no sub-offers
+  hasDependentOffers: false, // This offer has no sub-offers
   kind: "subscription",
   name: "Free",
   overridingKey: "free",
   price: 0,
   quantityLimit: null,
-  tags: ["subscription", "monthly"],
   tokenCount: 100,
-  weight: 0
+  weight: 0,
 } as unknown as IOffer<ObjectId>;
 
 /* eslint-disable */
@@ -53,7 +51,11 @@ type UnionFromMockType<T> = T extends {
 type CompleteMockType = UnionFromMockType<MockType[OFFER_GROUP]>;
 
 const MOCKS: MockType = {
-  Free: {},
+  Free: {
+    common: {
+      tags: ["subscription", "standard", "monthly", "yearly"]
+    },
+  },
   Startup: {
     common: {},
     monthly: {
@@ -127,19 +129,19 @@ const MOCKS: MockType = {
       tags: ["vip"]
     },
     _1talk: {
-      name: "1 VIP event",
+      name: "1-VIP-event",
       overridingKey: "1vip",
       price: 160,
       tokenCount: 1 // one event
     },
-    _3talk: {
-      name: "1 VIP event",
+    _3talks: {
+      name: "3-VIP-events",
       overridingKey: "1vip",
       price: 320,
       tokenCount: 3 // one event
     },
-    _7_talk: {
-      name: "1 VIP event",
+    _7talks: {
+      name: "7-VIP-events",
       overridingKey: "1vip",
       price: 640,
       tokenCount: 7 // one event
@@ -152,13 +154,13 @@ const MOCKS: MockType = {
       tags: ["vip"]
     },
     _1_article: {
-      name: "1 article/month",
+      name: "1-article-month",
       overridingKey: "1link",
       price: 640,
       tokenCount: 1 // one event
     },
     _2_articles: {
-      name: "2 articles/month",
+      name: "2-articles-month",
       overridingKey: "2links",
       price: 1280,
       tokenCount: 2 // one event
@@ -173,36 +175,45 @@ async function preparePredefinedOffer(
   specific?: string,
 ) {
   const mockDef: CompleteMockType = MOCKS[offerGroup];
-  const { common, monthly, yearly } = mockDef;
-  let otherFields: Record<string, unknown>;
+  if (!mockDef) throw new Error("Wrong key: not found in MOCKS: " + offerGroup);
 
-  if (specific == null) {
-    otherFields = {};
-  } else if (specific == "m") {
-    otherFields = monthly;
-    otherFields.offerGroup = offerGroup;
+  const { common, monthly, yearly } = mockDef;
+  let otherFields: Record<string, unknown> = {
+    _id: newObjectId(),
+    name: offerGroup,
+    offerGroup,
+  };
+
+  if (specific == "m") {
+    otherFields = { ...otherFields, ...monthly };
     otherFields.cycle = "monthly";
     otherFields.overridingKey = "monthly-" + offerGroup;
   } else if (specific == "y") {
-    otherFields = yearly;
-    otherFields.offerGroup = offerGroup;
+    otherFields = { ...otherFields, ...yearly };
     otherFields.cycle = "yearly";
     otherFields.overridingKey = "yearly-" + offerGroup;
   } else {
-    otherFields = mockDef?.[specific] as Record<string, unknown>;
-    if (otherFields == null) {
-      console.warn(
-        "No special field found in mock ",
-        offerGroup,
-        " with key: ",
-        specific
-      );
+    const fieldsToAdd = specific ? mockDef[specific] : null;
+    if (fieldsToAdd == null) {
+      if (specific) {
+        console.warn(
+          "No special field found in mock ",
+          offerGroup,
+          " with key: ",
+          specific,
+        );
+      }
+    } else {
+      otherFields = {
+        ...otherFields,
+        ...fieldsToAdd,
+      };
     }
   }
   const offer = offerDao.build({
     ...baseRootOffer,
     ...common,
-    ...otherFields
+    ...otherFields,
   });
 
   return offer;
@@ -214,7 +225,7 @@ async function preparePredefinedOffer(
  * @param daoFactory
  */
 export async function prefillOffersForLoading(
-  daoFactory: IDaoFactory<ObjectId>
+  daoFactory: IDaoFactory<ObjectId>,
 ) {
   const offerDao = daoFactory.getOfferDao();
   /* eslint-disable */
@@ -252,20 +263,20 @@ export async function prefillOffersForLoading(
   const vipSeoBackLinkOfferGroups = vipSeoBackLinks_1_article.asUnlockingOffers(vipDependsOnOffers);
   vipSeoBackLinks_2_articles.asUnlockingOffers(vipDependsOnOffers);
 
-  const allOffers = [...vipDependsOnOffers, enterpriseM, enterpriseY, startupM, startupY, vipEventTalk_1talk, vipEventTalk_3talks, vipEventTalk_7talks, vipSeoBackLinks_1_article, vipSeoBackLinks_2_articles];
+  const allOffers = [...vipDependsOnOffers, free, enterpriseM, enterpriseY, startupM, startupY, vipEventTalk_1talk, vipEventTalk_3talks, vipEventTalk_7talks, vipSeoBackLinks_1_article, vipSeoBackLinks_2_articles];
   /* eslint-enable */
 
   // now save all the prepared data
   await Promise.all(
     allOffers.map(async (offer) => {
       await offer.save();
-    })
+    }),
   );
 
   console.log("Inserted offers:", await offerDao.find({}));
   return {
     allOffers,
     vipEventTalkOfferGroups,
-    vipSeoBackLinkOfferGroups
+    vipSeoBackLinkOfferGroups,
   };
 }
