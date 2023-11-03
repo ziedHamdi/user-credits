@@ -5,7 +5,7 @@ import expect from "expect";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import { Connection } from "mongoose";
 
-import { IDaoFactory, IOfferDao } from "../../../src/db/dao";
+import { IDaoFactory, IOfferDao, IOrderDao } from "../../../src/db/dao";
 import {
   IMinimalId,
   IOffer,
@@ -72,6 +72,7 @@ describe("Offer Database Integration Test", () => {
   let service: BaseService<ObjectId>;
   let mongoMemoryServer: MongoMemoryServer;
   let connection: Connection;
+  let orderDao: IOrderDao<ObjectId, IOrder<ObjectId>>
 
   beforeEach(async () => {
     // Initialize your mocks and dependencies here.
@@ -81,6 +82,7 @@ describe("Offer Database Integration Test", () => {
       mongooseDaoFactory,
     } = await initMocks(false));
 
+    orderDao = mongooseDaoFactory.getOrderDao();
     await prefillOrdersForTests(mongooseDaoFactory);
     // Create a new instance of BaseService with the mock userCreditsDao
     service = new ExtendedBaseService<ObjectId>(mongooseDaoFactory);
@@ -91,7 +93,26 @@ describe("Offer Database Integration Test", () => {
     await connection.close();
   });
 
-  it("should insert all offers and retrieve only root offers from the database for a null userId", async () => {
+  it("should have inserted all orders in prefillOrdersForTests", async () => {
+    const orders = await orderDao.find({});
+    expect(Array.isArray(orders)).toBe(true);
+    expect(orders.map( (order: IOrder<ObjectId>) => order.offerGroup )).toEqual(
+      expect.arrayContaining([
+        // Free is only once, but the others are twice each: monthly and yearly
+        "Free",
+        "Startup",
+        "ScaleUp",
+        "EbEnterprise",
+        "VipEventTalk",
+      ]),
+    );
+    expect(orders.length).toBe(5);
+
+    const userCerditsDao = mongooseDaoFactory.getUserCreditsDao();
+    const userCreditsInserted = await userCerditsDao.find({} );
+    expect(Array.isArray(userCreditsInserted)).toBe(true);
+    console.log("inserted user credits: ", userCreditsInserted);
+    expect(userCreditsInserted.length).toBe(4);
   });
 
   it("should correctly override conflicting offers", async () => {
