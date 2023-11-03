@@ -21,11 +21,11 @@ export class OfferDao
     return this.find({ tags: { $all: tags } });
   }
 
-  async loadSubGroupOffers(
-    parentOfferGroup: string,
+  async loadOffersUnlockedByGroup(
+    unlockedBy: string,
   ): Promise<IMongooseOffer[]> {
     // Use find() to get sub-offers based on offerGroup and parentOfferGroup
-    return this.find({ parentOfferGroup });
+    return this.find({ unlockedBy });
   }
 
   async loadOffers(

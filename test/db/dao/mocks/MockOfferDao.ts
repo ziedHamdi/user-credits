@@ -11,7 +11,7 @@ export class MockOfferDao
   implements IOfferDao<ObjectId, IOffer<ObjectId>>
 {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  loadSubGroupOffers(parentOfferGroup: string): Promise<IOffer<ObjectId>[]> {
+  loadOffersUnlockedByGroup(parentOfferGroup: string): Promise<IOffer<ObjectId>[]> {
     return Promise.resolve([]);
   }
 

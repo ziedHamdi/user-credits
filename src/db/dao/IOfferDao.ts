@@ -14,7 +14,7 @@ export interface IOfferDao<K extends IMinimalId, D extends IOffer<K>>
    * loads offers that's parentOfferGroup is equal to the param
    * @param parentOfferGroup
    */
-  loadSubGroupOffers(parentOfferGroup: string): Promise<D[]>;
+  loadOffersUnlockedByGroup(parentOfferGroup: string): Promise<D[]>;
 
   /**
    * loads offers that have all required tags in the param
