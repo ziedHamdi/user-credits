@@ -2,7 +2,7 @@ import type { IOffer, IOfferDao } from "../../../../src";
 import { IDaoFactory } from "../../../../src";
 import {
   newObjectId,
-  ObjectId,
+  ObjectId
 } from "../../../service/mocks/BaseService.mocks";
 
 const baseRootOffer = {
@@ -16,7 +16,7 @@ const baseRootOffer = {
   quantityLimit: null,
   tags: ["subscription", "monthly"],
   tokenCount: 100,
-  weight: 0,
+  weight: 0
 } as unknown as IOffer<ObjectId>;
 
 /* eslint-disable */
@@ -24,130 +24,147 @@ export const enum OFFER_GROUP {
   Free = "Free",
   // Standard offers
   Startup = "Startup",
-  Enterprise = "Entreprise",
+  Enterprise = "Enterprise",
   ScaleUp = "ScaleUp",
   // Early Bird offers
   EbStartup = "EbStartup",
-  EbEnterprise = "EbEntreprise",
+  EbEnterprise = "EbEnterprise",
   EbScaleUp = "EbScaleUp",
   // Exclusive offers unlocked on certain subscriptions
   VipEventTalk = "VipEventTalk",
   VipSeoBackLinks = "VipSeoBackLinks",
 }
 
+type MockType = {
+  [key in OFFER_GROUP]: {
+    [subKey: string]: any;
+  };
+};
 
-const MOCKS: Map<OFFER_GROUP, object> = new Map();
-MOCKS.set(OFFER_GROUP.Free, {});
-MOCKS.set(OFFER_GROUP.Startup, {
-  common: {},
-  monthly: {
-    price: 49,
-    tags: ["subscription", "standard", "monthly"]
-  },
-  yearly: {
-    price: 490,
-    tags: ["subscription", "standard", "yearly"]
+/**
+ * A little tricky:  Captures the value types union of T and uses them as UnionFromMockType (instead of T)
+ */
+type UnionFromMockType<T> = T extends {
+    [K in keyof T]: infer U;
   }
-});
-MOCKS.set(OFFER_GROUP.Enterprise, {
-  common: {},
-  monthly: {
-    price: 99,
-    tags: ["subscription", "standard", "monthly"]
+  ? U
+  : never;
+
+type CompleteMockType = UnionFromMockType<MockType[OFFER_GROUP]>;
+
+const MOCKS: MockType = {
+  Free: {},
+  Startup: {
+    common: {},
+    monthly: {
+      price: 49,
+      tags: ["subscription", "standard", "monthly"]
+    },
+    yearly: {
+      price: 490,
+      tags: ["subscription", "standard", "yearly"]
+    }
   },
-  yearly: {
-    price: 990,
-    tags: ["subscription", "standard", "yearly"]
+  Enterprise: {
+    common: {},
+    monthly: {
+      price: 99,
+      tags: ["subscription", "standard", "monthly"]
+    },
+    yearly: {
+      price: 990,
+      tags: ["subscription", "standard", "yearly"]
+    }
+  },
+  ScaleUp: {
+    common: {},
+    monthly: {
+      price: 99,
+      tags: ["subscription", "standard", "monthly"]
+    },
+    yearly: {
+      price: 990,
+      tags: ["subscription", "standard", "yearly"]
+    }
+  },
+  EbStartup: {
+    common: {},
+    monthly: {
+      price: 49,
+      tags: ["subscription", "EarlyBird", "monthly"]
+    },
+    yearly: {
+      price: 490,
+      tags: ["subscription", "EarlyBird", "yearly"]
+    }
+  },
+  EbEnterprise: {
+    common: {},
+    monthly: {
+      price: 99,
+      tags: ["subscription", "EarlyBird", "monthly"]
+    },
+    yearly: {
+      price: 990,
+      tags: ["subscription", "EarlyBird", "yearly"]
+    }
+  },
+  EbScaleUp: {
+    common: {},
+    monthly: {
+      price: 99,
+      tags: ["subscription", "EarlyBird", "monthly"]
+    },
+    yearly: {
+      price: 990,
+      tags: ["subscription", "EarlyBird", "yearly"]
+    }
+  },
+  VipEventTalk: {
+    common: {
+      cycle: "yearly", // ends at the end of the year
+      offerGroup: "VIP_TALK",
+      tags: ["vip"]
+    },
+    _1talk: {
+      name: "1 VIP event",
+      overridingKey: "1vip",
+      price: 160,
+      tokenCount: 1 // one event
+    },
+    _3talk: {
+      name: "1 VIP event",
+      overridingKey: "1vip",
+      price: 320,
+      tokenCount: 3 // one event
+    },
+    _7_talk: {
+      name: "1 VIP event",
+      overridingKey: "1vip",
+      price: 640,
+      tokenCount: 7 // one event
+    }
+  },
+  VipSeoBackLinks: {
+    common: {
+      cycle: "monthly", // ends at the end of the year
+      offerGroup: "VIP_BACK_LINK",
+      tags: ["vip"]
+    },
+    _1_article: {
+      name: "1 article/month",
+      overridingKey: "1link",
+      price: 640,
+      tokenCount: 1 // one event
+    },
+    _2_articles: {
+      name: "2 articles/month",
+      overridingKey: "2links",
+      price: 1280,
+      tokenCount: 2 // one event
+    }
   }
-});
-MOCKS.set(OFFER_GROUP.ScaleUp, {
-  common: {},
-  monthly: {
-    price: 99,
-    tags: ["subscription", "standard", "monthly"]
-  },
-  yearly: {
-    price: 990,
-    tags: ["subscription", "standard", "yearly"]
-  }
-});
-MOCKS.set(OFFER_GROUP.EbStartup, {
-  common: {},
-  monthly: {
-    price: 49,
-    tags: ["subscription", "EarlyBird", "monthly"]
-  },
-  yearly: {
-    price: 490,
-    tags: ["subscription", "EarlyBird", "yearly"]
-  }
-});
-MOCKS.set(OFFER_GROUP.EbEnterprise, {
-  common: {},
-  monthly: {
-    price: 99,
-    tags: ["subscription", "EarlyBird", "monthly"]
-  },
-  yearly: {
-    price: 990,
-    tags: ["subscription", "EarlyBird", "yearly"]
-  }
-});
-MOCKS.set(OFFER_GROUP.EbScaleUp, {
-  common: {},
-  monthly: {
-    price: 99,
-    tags: ["subscription", "EarlyBird", "monthly"]
-  },
-  yearly: {
-    price: 990,
-    tags: ["subscription", "EarlyBird", "yearly"]
-  }
-});
-MOCKS.set(OFFER_GROUP.VipEventTalk, {
-  common: {
-    cycle: "yearly", // ends at the end of the year
-    offerGroup: "VIP_TALK",
-    tags: ["vip"]
-  },
-  _1talk: {
-    name: "1 VIP event",
-    overridingKey: "1vip",
-    price: 160,
-    tokenCount: 1 // one event
-  },
-  _3talk: {
-    name: "1 VIP event",
-    overridingKey: "1vip",
-    price: 320,
-    tokenCount: 3 // one event
-  },
-  _7_talk: {
-    name: "1 VIP event",
-    overridingKey: "1vip",
-    price: 640,
-    tokenCount: 7 // one event
-  }
-});
-MOCKS.set(OFFER_GROUP.VipSeoBackLinks, {
-  common: {
-    cycle: "monthly", // ends at the end of the year
-    offerGroup: "VIP_BACK_LINK",
-    tags: ["vip"]
-  },
-  _1_article: {
-    name: "1 article/month",
-    overridingKey: "1link",
-    price: 640,
-    tokenCount: 1 // one event
-  },
-  _2_articles: {
-    name: "2 articles/month",
-    overridingKey: "2links",
-    price: 1280,
-    tokenCount: 2 // one event
-  }
-});
+};
 
 /* eslint-enable */
 async function preparePredefinedOffer(
@@ -155,11 +172,8 @@ async function preparePredefinedOffer(
   offerGroup: OFFER_GROUP,
   specific?: string,
 ) {
-  const mockDef = MOCKS.get(offerGroup);
-  const { common, monthly, yearly } = mockDef as Record<
-    string,
-    Record<string, unknown>
-  >;
+  const mockDef: CompleteMockType = MOCKS[offerGroup];
+  const { common, monthly, yearly } = mockDef;
   let otherFields: Record<string, unknown>;
 
   if (specific == null) {
@@ -181,14 +195,14 @@ async function preparePredefinedOffer(
         "No special field found in mock ",
         offerGroup,
         " with key: ",
-        specific,
+        specific
       );
     }
   }
   const offer = offerDao.build({
     ...baseRootOffer,
     ...common,
-    ...otherFields,
+    ...otherFields
   });
 
   return offer;
@@ -200,7 +214,7 @@ async function preparePredefinedOffer(
  * @param daoFactory
  */
 export async function prefillOffersForLoading(
-  daoFactory: IDaoFactory<ObjectId>,
+  daoFactory: IDaoFactory<ObjectId>
 ) {
   const offerDao = daoFactory.getOfferDao();
   /* eslint-disable */
@@ -245,13 +259,13 @@ export async function prefillOffersForLoading(
   await Promise.all(
     allOffers.map(async (offer) => {
       await offer.save();
-    }),
+    })
   );
 
   console.log("Inserted offers:", await offerDao.find({}));
   return {
     allOffers,
     vipEventTalkOfferGroups,
-    vipSeoBackLinkOfferGroups,
+    vipSeoBackLinkOfferGroups
   };
 }
