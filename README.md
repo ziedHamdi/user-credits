@@ -35,19 +35,19 @@ UserCredits is an open-source library designed to simplify the implementation of
 
 UserCredits is designed with a modular architecture that simplifies development by abstracting the complexities of both database interactions and payment processing libraries. The architecture consists of distinct layers, each with its unique role:
 
-###1. Declarative Interfaces
+### 1. Declarative Interfaces
 At the core of UserCredits, you'll find a set of declarative interfaces that define the project's concepts and abstractions.
 
-###2. Technology-Agnostic Logic
+### 2. Technology-Agnostic Logic
 The next layer implements technology-agnostic logic, providing methods for creating orders, managing special offers based on user subscriptions, and handling various payment-related operations and monitoring.
 
-###3. Implementation Layer
+### 3. Implementation Layer
 Each of these layers can be changed without any adaptations needed on the other:
 
-  - ####Database Abstraction:
+  - #### Database Abstraction:
     Beneath the technology-agnostic logic, a database implementation is in place, currently using Mongoose and MongoDB. Importantly, adding support for other databases is straightforward. You can create Data Access Objects (DAOs) and schemas that adhere to the abstract concepts defined in the first layer. These implementations are utilized by the second layer, which remains unaware of the underlying database specifics.
 
-  - ####Payment Platform Integration:
+  - #### Payment Platform Integration:
     The final layer serves as a bridge to payment platforms like Stripe. It encapsulates the intricacies of payment operations, allowing UserCredits to seamlessly interact with different payment providers.
 
 > All these layers are efficiently managed through [Inversion of Control (IoC)](#ioc) principles, leveraging the Awilix library. The end result is a user-friendly and adaptable library that abstracts away the complexities of database and payment integration.
