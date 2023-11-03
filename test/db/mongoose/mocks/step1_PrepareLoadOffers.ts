@@ -263,7 +263,10 @@ export async function prefillOffersForTests(
   const vipSeoBackLinkOfferGroups = vipSeoBackLinks_1_article.asUnlockingOffers(vipDependsOnOffers);
   vipSeoBackLinks_2_articles.asUnlockingOffers(vipDependsOnOffers);
 
-  const allOffers = {...vipDependsOnOffers, free, enterpriseM, enterpriseY, startupM, startupY, vipEventTalk_1talk, vipEventTalk_3talks, vipEventTalk_7talks, vipSeoBackLinks_1_article, vipSeoBackLinks_2_articles} as unknown as Record<string, IOffer<ObjectId>>;
+  const allOffers = {
+    free, enterpriseM, enterpriseY, startupM, startupY, vipEventTalk_1talk, vipEventTalk_3talks,
+    scaleUpM, scaleUpY, ebStartupM, ebStartupY, ebEnterpriseM, ebEnterpriseY, ebScaleUpM, ebScaleUpY,
+    vipEventTalk_7talks, vipSeoBackLinks_1_article, vipSeoBackLinks_2_articles};
   /* eslint-enable */
 
   // now save all the prepared data
@@ -273,7 +276,7 @@ export async function prefillOffersForTests(
     })
   );
 
-  console.log("Inserted offers:", await offerDao.find({}));
+  // console.log("Inserted offers:", await offerDao.find({}));
   return {
     allOffers,
     vipEventTalkOfferGroups,

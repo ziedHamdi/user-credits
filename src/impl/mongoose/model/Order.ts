@@ -54,7 +54,7 @@ const orderSchema = new Schema<IMongooseOrder>(
       type: String,
     },
     taxRate: Number,
-    tokenCount: { required: true, type: Number },
+    tokenCount: { type: Number },
     total: Number,
     userId: {
       required: true,
