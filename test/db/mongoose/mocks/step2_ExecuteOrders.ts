@@ -26,7 +26,7 @@ export enum TestUserIds {
   User_Eb_Enterprise = "User_Eb_Enterprise",
 };
 
-const UserOrders = {
+const USER_ORDERS = {
   User_Free: {
     userId: newObjectId(),
     orders: [
@@ -66,7 +66,7 @@ const UserOrders = {
 }
 
 async function buildOrders( user: keyof typeof TestUserIds, service: Service<ObjectId>, allOffers: Record<string, IOffer<ObjectId>>) {
-  const ordersSpec = UserOrders[user];
+  const ordersSpec = USER_ORDERS[user];
 
   const createdOrders: Record<string, IOrder<ObjectId>> = {};
   for (const order of ordersSpec.orders) {

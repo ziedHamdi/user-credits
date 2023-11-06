@@ -52,11 +52,13 @@ export class StripeClient<K extends IMinimalId> implements IPaymentClient<K> {
   }
 
   /**
-   * Execute the after payment routines using the paymentIntentId. This method checks that it is called after Stripe executed a payment (eg. by Stripe Elements) or after a callback webhook triggers.
+   * Execute the after payment routines using the paymentIntentId. This method checks that it is called
+   * after Stripe executed a payment (eg. by Stripe Elements) or after a callback webhook triggers.
    * It will just notify the client of the status change so that information is synced.
    * https://stripe.com/docs/payments/accept-a-payment?ui=elements
    *
-   * If you want to implement more complex cases, your can override this method and call confirmPayment by yourself, handling redirects and other needed actions.
+   * If you want to implement more complex cases, your can override this method and call confirmPayment by yourself,
+   * handling redirects and other needed actions.
    * Docs for that are here https://stripe.com/docs/api/payment_intents/confirm
    *
    * @param order the order containing intent information

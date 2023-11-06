@@ -58,14 +58,16 @@ export class BaseMongooseDao<
   async findById(userId: object): Promise<D | null> {
     return this.wrapWithSystemError(async () => {
       const result = await this.model.findById(userId).exec();
-      return result ? result.toObject() : null;
+      // return result ? result.toObject() : null;
+      return result;
     }, "findById");
   }
 
   async findOne(query: object): Promise<D | null> {
     return this.wrapWithSystemError(async () => {
       const result = await this.model.findOne(query).exec();
-      return result ? result.toObject() : null;
+      // return result ? result.toObject() : null;
+      return result;
     }, "findOne");
   }
 
@@ -82,6 +84,7 @@ export class BaseMongooseDao<
     return this.wrapWithSystemError(async () => {
       const result = await this.model.create(data);
       return result.toObject();
+      return result;
     }, "create");
   }
 
@@ -91,7 +94,8 @@ export class BaseMongooseDao<
       const result = await this.model
         .findByIdAndUpdate(userId, update, { new: true })
         .exec();
-      return result ? result.toObject() : null;
+      // return result ? result.toObject() : null;
+      return result;
     }, "updateById");
   }
 

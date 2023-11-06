@@ -111,7 +111,6 @@ describe("Offer Database Integration Test", () => {
     const userCerditsDao = mongooseDaoFactory.getUserCreditsDao();
     const userCreditsInserted = await userCerditsDao.find({} );
     expect(Array.isArray(userCreditsInserted)).toBe(true);
-    console.log("inserted user credits: ", userCreditsInserted);
     expect(userCreditsInserted.length).toBe(4);
   });
 

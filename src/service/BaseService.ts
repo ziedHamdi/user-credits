@@ -3,7 +3,7 @@ import {
   IOfferDao,
   IOrderDao,
   ITokenTimetableDao,
-  IUserCreditsDao,
+  IUserCreditsDao
 } from "../db/dao";
 import {
   IMinimalId,
@@ -11,7 +11,7 @@ import {
   IOrder,
   ISubscription,
   ITokenTimetable,
-  IUserCredits,
+  IUserCredits
 } from "../db/model";
 import { OfferCycle } from "../db/model/IOffer";
 import { InvalidOrderError, PaymentError } from "../errors";
@@ -23,15 +23,13 @@ export abstract class BaseService<K extends IMinimalId> implements IService<K> {
 
   protected readonly offerDao: IOfferDao<K, IOffer<K>>;
   protected readonly orderDao: IOrderDao<K, IOrder<K>>;
-  protected readonly tokenTimetableDao: ITokenTimetableDao<
-    K,
-    ITokenTimetable<K>
-  >;
+  protected readonly tokenTimetableDao: ITokenTimetableDao<K,
+    ITokenTimetable<K>>;
   protected readonly userCreditsDao: IUserCreditsDao<K, IUserCredits<K>>;
 
   constructor(
     daoFactory: IDaoFactory<K>,
-    protected defaultCurrency: string = "usd",
+    protected defaultCurrency: string = "usd"
   ) {
     this.daoFactory = daoFactory;
 
@@ -56,10 +54,10 @@ export abstract class BaseService<K extends IMinimalId> implements IService<K> {
     }
     const activeSubscriptions = await this.getActiveSubscriptions(userId);
     const purchasedOfferGroups: string[] = activeSubscriptions.map(
-      (subs) => subs.offerGroup,
+      (subs) => subs.offerGroup
     );
     const dependentOffers = await this.offerDao.loadOffers({
-      unlockedBy: purchasedOfferGroups,
+      unlockedBy: purchasedOfferGroups
     });
     const regularOffers = await this.getRegularOffers(envTags);
 
@@ -72,7 +70,7 @@ export abstract class BaseService<K extends IMinimalId> implements IService<K> {
     offerId: K,
     userId: K,
     quantity?: number, // Optional quantity parameter
-    currency: string = this.defaultCurrency,
+    currency: string = this.defaultCurrency
   ): Promise<IOrder<K>> {
     const offer = await this.offerDao.findOne({ _id: offerId });
 
@@ -107,62 +105,76 @@ export abstract class BaseService<K extends IMinimalId> implements IService<K> {
       status: "pending",
       tokenCount,
       total,
-      userId,
+      userId
     } as IOrder<K>)) as IOrder<K>;
-    await this.onOrderChange(userId, order);
+    await this.onOrderChange(userId, order, offer);
 
     return order;
   }
 
-  protected async onOrderChange(userId: K, order: IOrder<K>) {
+  protected async onOrderChange(userId: K, order: IOrder<K>, offer: IOffer<K>) {
     let userCredits: IUserCredits<K> | null =
       await this.userCreditsDao.findByUserId(userId);
+    userCredits = await this.updateSubscriptionsOnOrderChange(
+      userCredits,
+      offer,
+      order,
+      userId
+    );
+
+    await userCredits.save();
+  }
+
+  private async updateSubscriptionsOnOrderChange(
+    userCredits: IUserCredits<K> | null,
+    offer: IOffer<K>,
+    order: IOrder<K>,
+    userId: K
+  ) {
     if (!userCredits) {
-      const subscription: Partial<ISubscription<K>> = {
-        customCycle: order.customCycle,
-        cycle: order.cycle,
-        name: new Date().toDateString(),
-        offerGroup: order.offerGroup,
-        offerId: order.offerId,
-        orderId: order._id,
-        starts: null,
-        status: "pending",
-        tokens: order.tokenCount,
-      } as unknown as ISubscription<K>;
-      userCredits = this.userCreditsDao.build({
+      const subscription: Partial<ISubscription<K>> = this.buildSubscription(
+        offer,
+        order
+      );
+      userCredits = await this.userCreditsDao.build({
         subscriptions: [subscription],
-        userId,
+        userId
       });
     } else {
       // Check if a subscription with the same orderId exists
       const existingSubscription = userCredits.subscriptions.find(
-        (subscription) => subscription.orderId === order._id,
+        (subscription) => subscription.orderId === order._id
       );
 
       if (existingSubscription) {
         // Update the existing subscription
         existingSubscription.status = order.status;
-        existingSubscription.starts = order.createdAt;
+        existingSubscription.starts = order.updatedAt;
       } else {
         // Create a new subscription and add it to the array
-        const newSubscription: Partial<ISubscription<K>> = {
-          customCycle: order.customCycle,
-          cycle: order.cycle,
-          name: new Date().toDateString(),
-          offerGroup: order.offerGroup,
-          offerId: order.offerId,
-          orderId: order._id,
-          starts: order.createdAt,
-          status: order.status,
-          tokens: order.tokenCount,
-        } as ISubscription<K>;
+        const newSubscription: Partial<ISubscription<K>> =
+          this.buildSubscription(offer, order);
 
         userCredits.subscriptions.push(
-          newSubscription as unknown as ISubscription<K>,
+          newSubscription as unknown as ISubscription<K>
         );
       }
     }
-    await userCredits.save();
+    return userCredits;
+  }
+
+  protected buildSubscription(offer: IOffer<K>, order: IOrder<K>) {
+    return {
+      customCycle: offer.customCycle,
+      cycle: offer.cycle,
+      name: offer.name,
+      offerGroup: offer.offerGroup,
+      offerId: order.offerId,
+      orderId: order._id,
+      starts: order.createdAt,
+      status: "pending",
+      tokens: offer.tokenCount
+    } as unknown as ISubscription<K>;
   }
 
   /**
@@ -175,24 +187,9 @@ export abstract class BaseService<K extends IMinimalId> implements IService<K> {
       await this.userCreditsDao.findByUserId(userId);
     return (
       (userCredits?.subscriptions as ISubscription<K>[]).filter(
-        (subscription) => subscription.status === "paid",
+        (subscription) => subscription.status === "paid"
       ) || []
     );
-  }
-
-  /**
-   * Get suboffers corresponding to active subscriptions.
-   * @param subscriptions An array of active subscriptions.
-   * @returns A promise that resolves to an array of suboffers.
-   */
-  async getSubOffers(subscriptions: ISubscription<K>[]): Promise<IOffer<K>[]> {
-    const uniqueOfferIds = [
-      ...new Set(subscriptions.map((sub) => sub.offerId)),
-    ];
-    return this.offerDao.find({
-      hasSubOffers: false,
-      parentOfferId: { $in: uniqueOfferIds },
-    });
   }
 
   /**
@@ -205,7 +202,7 @@ export abstract class BaseService<K extends IMinimalId> implements IService<K> {
 
     return await this.offerDao.loadOffers({
       allTags: true,
-      tags: envTags,
+      tags: envTags
     });
   }
 
@@ -222,7 +219,7 @@ export abstract class BaseService<K extends IMinimalId> implements IService<K> {
    */
   mergeOffers(
     regularOffers: IOffer<K>[],
-    unlockedOffers: IOffer<K>[],
+    unlockedOffers: IOffer<K>[]
   ): IOffer<K>[] {
     // Create a Map to store unlockedOffers by their overridingKey
     const unlockedOffersMap = new Map<string, IOffer<K>>();
@@ -230,7 +227,7 @@ export abstract class BaseService<K extends IMinimalId> implements IService<K> {
     // Populate the unlockedOffersMap with unlockedOffers, overriding duplicates
     for (const unlockedOffer of unlockedOffers) {
       const existingSubOffer = unlockedOffersMap.get(
-        unlockedOffer.overridingKey,
+        unlockedOffer.overridingKey
       );
       if (
         !existingSubOffer ||
@@ -254,12 +251,12 @@ export abstract class BaseService<K extends IMinimalId> implements IService<K> {
 
   async isUserAlreadySubscribed(
     userId: K,
-    offerId: K,
+    offerId: K
   ): Promise<IOrder<K> | null> {
     const existingSubscription = await this.orderDao.findOne({
       offerId: offerId,
       status: "paid",
-      userId: userId, // You may want to adjust this based on your criteria
+      userId: userId // You may want to adjust this based on your criteria
     });
 
     return existingSubscription;
@@ -272,7 +269,7 @@ export abstract class BaseService<K extends IMinimalId> implements IService<K> {
 
     if (!userCredits) {
       throw new PaymentError(
-        `Illegal state: user has no prepared userCredits (${userId}).`,
+        `Illegal state: user has no prepared userCredits (${userId}).`
       );
     }
 
@@ -283,7 +280,7 @@ export abstract class BaseService<K extends IMinimalId> implements IService<K> {
     startDate: Date,
     cycle: OfferCycle,
     quantity: number = 1,
-    customCycle?: number,
+    customCycle?: number
   ): Date {
     const date = new Date(startDate);
 
