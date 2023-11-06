@@ -94,6 +94,6 @@ export async function prefillOrdersForTests(daoFactory: IDaoFactory<ObjectId>) {
     );
   }
 
-  console.log("orders per user: ", ordersPerUser)
+  // console.log("orders per user: ", ordersPerUser)
   return ordersPerUser;
 }

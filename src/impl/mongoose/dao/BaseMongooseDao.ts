@@ -55,46 +55,51 @@ export class BaseMongooseDao<
   }
 
   // Find document by ID
-  async findById(userId: object): Promise<D | null> {
+  async findById(userId: object, asPojo: boolean = false): Promise<D | null> {
     return this.wrapWithSystemError(async () => {
       const result = await this.model.findById(userId).exec();
-      // return result ? result.toObject() : null;
+      if (asPojo) return result ? result.toObject() : null;
       return result;
     }, "findById");
   }
 
-  async findOne(query: object): Promise<D | null> {
+  async findOne(query: object, asPojo: boolean = false): Promise<D | null> {
     return this.wrapWithSystemError(async () => {
       const result = await this.model.findOne(query).exec();
-      // return result ? result.toObject() : null;
+      if (asPojo) return result ? result.toObject() : null;
       return result;
     }, "findOne");
   }
 
   // Find documents that match a query
-  async find(query: object): Promise<D[]> {
+  async find(query: object, asPojo: boolean = false): Promise<D[]> {
     return this.wrapWithSystemError(async () => {
       const results = await this.model.find(query).exec();
-      return results.map((result) => result.toObject());
+      if (asPojo) return results.map((result) => result.toObject());
+      return results;
     }, "find");
   }
 
   // Create a new document
-  async create(data: Partial<D>): Promise<D> {
+  async create(data: Partial<D>, asPojo: boolean = false): Promise<D> {
     return this.wrapWithSystemError(async () => {
       const result = await this.model.create(data);
-      return result.toObject();
+      if (asPojo) return result.toObject();
       return result;
     }, "create");
   }
 
   // Update a document by ID
-  async updateById(userId: string, update: Partial<D>): Promise<D | null> {
+  async updateById(
+    userId: string,
+    update: Partial<D>,
+    asPojo: boolean = false,
+  ): Promise<D | null> {
     return this.wrapWithSystemError(async () => {
       const result = await this.model
         .findByIdAndUpdate(userId, update, { new: true })
         .exec();
-      // return result ? result.toObject() : null;
+      if (asPojo) return result ? result.toObject() : null;
       return result;
     }, "updateById");
   }
