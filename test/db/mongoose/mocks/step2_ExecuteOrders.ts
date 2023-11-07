@@ -89,5 +89,5 @@ export async function prefillOrdersForTests(service: IService<ObjectId>) {
   }
 
   // console.log("orders per user: ", ordersPerUser)
-  return ordersPerUser;
+  return { allOffers, ordersPerUser };
 }

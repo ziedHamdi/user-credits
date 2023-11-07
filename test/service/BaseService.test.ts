@@ -36,6 +36,11 @@ class ExtendedBaseService<K extends IMinimalId> extends BaseService<K> {
   }
 }
 
+/**
+ * This file is now testing MongoDb adapter (mongooseDaoFactory) only, but the same test should run on any implementation.
+ * Multiple Awilix configurations will enable switching between the different implementation.
+ * Check /test/testContainer.ts for IOC configuration details
+ */
 describe("createOrder: verifying createOrder works before relying on it for other tests", () => {
   // eslint-disable-next-line
   type OffersToTest = { free: Partial<IOffer<ObjectId>>, enterpriseM: Partial<IOffer<ObjectId>>, vipSeoBackLinks_1_article: Partial<IOffer<ObjectId>>};

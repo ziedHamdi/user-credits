@@ -38,35 +38,6 @@ export class ExtendedBaseService<K extends IMinimalId> extends BaseService<K> {
   }
 }
 
-/**
- * This file is now testing MongoDb adapter (mongooseDaoFactory) only, but the same test should run on any implementation.
- * Multiple Awilix configurations will enable switching between the different implementation.
- * Check /test/testContainer.ts for IOC configuration details
- */
-describe("offer creation", () => {
-  let mongooseDaoFactory: IDaoFactory<ObjectId>;
-  let service: BaseService<ObjectId>;
-  let mongoMemoryServer: MongoMemoryServer;
-  let connection: Connection;
-
-  beforeEach(async () => {
-    // Initialize mocks and dependencies here.
-    const mocks = await initMocks(false);
-    ({ connection, mongoMemoryServer, mongooseDaoFactory } = mocks);
-    // Create a new instance of BaseService with the mock userCreditsDao
-    service = new ExtendedBaseService<ObjectId>(mongooseDaoFactory);
-  });
-
-  afterEach(async () => {
-    await mongoMemoryServer.stop(false);
-    await connection.close();
-  });
-});
-
-function asRecord(offerChild1: IOffer<ObjectId>): Record<string, never> {
-  return offerChild1 as unknown as Record<string, never>;
-}
-
 function offerNames(offers: IMongooseOffer[]): string[] {
   return offers.map((offer) => offer.name);
 }

@@ -2,6 +2,13 @@
 
 UserCredits is an open-source library designed to simplify the implementation of pay-as-you-go features in your web or mobile applications. Whether you're building a subscription-based service, a digital marketplace, or an e-commerce platform, UserCredits provides a flexible and technology-agnostic solution to manage user credits and token-based payments.
 
+## Getting started guide
+To understand how offers are declared, orders executed and payments tracked a fully explained guide is available:
+ - 1/ [Offers explained](/docs/offers_explained.md)
+ - 2/ [Offer loading explained](/docs/offer_loading_explained.md)
+ - 3/ [Orders Explained](/docs/orders_explained.md)
+
+## What is it
  - [Features](#Features)
  - [Architecture](#Architecture)
    - [1. Declarative Interfaces](#1-declarative-interfaces)
