@@ -18,7 +18,11 @@ import { IPaymentClient } from "../../src/service/IPaymentClient";
 import { PaymentService } from "../../src/service/PaymentService";
 import { addMonths } from "../../src/util/Dates";
 import { TestContainerSingleton } from "../config/testContainer";
-import { prefillOrdersForTests, TEST_USER_IDS, USER_ORDERS } from "../db/mongoose/mocks/step2_ExecuteOrders";
+import {
+  prefillOrdersForTests,
+  TEST_USER_IDS,
+  USER_ORDERS,
+} from "../db/mongoose/mocks/step2_ExecuteOrders";
 import { initMocks, ObjectId } from "./mocks/BaseService.mocks";
 import { MOCK_VALUES } from "./mocks/StripeMock";
 
@@ -47,7 +51,7 @@ describe("PaymentService.updateOfferGroup", () => {
   beforeEach(async () => {
     // Initialize your mocks and dependencies here.
     const mocks = await initMocks(false);
-    ({ mongoMemoryServer, mongooseDaoFactory, connection } = mocks);
+    ({ connection, mongoMemoryServer, mongooseDaoFactory } = mocks);
 
     paymentClient = (await TestContainerSingleton.getInstance()).resolve(
       "stripeMock",
@@ -60,7 +64,11 @@ describe("PaymentService.updateOfferGroup", () => {
     );
     await prefillOrdersForTests(service);
     // I have to cheat here as I know it will not be null
-    order = await mongooseDaoFactory.getOrderDao().findOne({userId:USER_ORDERS.User_St_Startup.userId}) ?? {} as unknown as IOrder<ObjectId>
+    order =
+      (await mongooseDaoFactory
+        .getOrderDao()
+        .findOne({ userId: USER_ORDERS.User_St_Startup.userId })) ??
+      ({} as unknown as IOrder<ObjectId>);
     const userId = order.userId;
     userCredits = {
       offers: [] as unknown as [IActivatedOffer],
