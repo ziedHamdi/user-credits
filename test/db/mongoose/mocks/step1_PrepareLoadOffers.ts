@@ -173,7 +173,7 @@ async function preparePredefinedOffer(
   offerDao: IOfferDao<ObjectId, IOffer<ObjectId>>,
   offerGroup: OFFER_GROUP,
   specific?: string,
-) {
+): Promise<IOffer<ObjectId>> {
   const mockDef: CompleteMockType = MOCKS[offerGroup];
   if (!mockDef) throw new Error("Wrong key: not found in MOCKS: " + offerGroup);
 
@@ -221,6 +221,20 @@ async function preparePredefinedOffer(
 
 /**
  * This test reproduces the structure described in {@link /docs/offers_explained}
+ *
+ * It returns an object containing all offers, along with unlockedBy group names for each of the 'conditional' offers unlocked by the purchase of another offer.
+ *   return {
+ *   allOffers,
+ *   vipEventTalkOfferGroups,
+ *   vipSeoBackLinkOfferGroups,
+ * };
+ *
+ * allOffers lists the offers under the keys (see teh article to understand the cases):
+ *   const allOffers = {
+ *     free, enterpriseM, enterpriseY, startupM, startupY, vipEventTalk_1talk, vipEventTalk_3talks,
+ *     scaleUpM, scaleUpY, ebStartupM, ebStartupY, ebEnterpriseM, ebEnterpriseY, ebScaleUpM, ebScaleUpY,
+ *     vipEventTalk_7talks, vipSeoBackLinks_1_article, vipSeoBackLinks_2_articles
+ *   };
  *
  * @param daoFactory
  */

@@ -14,10 +14,11 @@ import { InvalidOrderError } from "../../src/errors";
 import { BaseService } from "../../src/service/BaseService"; //IMPROVEMENT Should use { IPayment } and add a secondary interface instead
 // eslint-disable-next-line no-unused-vars,@typescript-eslint/no-unused-vars
 import { toHaveSameFields } from "../extend/sameObjects";
-import { initMocks, ObjectId } from "./mocks/BaseService.mocks";
+import { initMocks, newObjectId, ObjectId } from "./mocks/BaseService.mocks";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import { Connection } from "mongoose";
-import { prefillOrdersForTests } from "../db/mongoose/mocks/step2_ExecuteOrders";
+import { prefillOrdersForTests, TEST_USER_IDS } from "../db/mongoose/mocks/step2_ExecuteOrders";
+import { prefillOffersForTests } from "../db/mongoose/mocks/step1_PrepareLoadOffers";
 
 class ExtendedBaseService<K extends IMinimalId> extends BaseService<K> {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -25,6 +26,99 @@ class ExtendedBaseService<K extends IMinimalId> extends BaseService<K> {
     return Promise.resolve(undefined as unknown as IUserCredits<K>);
   }
 }
+
+describe("createOrder", () => {
+  type OffersToTest = { enterpriseM: Partial<IOffer<ObjectId>>};
+  type PrefillResult = { allOffer: OffersToTest };
+
+  let service: BaseService<ObjectId>;
+  let mongooseDaoFactory: IDaoFactory<ObjectId>;
+  let allOffers: OffersToTest;
+
+  beforeAll(async () => {
+    // Initialize your mocks and dependencies here.
+    const mocks = await initMocks();
+    ({ mongooseDaoFactory } = mocks);
+    service = new ExtendedBaseService(mongooseDaoFactory);
+    ({ allOffers } = await prefillOffersForTests(service.getDaoFactory())) as unknown as PrefillResult;
+  });
+
+  it("should create an order with the specified quantity and total", async () => {
+    // Arrange
+    const enterpriseM = allOffers.enterpriseM;
+    const offerId = enterpriseM._id; // Use the offer with a quantity limit
+    const userId = newObjectId();
+    const quantity = 3; // Below the maximum allowed quantity
+
+    if( !offerId )
+      throw new Error("Offer was not created: enterpriseM")
+    // Act
+    const order = await service.createOrder(offerId, userId, quantity);
+
+    // Assert
+    expect(order.quantity).toEqual(quantity);
+    expect(order.total).toEqual(order.quantity * enterpriseM.price!);
+  });
+
+  // it("should throw an InvalidOrderError when quantity exceeds the maximum limit", async () => {
+  //   // Arrange
+  //   const offerId = offerRoot2._id; // Use the offer with a quantity limit
+  //   const userId = sampleUserId;
+  //   const quantity = 10; // Exceeds the maximum allowed quantity
+  //
+  //   // Act
+  //   try {
+  //     await service.createOrder(offerId, userId, quantity);
+  //   } catch (error) {
+  //     // Assert
+  //     expect(error).toBeInstanceOf(InvalidOrderError);
+  //     expect((error as InvalidOrderError).message).toBe(
+  //       "Requested quantity exceeds the limit",
+  //     );
+  //     return; // Exit the test function
+  //   }
+  //
+  //   // If no error was thrown, fail the test
+  //   fail("Expected InvalidOrderError to be thrown");
+  // });
+  // it("should create an order with quantity 1 if quantity parameter is not provided", async () => {
+  //   // Arrange
+  //   const offerId = offerRoot1._id;
+  //   const userId = sampleUserId;
+  //
+  //   // Act
+  //   const order = await service.createOrder(offerId, userId);
+  //
+  //   // Assert
+  //   expect(order.quantity).toBeUndefined();
+  //   expect(order.total).toEqual(offerRoot1.price);
+  // });
+  //
+  // it("should create an order with tokenCount when the offer kind is 'tokens'", async () => {
+  //   // Arrange
+  //   const offerId = offerRoot1._id; // Use the tokens offer
+  //   const userId = sampleUserId;
+  //   const quantity = 5; // Any quantity, as this test focuses on tokenCount
+  //
+  //   // Act
+  //   const order = await service.createOrder(offerId, userId, quantity);
+  //
+  //   // Assert
+  //   expect(order.tokenCount).toEqual(offerRoot1.tokenCount);
+  // });
+  //
+  // it("should create an order with the same total as the offer price when quantity is not provided", async () => {
+  //   // Arrange
+  //   const offerId = offerRoot1._id; // Use an offer with quantity limit
+  //   const userId = sampleUserId;
+  //
+  //   // Act
+  //   const order = await service.createOrder(offerId, userId);
+  //
+  //   // Assert
+  //   expect(order.total).toEqual(offerRoot1.price);
+  // });
+});
 
 describe("Offer Database Integration Test", () => {
   let mongooseDaoFactory: IDaoFactory<ObjectId>;
@@ -206,92 +300,4 @@ describe("Offer Database Integration Test", () => {
 //   });
 // });
 
-// describe("createOrder", () => {
-//   let sampleUserId: ObjectId;
-//   let offerRoot1: IOffer<ObjectId>;
-//   let offerRoot2: IOffer<ObjectId>;
-//   let service: BaseService<ObjectId>;
-//   let mongooseDaoFactory: IDaoFactory<ObjectId>;
-//
-//   beforeAll(async () => {
-//     // Initialize your mocks and dependencies here.
-//     const mocks = await initMocks();
-//     ({ mongooseDaoFactory, offerRoot1, offerRoot2, sampleUserId } = mocks);
-//     await mongooseDaoFactory.getOfferDao().create(offerRoot1);
-//     await mongooseDaoFactory.getOfferDao().create(offerRoot2);
-//     service = new ExtendedBaseService(mongooseDaoFactory);
-//   });
-//
-//   it("should create an order with the specified quantity and total", async () => {
-//     // Arrange
-//     const offerId = offerRoot1._id; // Use the offer with a quantity limit
-//     const userId = sampleUserId;
-//     const quantity = 150; // Below the maximum allowed quantity
-//
-//     // Act
-//     const order = await service.createOrder(offerId, userId, quantity);
-//
-//     // Assert
-//     expect(order.quantity).toEqual(quantity);
-//     expect(order.total).toEqual(order.quantity * offerRoot1.price);
-//   });
-//
-//   it("should throw an InvalidOrderError when quantity exceeds the maximum limit", async () => {
-//     // Arrange
-//     const offerId = offerRoot2._id; // Use the offer with a quantity limit
-//     const userId = sampleUserId;
-//     const quantity = 10; // Exceeds the maximum allowed quantity
-//
-//     // Act
-//     try {
-//       await service.createOrder(offerId, userId, quantity);
-//     } catch (error) {
-//       // Assert
-//       expect(error).toBeInstanceOf(InvalidOrderError);
-//       expect((error as InvalidOrderError).message).toBe(
-//         "Requested quantity exceeds the limit",
-//       );
-//       return; // Exit the test function
-//     }
-//
-//     // If no error was thrown, fail the test
-//     fail("Expected InvalidOrderError to be thrown");
-//   });
-//   it("should create an order with quantity 1 if quantity parameter is not provided", async () => {
-//     // Arrange
-//     const offerId = offerRoot1._id;
-//     const userId = sampleUserId;
-//
-//     // Act
-//     const order = await service.createOrder(offerId, userId);
-//
-//     // Assert
-//     expect(order.quantity).toBeUndefined();
-//     expect(order.total).toEqual(offerRoot1.price);
-//   });
-//
-//   it("should create an order with tokenCount when the offer kind is 'tokens'", async () => {
-//     // Arrange
-//     const offerId = offerRoot1._id; // Use the tokens offer
-//     const userId = sampleUserId;
-//     const quantity = 5; // Any quantity, as this test focuses on tokenCount
-//
-//     // Act
-//     const order = await service.createOrder(offerId, userId, quantity);
-//
-//     // Assert
-//     expect(order.tokenCount).toEqual(offerRoot1.tokenCount);
-//   });
-//
-//   it("should create an order with the same total as the offer price when quantity is not provided", async () => {
-//     // Arrange
-//     const offerId = offerRoot1._id; // Use an offer with quantity limit
-//     const userId = sampleUserId;
-//
-//     // Act
-//     const order = await service.createOrder(offerId, userId);
-//
-//     // Assert
-//     expect(order.total).toEqual(offerRoot1.price);
-//   });
-// });
+;

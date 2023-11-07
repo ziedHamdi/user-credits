@@ -9,7 +9,7 @@ import {
 import { prefillOffersForTests } from "./step1_PrepareLoadOffers";
 
 /* eslint-disable */
-export enum TestUserIds {
+export enum TEST_USER_IDS {
   User_Free = "User_Free",
   User_St_Startup = "User_St_Startup",
   User_St_ScaleUp = "User_St_ScaleUp",
@@ -55,7 +55,7 @@ const USER_ORDERS = {
   },
 }
 
-async function buildOrders( user: keyof typeof TestUserIds, service: IService<ObjectId>, allOffers: Record<string, IOffer<ObjectId>>) {
+export async function buildOrders(user: keyof typeof TEST_USER_IDS, service: IService<ObjectId>, allOffers: Record<string, IOffer<ObjectId>>) {
   const ordersSpec = USER_ORDERS[user];
 
   const createdOrders: Record<string, IOrder<ObjectId>> = {};
@@ -68,15 +68,21 @@ async function buildOrders( user: keyof typeof TestUserIds, service: IService<Ob
 }
 /* eslint-enable */
 
+/**
+ * Prefills all offers using {@link prefillOffersForTests} then uses them along with the users in {@link TEST_USER_IDS}
+ * to create orders as defined in {@link USER_ORDERS}
+ *
+ * @param service the service intended to test
+ */
 export async function prefillOrdersForTests(service: IService<ObjectId>) {
   const { allOffers } = await prefillOffersForTests(service.getDaoFactory());
 
   const ordersPerUser: Partial<
-    Record<keyof typeof TestUserIds, Record<string, IOrder<ObjectId>>>
+    Record<keyof typeof TEST_USER_IDS, Record<string, IOrder<ObjectId>>>
   > = {};
-  for (const key in TestUserIds) {
-    ordersPerUser[key as keyof typeof TestUserIds] = await buildOrders(
-      key as keyof typeof TestUserIds,
+  for (const key in TEST_USER_IDS) {
+    ordersPerUser[key as keyof typeof TEST_USER_IDS] = await buildOrders(
+      key as keyof typeof TEST_USER_IDS,
       service,
       allOffers,
     );

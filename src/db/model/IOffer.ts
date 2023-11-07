@@ -20,8 +20,10 @@ export interface IOffer<K extends IMinimalId> extends IBaseEntity<K> {
 
   /**
    * Method to set offers this offer depends on
-   * @param dependsOnOffers this offer unlocks only on purchase of at least one item of these offers groups
+   * @param dependsOnOffers the current offer can be unlocked only by purchasing at least one of dependsOnOffers
    * @param reset if true resets dependencies, otherwise adds the ones not already referenced
+   *
+   * @return string[] array of distinct offerGroups it can be unlocked by
    */
   asUnlockingOffers(dependsOnOffers: IOffer<K>[], reset?: boolean): string[];
   /**
