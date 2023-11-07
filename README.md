@@ -4,7 +4,7 @@ UserCredits is an open-source library designed to simplify the implementation of
 
 ## Getting started guide
 To understand how offers are declared, orders executed and payments tracked a fully explained guide is available:
- - 1/ [Offers explained](/docs/offers_explained.md)
+ - 1/ [Offers explained](/docs/offers_explained.md) (Also on [Medium](https://medium.com/@zhamdi/design-your-pay-as-you-go-offers-with-user-credits-21cb8d9f162d))
  - 2/ [Offer loading explained](/docs/offer_loading_explained.md)
  - 3/ [Orders Explained](/docs/orders_explained.md)
 
