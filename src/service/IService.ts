@@ -32,6 +32,13 @@ export interface IService<K extends IMinimalId> {
   createOrder(offerId: unknown, userId: unknown): Promise<IOrder<K>>;
 
   /**
+   * You can define your own logic for key equality
+   * @param a a key
+   * @param b the other key
+   */
+  equals(a: K, b: K): boolean;
+
+  /**
    * Provides access to the data access objects (DAOs) used to store data locally within the application.
    * This includes DAOs for offers, orders, token timetables, and user credits.
    *
@@ -52,4 +59,11 @@ export interface IService<K extends IMinimalId> {
    * @returns A promise that resolves to an array of offers available to the user.
    */
   loadOffers(userId: unknown, envTags: string[]): Promise<IOffer<K>[]>;
+
+  /**
+   * Loads the current user credits status object
+   * @param userId user id
+   * return a {@link IUserCredits} instance if found or null
+   */
+  loadUserCredits(userId: K): Promise<IUserCredits<K>>;
 }

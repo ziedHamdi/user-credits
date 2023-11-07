@@ -16,7 +16,7 @@ export enum TEST_USER_IDS {
   User_Eb_Enterprise = "User_Eb_Enterprise",
 };
 
-const USER_ORDERS = {
+export const USER_ORDERS = {
   User_Free: {
     userId: newObjectId(),
     orders: [

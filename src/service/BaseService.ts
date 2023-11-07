@@ -17,6 +17,7 @@ import { OfferCycle } from "../db/model/IOffer";
 import { InvalidOrderError, PaymentError } from "../errors";
 import { addDays, addMonths, addSeconds, addYears } from "../util/Dates";
 import { IService } from "./IService";
+import { defaultCustomEquals } from "../util/Copy";
 
 export abstract class BaseService<K extends IMinimalId> implements IService<K> {
   protected daoFactory: IDaoFactory<K>;
@@ -313,4 +314,12 @@ export abstract class BaseService<K extends IMinimalId> implements IService<K> {
   }
 
   abstract afterExecute(order: IOrder<K>): Promise<IUserCredits<K>>;
+
+  loadUserCredits(userId: K): Promise<IUserCredits<K>> {
+    return this.daoFactory.getUserCreditsDao().findByUserId(userId);
+  }
+
+  equals(a: K, b: K): boolean {
+    return defaultCustomEquals(a, b);
+  }
 }

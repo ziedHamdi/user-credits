@@ -1,7 +1,10 @@
 //NODE: these imports are a temporary workaround to avoid the warning: "Corresponding file is not included in tsconfig.json"
 import { afterEach, beforeAll, beforeEach, describe, it } from "@jest/globals";
 import expect from "expect";
+import { MongoMemoryServer } from "mongodb-memory-server";
+import { Connection } from "mongoose";
 
+import { PaymentError, PaymentService } from "../../src";
 import { IDaoFactory, IOrderDao } from "../../src/db/dao"; // Import the actual path
 import {
   IMinimalId,
@@ -12,13 +15,19 @@ import {
 } from "../../src/db/model"; // Import the actual path
 import { InvalidOrderError } from "../../src/errors";
 import { BaseService } from "../../src/service/BaseService"; //IMPROVEMENT Should use { IPayment } and add a secondary interface instead
+import {
+  OFFER_GROUP,
+  prefillOffersForTests,
+} from "../db/mongoose/mocks/step1_PrepareLoadOffers";
+import {
+  prefillOrdersForTests,
+  TEST_USER_IDS,
+  USER_ORDERS,
+} from "../db/mongoose/mocks/step2_ExecuteOrders";
 // eslint-disable-next-line no-unused-vars,@typescript-eslint/no-unused-vars
 import { toHaveSameFields } from "../extend/sameObjects";
 import { initMocks, newObjectId, ObjectId } from "./mocks/BaseService.mocks";
-import { MongoMemoryServer } from "mongodb-memory-server";
-import { Connection } from "mongoose";
-import { prefillOrdersForTests, TEST_USER_IDS } from "../db/mongoose/mocks/step2_ExecuteOrders";
-import { prefillOffersForTests } from "../db/mongoose/mocks/step1_PrepareLoadOffers";
+import { StripeMock } from "./mocks/StripeMock";
 
 class ExtendedBaseService<K extends IMinimalId> extends BaseService<K> {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -41,7 +50,9 @@ describe("createOrder: verifying createOrder works before relying on it for othe
     const mocks = await initMocks();
     ({ mongooseDaoFactory } = mocks);
     service = new ExtendedBaseService(mongooseDaoFactory);
-    ({ allOffers } = await prefillOffersForTests(service.getDaoFactory())) as unknown as PrefillResult;
+    ({ allOffers } = await prefillOffersForTests(
+      service.getDaoFactory(),
+    )) as unknown as PrefillResult;
   });
 
   it("should create an order with the specified quantity and total", async () => {
@@ -51,8 +62,7 @@ describe("createOrder: verifying createOrder works before relying on it for othe
     const userId = newObjectId();
     const quantity = 3; // Below the maximum allowed quantity
 
-    if( !offerId )
-      throw new Error("Offer was not created: enterpriseM")
+    if (!offerId) throw new Error("Offer was not created: enterpriseM");
     // Act
     const order = await service.createOrder(offerId, userId, quantity);
 
@@ -137,15 +147,12 @@ describe("Offer Database Integration Test", () => {
   let service: BaseService<ObjectId>;
   let mongoMemoryServer: MongoMemoryServer;
   let connection: Connection;
-  let orderDao: IOrderDao<ObjectId, IOrder<ObjectId>>
+  let orderDao: IOrderDao<ObjectId, IOrder<ObjectId>>;
 
   beforeEach(async () => {
     // Initialize your mocks and dependencies here.
-    ({
-      connection,
-      mongoMemoryServer,
-      mongooseDaoFactory,
-    } = await initMocks(false));
+    ({ connection, mongoMemoryServer, mongooseDaoFactory } =
+      await initMocks(false));
 
     orderDao = mongooseDaoFactory.getOrderDao();
     // Create a new instance of BaseService with the mock userCreditsDao
@@ -161,7 +168,7 @@ describe("Offer Database Integration Test", () => {
   it("should have inserted all orders in prefillOrdersForTests", async () => {
     const orders = await orderDao.find({});
     expect(Array.isArray(orders)).toBe(true);
-    expect(orders.map( (order: IOrder<ObjectId>) => order.offerGroup )).toEqual(
+    expect(orders.map((order: IOrder<ObjectId>) => order.offerGroup)).toEqual(
       expect.arrayContaining([
         // Free is only once, but the others are twice each: monthly and yearly
         "Free",
@@ -174,104 +181,132 @@ describe("Offer Database Integration Test", () => {
     expect(orders.length).toBe(5);
 
     const userCerditsDao = mongooseDaoFactory.getUserCreditsDao();
-    const userCreditsInserted = await userCerditsDao.find({} );
+    const userCreditsInserted = await userCerditsDao.find({});
     expect(Array.isArray(userCreditsInserted)).toBe(true);
     expect(userCreditsInserted.length).toBe(4);
   });
 
-  it("should correctly override offers with unlocked offers", async () => {
+  it("should correctly override offers with unlocked offers", async () => {});
 
+  it("should forbid a user to purchase an offer he didn't unlock", async () => {});
+
+  it("should override offers between two active subscriptions, taking the ones with higher weights", async () => {});
+});
+
+describe("BaseService.getActiveSubscriptions", () => {
+  let mongooseDaoFactory: IDaoFactory<ObjectId>;
+  let mongoMemoryServer: MongoMemoryServer;
+  let connection: Connection;
+  const paymentClientMock = new StripeMock<ObjectId>();
+  const sampleUserId = USER_ORDERS.User_Eb_Enterprise.userId;
+  let service: PaymentService<ObjectId>;
+
+  beforeEach(async () => {
+    const mocks = await initMocks(false);
+    ({ connection, mongoMemoryServer, mongooseDaoFactory } = mocks);
+    // Create a new instance of BaseService with the mock userCreditsDao
+    service = new PaymentService<ObjectId>(
+      mongooseDaoFactory,
+      paymentClientMock,
+      "usd",
+    );
+    await prefillOrdersForTests(service);
   });
 
-  it("should forbid a user to purchase an offer he didn't unlock", async () => {
+  afterEach(async () => {
+    await mongoMemoryServer.stop(false);
+    await connection.close();
   });
+  it("should return no active subscriptions as user has not paid yet", async () => {
+    // Create a spy on the real findByUserId method
+    const findByUserIdSpy = jest.spyOn(
+      mongooseDaoFactory.getUserCreditsDao(),
+      "findByUserId",
+    );
 
-  it("should override offers between two active subscriptions, taking the ones with higher weights", async () => {
+    // Call the getActiveSubscriptions method
+    const activeSubscriptions =
+      await service.getActiveSubscriptions(sampleUserId);
 
+    // Assert that findByUserId was called with the correct userId (the user must be loaded from storage)
+    expect(findByUserIdSpy).toHaveBeenCalled();
+    expect(findByUserIdSpy).toHaveBeenCalledWith(sampleUserId);
+
+    // Assert that activeSubscriptions contain only paid subscriptions
+    expect(Array.isArray(activeSubscriptions)).toEqual(true);
+    expect(activeSubscriptions.length).toEqual(0);
   });
-})
+  it("should have two pending subscriptions for EbEnterprise", async () => {
+    // Create a spy on the real findByUserId method
+    const userCredits = await service.loadUserCredits(sampleUserId);
 
-// describe("BaseService.getActiveSubscriptions", () => {
-//   let daoFactoryMock: IDaoFactory<ObjectId>;
-//   let sampleUserId: ObjectId;
-//   let subscriptionPaidRoot1: ISubscription<ObjectId>;
-//   let subscriptionPendingChild3_1: ISubscription<ObjectId>;
-//   let subscriptionRefusedChild3_2: ISubscription<ObjectId>;
-//   let sampleUserCredits: IUserCredits<ObjectId>;
-//
-//   beforeAll(async () => {
-//     // Initialize your mocks and dependencies here.
-//     const mocks = await initMocks();
-//     ({
-//       daoFactoryMock,
-//       sampleUserId,
-//       subscriptionPaidRoot1,
-//       subscriptionPendingChild3_1,
-//       subscriptionRefusedChild3_2,
-//     } = mocks);
-//     sampleUserCredits = {
-//       subscriptions: [subscriptionPaidRoot1, subscriptionPendingChild3_1], // Use the created instances
-//       tokens: 100, // Sample token balance
-//       userId: sampleUserId,
-//     } as unknown as IUserCredits<ObjectId>;
-//   });
-//
-//   let service: BaseService<ObjectId>;
-//
-//   beforeEach(() => {
-//     // Create a new instance of BaseService with the mock userCreditsDao
-//     service = new ExtendedBaseService(daoFactoryMock);
-//
-//     // Reset the mock function before each test
-//     (daoFactoryMock.getUserCreditsDao().findByUserId as jest.Mock).mockReset();
-//   });
-//
-//   it("should return active subscriptions when user has paid subscriptions", async () => {
-//     // Mock the userCreditsDao.findById method to return sampleUserCredits
-//     (
-//       daoFactoryMock.getUserCreditsDao().findByUserId as jest.Mock
-//     ).mockResolvedValue(sampleUserCredits);
-//
-//     // Call the getActiveSubscriptions method
-//     const activeSubscriptions =
-//       await service.getActiveSubscriptions(sampleUserId);
-//
-//     // Assert that userCreditsDao.findById was called with the correct userId
-//     expect(
-//       daoFactoryMock.getUserCreditsDao().findByUserId,
-//     ).toHaveBeenCalledWith(sampleUserId);
-//
-//     // Assert that activeSubscriptions contain only paid subscriptions
-//     expect(activeSubscriptions).toEqual([
-//       sampleUserCredits.subscriptions[0], // The first subscription is 'paid'
-//     ]);
-//   });
-//
-//   it("should return an empty array when user has no paid subscriptions", async () => {
-//     // Modify the sampleUserCredits to have no paid subscriptions
-//     const noPaidSubscriptionsUserCredits: IUserCredits<ObjectId> = {
-//       ...sampleUserCredits,
-//       subscriptions: [subscriptionPendingChild3_1, subscriptionRefusedChild3_2],
-//     } as IUserCredits<ObjectId>;
-//
-//     // Mock the userCreditsDao.findById method to return the modified userCredits
-//     (
-//       daoFactoryMock.getUserCreditsDao().findByUserId as jest.Mock
-//     ).mockResolvedValue(noPaidSubscriptionsUserCredits);
-//
-//     // Call the getActiveSubscriptions method
-//     const activeSubscriptions =
-//       await service.getActiveSubscriptions(sampleUserId);
-//
-//     // Assert that userCreditsDao.findById was called with the correct userId
-//     expect(
-//       daoFactoryMock.getUserCreditsDao().findByUserId,
-//     ).toHaveBeenCalledWith(sampleUserId);
-//
-//     // Assert that activeSubscriptions is an empty array
-//     expect(activeSubscriptions).toEqual([]);
-//   });
-// });
+    // Assert that activeSubscriptions contain only paid subscriptions
+    expect(Array.isArray(userCredits.subscriptions)).toEqual(true);
+    const ebEnterprise = userCredits.subscriptions.find(
+      (subs) => subs.offerGroup == OFFER_GROUP.EbEnterprise,
+    );
+    expect(ebEnterprise).toBeTruthy();
+    expect(ebEnterprise!.status).toEqual("pending");
+    expect(ebEnterprise!.offerId).toBeTruthy();
+    const vipEventTalk = userCredits.subscriptions.find(
+      (subs) => subs.offerGroup == OFFER_GROUP.VipEventTalk,
+    );
+    expect(vipEventTalk).toBeTruthy();
+    expect(vipEventTalk!.status).toEqual("pending");
+    expect(vipEventTalk!.offerId).toBeTruthy();
+  });
+  it("should throw error if afterExecute is called with an unknown subscription (without createOrder being called previously)", async () => {
+    const paidOrder = {
+      _id: newObjectId(),
+      cycle: "monthly",
+      orderId: newObjectId(),
+      status: "paid",
+      userId: sampleUserId,
+    } as unknown as IOrder<ObjectId>;
+    try {
+      // Act: The real implementation would check if the order was really paid, we're using {@link StripeMock} here to bypass that
+      await service.afterExecute({ ...paidOrder, status: "pending" }); // a paid status would be interpreted as an already paid order and throw an exception
+    } catch (error) {
+      expect(error).toBeInstanceOf(PaymentError);
+      expect((error as PaymentError).message).toMatch(
+        "has no subscription for order",
+      );
+      return; // Exit the test function
+    }
+
+    // If no error was thrown, fail the test
+    fail("Expected InvalidOrderError to be thrown");
+  });
+  it("should update subscriptions on afterExecute with a 'paid' order status", async () => {
+    let userCredits = await service.loadUserCredits(sampleUserId);
+    let ebEnterprise = userCredits.subscriptions.find(
+      (subs) => subs.offerGroup == OFFER_GROUP.EbEnterprise,
+    );
+    const paidOrder = {
+      _id: ebEnterprise!.orderId,
+      cycle: "monthly",
+      orderId: ebEnterprise!.orderId,
+      status: "paid",
+      userId: sampleUserId,
+    } as unknown as IOrder<ObjectId>;
+
+    //The Mock emulates a check that the order is really paid in the payment system, and returns an order with an updated status
+    // eslint-disable-next-line
+    (paymentClientMock.afterPaymentExecuted = jest.fn()).mockResolvedValue(paidOrder);
+
+    // Act: The real implementation would check if the order was really paid, we're using {@link StripeMock} here to bypass that
+    await service.afterExecute({ ...paidOrder, status: "pending" }); // a paid status would be interpreted as an already paid order and throw an exception
+
+    // Assert
+    userCredits = await service.loadUserCredits(sampleUserId);
+    ebEnterprise = userCredits.subscriptions.find(
+      (subs) => subs.offerGroup == OFFER_GROUP.EbEnterprise,
+    );
+
+    // Assert that activeSubscriptions contain only paid subscriptions
+    expect(ebEnterprise!.status).toEqual("paid");
+  });
+});
 
 // describe("MergeOffers tests", () => {
 //   let offerChild1: IOffer<ObjectId>;
@@ -311,5 +346,3 @@ describe("Offer Database Integration Test", () => {
 //     expect(mergedOffers).toEqual([]);
 //   });
 // });
-
-;

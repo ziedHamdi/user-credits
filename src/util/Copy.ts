@@ -1,6 +1,6 @@
 import { DuplicateMatchesError } from "../errors";
 
-function defaultCustomEquals<T extends object, U extends object>(
+export function defaultCustomEquals<T extends object, U extends object>(
   a: T,
   b: U,
 ): boolean {

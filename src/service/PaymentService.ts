@@ -50,8 +50,8 @@ export class PaymentService<K extends IMinimalId> extends BaseService<K> {
     updatedOrder: IOrder<K>,
   ): IActivatedOffer | null {
     const existingSubscription: ISubscription<K> =
-      userCredits.subscriptions.find(
-        (subscription) => subscription.orderId === updatedOrder._id,
+      userCredits.subscriptions.find((subscription) =>
+        this.equals(subscription.orderId, updatedOrder._id),
       ) as ISubscription<K>;
 
     if (!existingSubscription) {
@@ -109,7 +109,7 @@ export class PaymentService<K extends IMinimalId> extends BaseService<K> {
       ),
       offerGroup: order.offerGroup,
       starts: currentDate,
-      tokens: (order.tokenCount || 0) * order.quantity,
+      tokens: (order.tokenCount || 0) * (order.quantity || 1),
     };
     userCredits.offers.push(newOffer);
 
