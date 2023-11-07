@@ -5,31 +5,17 @@ import expect from "expect";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import { Connection } from "mongoose";
 
-import { IDaoFactory, IOfferDao, IOrderDao } from "../../../src/db/dao";
-import {
-  IMinimalId,
-  IOffer,
-  IOrder,
-  ISubscription,
-  IUserCredits,
-} from "../../../src/db/model";
-import { IActivatedOffer } from "../../../src/db/model/IActivatedOffer";
+import { IDaoFactory, IOfferDao } from "../../../src/db/dao";
+import { IMinimalId, IOrder, IUserCredits } from "../../../src/db/model";
 import { IMongooseOffer } from "../../../src/impl/mongoose/model/Offer";
 import { BaseService } from "../../../src/service/BaseService";
-import { copyFieldsWhenMatching } from "../../../src/util/Copy";
 // eslint-disable-next-line no-unused-vars,@typescript-eslint/no-unused-vars
 // import { toHaveSameFields } from "../../extend/sameObjects";
-import { addVersion0, clearDatabase } from "../../extend/util";
-import {
-  initMocks,
-  newObjectId,
-  ObjectId,
-} from "../../service/mocks/BaseService.mocks";
+import { initMocks, ObjectId } from "../../service/mocks/BaseService.mocks";
 import {
   OFFER_GROUP,
   prefillOffersForTests,
 } from "../mongoose/mocks/step1_PrepareLoadOffers";
-import { prefillOrdersForTests } from "../mongoose/mocks/step2_ExecuteOrders";
 
 export class ExtendedBaseService<K extends IMinimalId> extends BaseService<K> {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -47,9 +33,6 @@ describe("OfferDao specific methods", () => {
   let mongoMemoryServer: MongoMemoryServer;
   let connection: Connection;
   let offerDao: IOfferDao<ObjectId, IMongooseOffer>;
-  let allOffers: Record<string, IOffer<ObjectId>>;
-  let vipEventTalkOfferGroups: string[];
-  let vipSeoBackLinkOfferGroups: string[];
 
   beforeEach(async () => {
     // Initialize mocks and dependencies here.
@@ -59,8 +42,8 @@ describe("OfferDao specific methods", () => {
       ObjectId,
       IMongooseOffer
     >;
-    ({ allOffers, vipEventTalkOfferGroups, vipSeoBackLinkOfferGroups } =
-      await prefillOffersForTests(mongooseDaoFactory));
+
+    await prefillOffersForTests(mongooseDaoFactory);
   });
 
   afterEach(async () => {

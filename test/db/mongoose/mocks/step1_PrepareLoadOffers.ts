@@ -239,9 +239,7 @@ async function preparePredefinedOffer(
  *
  * @param daoFactory
  */
-export async function prefillOffersForTests(
-  daoFactory: IDaoFactory<ObjectId>,
-) {
+export async function prefillOffersForTests(daoFactory: IDaoFactory<ObjectId>) {
   const offerDao = daoFactory.getOfferDao();
   /* eslint-disable */
   // -------------------- free forever-basic subscription -------------------
@@ -288,7 +286,7 @@ export async function prefillOffersForTests(
   await Promise.all(
     Object.values(allOffers).map(async (offer) => {
       await offer.save();
-    })
+    }),
   );
 
   // console.log("Inserted offers:", await offerDao.find({}));

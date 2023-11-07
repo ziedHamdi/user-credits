@@ -6,13 +6,7 @@ import { Connection } from "mongoose";
 
 import { PaymentError, PaymentService } from "../../src";
 import { IDaoFactory, IOrderDao } from "../../src/db/dao"; // Import the actual path
-import {
-  IMinimalId,
-  IOffer,
-  IOrder,
-  ISubscription,
-  IUserCredits,
-} from "../../src/db/model"; // Import the actual path
+import { IMinimalId, IOffer, IOrder, IUserCredits } from "../../src/db/model"; // Import the actual path
 import { InvalidOrderError } from "../../src/errors";
 import { BaseService } from "../../src/service/BaseService"; //IMPROVEMENT Should use { IPayment } and add a secondary interface instead
 import {
@@ -21,7 +15,6 @@ import {
 } from "../db/mongoose/mocks/step1_PrepareLoadOffers";
 import {
   prefillOrdersForTests,
-  TEST_USER_IDS,
   USER_ORDERS,
 } from "../db/mongoose/mocks/step2_ExecuteOrders";
 // eslint-disable-next-line no-unused-vars,@typescript-eslint/no-unused-vars

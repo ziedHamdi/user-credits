@@ -5,26 +5,18 @@ import { MongoMemoryServer } from "mongodb-memory-server";
 import { Connection, Types } from "mongoose";
 
 import { IDaoFactory } from "../../src/db/dao";
-import {
-  IOffer,
-  IOrder,
-  ISubscription,
-  IUserCredits,
-} from "../../src/db/model";
+import { IOrder, IUserCredits } from "../../src/db/model";
 import { IActivatedOffer } from "../../src/db/model/IActivatedOffer";
 import { IOrderStatus } from "../../src/db/model/IOrderStatus";
-import { PaymentError } from "../../src/errors";
 import { IPaymentClient } from "../../src/service/IPaymentClient";
 import { PaymentService } from "../../src/service/PaymentService";
 import { addMonths } from "../../src/util/Dates";
 import { TestContainerSingleton } from "../config/testContainer";
 import {
   prefillOrdersForTests,
-  TEST_USER_IDS,
   USER_ORDERS,
 } from "../db/mongoose/mocks/step2_ExecuteOrders";
 import { initMocks, ObjectId } from "./mocks/BaseService.mocks";
-import { MOCK_VALUES } from "./mocks/StripeMock";
 
 /**
  * Temporary class to access the protected methods

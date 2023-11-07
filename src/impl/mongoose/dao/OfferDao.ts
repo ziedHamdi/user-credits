@@ -2,12 +2,12 @@ import { Connection, Types } from "mongoose";
 
 type ObjectId = Types.ObjectId;
 
+import { IFindOffersParams } from "../../../db/dao/IFindOffersParams";
 import type { IOfferDao } from "../../../db/dao/IOfferDao";
 import type { IOffer } from "../../../db/model";
 import { Offer } from "../model";
 import type { IMongooseOffer } from "../model/Offer";
 import { BaseMongooseDao } from "./BaseMongooseDao";
-import { IFindOffersParams } from "../../../db/dao/IFindOffersParams";
 
 export class OfferDao
   extends BaseMongooseDao<IMongooseOffer, IOffer<ObjectId>>

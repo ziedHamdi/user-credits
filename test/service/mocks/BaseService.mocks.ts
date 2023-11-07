@@ -2,7 +2,6 @@ import { MongoMemoryServer } from "mongodb-memory-server";
 import { Connection, Types } from "mongoose";
 
 import { IDaoFactory } from "../../../src/db/dao";
-import { IOffer, IOrder, ISubscription } from "../../../src/db/model";
 import { TestContainerSingleton } from "../../config/testContainer";
 
 export type ObjectId = Types.ObjectId;

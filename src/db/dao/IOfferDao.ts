@@ -8,7 +8,7 @@ export interface IOfferDao<K extends IMinimalId, D extends IOffer<K>>
    * loads offers
    * @param params}
    */
-  loadOffers(params: IFindOffersParams<K> = {}): Promise<D[]>;
+  loadOffers(params?: IFindOffersParams<K>): Promise<D[]>;
 
   /**
    * loads offers that's parentOfferGroup is equal to the param

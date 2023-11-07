@@ -2,16 +2,18 @@ import { Types } from "mongoose";
 type ObjectId = Types.ObjectId;
 
 import type { IOfferDao } from "../../../../src/db/dao";
+import { IFindOffersParams } from "../../../../src/db/dao/IFindOffersParams";
 import type { IOffer } from "../../../../src/db/model";
 import { MockBaseDao } from "./MockBaseDao";
-import { IFindOffersParams } from "../../../../src/db/dao/IFindOffersParams";
 
 export class MockOfferDao
   extends MockBaseDao<IOffer<ObjectId>>
   implements IOfferDao<ObjectId, IOffer<ObjectId>>
 {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  loadOffersUnlockedByGroup(parentOfferGroup: string): Promise<IOffer<ObjectId>[]> {
+  loadOffersUnlockedByGroup(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    parentOfferGroup: string,
+  ): Promise<IOffer<ObjectId>[]> {
     return Promise.resolve([]);
   }
 
@@ -26,8 +28,10 @@ export class MockOfferDao
     (): Promise<IOffer<ObjectId>[]> => Promise.resolve([]),
   );
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  loadOffers(params: IFindOffersParams<ObjectId>): Promise<IOffer<ObjectId>[]> {
+  loadOffers(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    params: IFindOffersParams<ObjectId> = {},
+  ): Promise<IOffer<ObjectId>[]> {
     return Promise.resolve([]);
   }
 }

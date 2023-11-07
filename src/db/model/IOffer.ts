@@ -16,7 +16,7 @@ export type OfferCycle =
  * @param K the type of foreign keys (is used for all foreign keys type)
  */
 export interface IOffer<K extends IMinimalId> extends IBaseEntity<K> {
-  asUnlockingOfferGroups(offerGroups: string[], reset = true): string[];
+  asUnlockingOfferGroups(offerGroups: string[], reset?: boolean): string[];
 
   /**
    * Method to set offers this offer depends on

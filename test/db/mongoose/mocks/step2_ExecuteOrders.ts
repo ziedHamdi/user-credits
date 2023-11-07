@@ -1,7 +1,4 @@
-import type {
-  IOffer,
-  IOrder, IService,
-} from "../../../../src";
+import type { IOffer, IOrder, IService } from "../../../../src";
 import {
   newObjectId,
   ObjectId,
