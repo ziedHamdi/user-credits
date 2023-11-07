@@ -53,6 +53,7 @@ type CompleteMockType = UnionFromMockType<MockType[OFFER_GROUP]>;
 const MOCKS: MockType = {
   Free: {
     common: {
+      quantityLimit: 1,
       tags: ["subscription", "standard", "monthly", "yearly"]
     },
   },

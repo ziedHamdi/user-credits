@@ -27,8 +27,9 @@ class ExtendedBaseService<K extends IMinimalId> extends BaseService<K> {
   }
 }
 
-describe("createOrder", () => {
-  type OffersToTest = { enterpriseM: Partial<IOffer<ObjectId>>};
+describe("createOrder: verifying createOrder works before relying on it for other tests", () => {
+  // eslint-disable-next-line
+  type OffersToTest = { free: Partial<IOffer<ObjectId>>, enterpriseM: Partial<IOffer<ObjectId>>, vipSeoBackLinks_1_article: Partial<IOffer<ObjectId>>};
   type PrefillResult = { allOffer: OffersToTest };
 
   let service: BaseService<ObjectId>;
@@ -60,40 +61,42 @@ describe("createOrder", () => {
     expect(order.total).toEqual(order.quantity * enterpriseM.price!);
   });
 
-  // it("should throw an InvalidOrderError when quantity exceeds the maximum limit", async () => {
-  //   // Arrange
-  //   const offerId = offerRoot2._id; // Use the offer with a quantity limit
-  //   const userId = sampleUserId;
-  //   const quantity = 10; // Exceeds the maximum allowed quantity
-  //
-  //   // Act
-  //   try {
-  //     await service.createOrder(offerId, userId, quantity);
-  //   } catch (error) {
-  //     // Assert
-  //     expect(error).toBeInstanceOf(InvalidOrderError);
-  //     expect((error as InvalidOrderError).message).toBe(
-  //       "Requested quantity exceeds the limit",
-  //     );
-  //     return; // Exit the test function
-  //   }
-  //
-  //   // If no error was thrown, fail the test
-  //   fail("Expected InvalidOrderError to be thrown");
-  // });
-  // it("should create an order with quantity 1 if quantity parameter is not provided", async () => {
-  //   // Arrange
-  //   const offerId = offerRoot1._id;
-  //   const userId = sampleUserId;
-  //
-  //   // Act
-  //   const order = await service.createOrder(offerId, userId);
-  //
-  //   // Assert
-  //   expect(order.quantity).toBeUndefined();
-  //   expect(order.total).toEqual(offerRoot1.price);
-  // });
-  //
+  it("should throw an InvalidOrderError when quantity exceeds the maximum limit", async () => {
+    // Arrange
+    const offerId = allOffers.free._id; // Use the offer with a quantity limit
+    const userId = newObjectId();
+    const quantity = 2; // Exceeds the maximum allowed quantity
+
+    // Act
+    try {
+      await service.createOrder(offerId!, userId, quantity);
+    } catch (error) {
+      // Assert
+      expect(error).toBeInstanceOf(InvalidOrderError);
+      expect((error as InvalidOrderError).message).toBe(
+        "Requested quantity exceeds the limit",
+      );
+      return; // Exit the test function
+    }
+
+    // If no error was thrown, fail the test
+    fail("Expected InvalidOrderError to be thrown");
+  });
+  it("should create an order with quantity undefined and price == offer.price if quantity parameter is not provided", async () => {
+    // Arrange
+    const enterpriseM = allOffers.enterpriseM;
+    const offerId = enterpriseM._id;
+    const userId = newObjectId();
+
+    // Act
+    const order = await service.createOrder(offerId!, userId);
+
+    // Assert
+    expect(order.quantity).toBeUndefined();
+    expect(order.total).toEqual(enterpriseM.price);
+  });
+
+  // FIXME should add an offer with kind tokens
   // it("should create an order with tokenCount when the offer kind is 'tokens'", async () => {
   //   // Arrange
   //   const offerId = offerRoot1._id; // Use the tokens offer
@@ -107,16 +110,25 @@ describe("createOrder", () => {
   //   expect(order.tokenCount).toEqual(offerRoot1.tokenCount);
   // });
   //
-  // it("should create an order with the same total as the offer price when quantity is not provided", async () => {
+  // it("unimplemented feature: should refuse to create an order if it is not unlocked (and the control option enabled)", async () => {
   //   // Arrange
-  //   const offerId = offerRoot1._id; // Use an offer with quantity limit
-  //   const userId = sampleUserId;
+  //   const offerId = allOffers.vipSeoBackLinks_1_article._id; // Use an offer with quantity limit
+  //   const userId = newObjectId();
   //
-  //   // Act
-  //   const order = await service.createOrder(offerId, userId);
+  //   try {
+  //     // Act
+  //     await service.createOrder(offerId!, userId, {onlyIfUnlocked: true});
+  //   } catch (error) {
+  //     // Assert
+  //     expect(error).toBeInstanceOf(InvalidOrderError);
+  //     expect((error as InvalidOrderError).message).toBe(
+  //       "Conditional offer locked: user is not allowed for this order.",
+  //     );
+  //     return; // Exit the test function
+  //   }
   //
-  //   // Assert
-  //   expect(order.total).toEqual(offerRoot1.price);
+  //   // If no error was thrown, fail the test
+  //   fail("Expected InvalidOrderError to be thrown");
   // });
 });
 
