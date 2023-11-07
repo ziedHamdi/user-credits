@@ -1,22 +1,12 @@
 import type {
-  IDaoFactory,
-  IMinimalId,
   IOffer,
-  IOrder,
-  IUserCredits,
+  IOrder, IService,
 } from "../../../../src";
-import { BaseService } from "../../../../src";
 import {
   newObjectId,
   ObjectId,
 } from "../../../service/mocks/BaseService.mocks";
 import { prefillOffersForTests } from "./step1_PrepareLoadOffers";
-
-class Service<K extends IMinimalId> extends BaseService<K> {
-  afterExecute(order: IOrder<K>): Promise<IUserCredits<K>> {
-    return Promise.resolve(undefined as unknown as IUserCredits<K>);
-  }
-}
 
 /* eslint-disable */
 export enum TestUserIds {
@@ -65,7 +55,7 @@ const USER_ORDERS = {
   },
 }
 
-async function buildOrders( user: keyof typeof TestUserIds, service: Service<ObjectId>, allOffers: Record<string, IOffer<ObjectId>>) {
+async function buildOrders( user: keyof typeof TestUserIds, service: IService<ObjectId>, allOffers: Record<string, IOffer<ObjectId>>) {
   const ordersSpec = USER_ORDERS[user];
 
   const createdOrders: Record<string, IOrder<ObjectId>> = {};
@@ -78,10 +68,8 @@ async function buildOrders( user: keyof typeof TestUserIds, service: Service<Obj
 }
 /* eslint-enable */
 
-export async function prefillOrdersForTests(daoFactory: IDaoFactory<ObjectId>) {
-  const { allOffers } = await prefillOffersForTests(daoFactory);
-
-  const service = new Service<ObjectId>(daoFactory);
+export async function prefillOrdersForTests(service: IService<ObjectId>) {
+  const { allOffers } = await prefillOffersForTests(service.getDaoFactory());
 
   const ordersPerUser: Partial<
     Record<keyof typeof TestUserIds, Record<string, IOrder<ObjectId>>>
