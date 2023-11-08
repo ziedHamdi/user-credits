@@ -1,3 +1,6 @@
+import { jest } from "@jest/globals";
+global.jest = jest;
+
 import { Types } from "mongoose";
 type ObjectId = Types.ObjectId;
 

@@ -1,15 +1,17 @@
 //NODE: these imports are a temporary workaround to avoid the warning: "Corresponding file is not included in tsconfig.json"
 // FIXME references to ObjectID should be removed as this file is testing the interface IOfferDao not its implementation in mongoose
-import { afterEach, beforeEach, describe, it } from "@jest/globals";
-import {
-  BaseService,
+import { afterEach, beforeEach, describe, it, expect } from "@jest/globals";
+import type {
   IDaoFactory,
   IMinimalId,
   IOfferDao,
   IOrder,
   IUserCredits,
 } from "@user-credits/core";
-import expect from "expect";
+import {
+  BaseService,
+} from "@user-credits/core";
+import expecting from "expect";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import { Connection } from "mongoose";
 

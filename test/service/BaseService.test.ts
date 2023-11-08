@@ -1,20 +1,23 @@
 //NODE: these imports are a temporary workaround to avoid the warning: "Corresponding file is not included in tsconfig.json"
-import { afterEach, beforeAll, beforeEach, describe, it } from "@jest/globals";
+import { afterEach, beforeAll, beforeEach, describe, it, expect } from "@jest/globals";
 import {
-  BaseService,
   IDaoFactory,
   IMinimalId,
-  InvalidOrderError,
   IOffer,
   IOrder,
   IOrderDao,
   IUserCredits,
 } from "@user-credits/core"; // Import the actual path
-import expect from "expect";
+import {
+  BaseService,
+    InvalidOrderError,
+    PaymentError,
+    PaymentService,
+} from "@user-credits/core"; // Import the actual path
+import expecting from "expect";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import { Connection } from "mongoose";
 
-import { PaymentError, PaymentService } from "../../src";
 import {
   OFFER_GROUP,
   prefillOffersForTests,

@@ -1,9 +1,9 @@
 import { beforeEach, describe, it, jest } from "@jest/globals";
 import { expect } from "expect";
 
-import { IOrder } from "../../../src/db/model";
+import type { IOrder } from "@user-credits/core";
 import { StripeClient } from "../../../src/impl/service/StripeClient";
-import { IConfigReader } from "../../../src/service/config/IConfigReader";
+import type { IConfigReader } from "../../../src/service/config/IConfigReader";
 import {
   clearStripeMocks,
   constructEventMock,
