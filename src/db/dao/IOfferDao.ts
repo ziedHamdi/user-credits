@@ -3,7 +3,7 @@ import type { IBaseDao } from "./IBaseDao";
 import { IFindOffersParams } from "./IFindOffersParams";
 
 export interface IOfferDao<K extends IMinimalId, D extends IOffer<K>>
-  extends IBaseDao<D> {
+  extends IBaseDao<K, D> {
   /**
    * loads offers
    * @param params}

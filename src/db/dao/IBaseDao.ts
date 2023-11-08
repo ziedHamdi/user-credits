@@ -1,4 +1,6 @@
-export interface IBaseDao<D extends object> {
+import { IMinimalId } from "../model";
+
+export interface IBaseDao<K extends IMinimalId, D> {
   /**
    * Used to construct an instance of a document from a raw object
    * @param D
@@ -16,7 +18,7 @@ export interface IBaseDao<D extends object> {
   // Find documents that match a query
   find(query: object): Promise<D[]>;
 
-  findById(id: object): Promise<D | null>;
+  findById(id: K): Promise<D | null>;
 
   findOne(query: object): Promise<D | null>;
 

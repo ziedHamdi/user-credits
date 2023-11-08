@@ -4,6 +4,6 @@ import { IBaseDao } from "./IBaseDao";
 export interface IUserCreditsDao<
   K extends IMinimalId,
   D extends IUserCredits<K>,
-> extends IBaseDao<D> {
+> extends IBaseDao<K, D> {
   findByUserId(userId: K): Promise<IUserCredits<K>>;
 }

@@ -5,4 +5,4 @@ import { IBaseDao } from "./IBaseDao";
 export interface ITokenTimetableDao<
   K extends IMinimalId,
   D extends ITokenTimetable<K>,
-> extends IBaseDao<D> {}
+> extends IBaseDao<K, D> {}

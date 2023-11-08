@@ -184,10 +184,13 @@ describe("Offer Database Integration Test", () => {
     expect(userCreditsInserted.length).toBe(4);
   });
 
+  // TODO should correctly override offers with unlocked offers
   it("should correctly override offers with unlocked offers", async () => {});
 
+  // TODO should forbid a user to purchase an offer he didn't unlock
   it("should forbid a user to purchase an offer he didn't unlock", async () => {});
 
+  // TODO should override offers between two active subscriptions, taking the ones with higher weights
   it("should override offers between two active subscriptions, taking the ones with higher weights", async () => {});
 });
 

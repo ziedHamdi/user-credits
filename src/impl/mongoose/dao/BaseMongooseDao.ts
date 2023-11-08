@@ -24,7 +24,7 @@ export interface EntityModel<
 export class BaseMongooseDao<
   D extends Document,
   A extends IBaseEntity<ObjectId>,
-> implements IBaseDao<D>
+> implements IBaseDao<ObjectId, D>
 {
   model: EntityModel<D, A> & Model<D>;
 
@@ -55,7 +55,7 @@ export class BaseMongooseDao<
   }
 
   // Find document by ID
-  async findById(userId: object, asPojo: boolean = false): Promise<D | null> {
+  async findById(userId: ObjectId, asPojo: boolean = false): Promise<D | null> {
     return this.wrapWithSystemError(async () => {
       const result = await this.model.findById(userId).exec();
       if (asPojo) return result ? result.toObject() : null;

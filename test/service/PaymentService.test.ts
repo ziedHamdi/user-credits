@@ -78,7 +78,7 @@ describe("PaymentService.updateOfferGroup", () => {
     order.cycle = "weekly"; // order a week
     order.quantity = 3; // a total of three weeks
     const offer = {
-      expires: addMonths(new Date(), 2), // TODO test also if a date is passed: check that the new date start from today and not from that last date (make it possible to chose from both scenarios)
+      expires: addMonths(new Date(), 2), // TODO test also if a date is passed: check that the new date starts from today and not from that last date (make it possible to chose from both scenarios)
       offerGroup: order.offerGroup,
       starts: addMonths(new Date(), -1), // Will check that the startDate is untouched
       tokens: 500,
@@ -118,7 +118,7 @@ describe("PaymentService.updateOfferGroup", () => {
     // Assert
     expect(newOffer.offerGroup).toEqual(order.offerGroup);
     expect(newOffer.tokens).toEqual((order.tokenCount || 0) * 3);
-    //FIXME there's an hour of difference between the expected and found value. I have no clue from where it could come
+    // FIXME there's an hour of difference between the expected and found value. I have no clue from where it could come
     // expect(newOffer.expires).toEqual(
     //   new Date(
     //     (order.updatedAt || order.createdAt || new Date()).getTime() +
