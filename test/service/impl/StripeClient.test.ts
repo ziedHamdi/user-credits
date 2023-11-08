@@ -14,10 +14,11 @@ import {
 } from "./mocks/StripeMocks";
 
 const intentId = "payment_intent_id";
-
-jest.mock("stripe", () => {
+// has to be called globally: https://dev.to/viewplatdevto/jest-mock-module-not-working-double-check-these-4mnp
+jest.unstable_mockModule("stripe", () => {
   return jest.fn().mockImplementation(() => {
     return {
+      __esModule: true,
       paymentIntents: {
         create: paymentIntentsCreateMock,
         retrieve: paymentIntentsRetrieveMock,
