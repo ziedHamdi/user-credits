@@ -1,9 +1,11 @@
-import { IMinimalId, IOrder } from "../../../src/db/model";
-import { IOrderStatus } from "../../../src/db/model/IOrderStatus";
 import {
+  IMinimalId,
+  IOrder,
+  IOrderStatus,
   IPaymentClient,
-  WebhookEventPayload,
-} from "../../../src/service/IPaymentClient";
+} from "@user-credits/core";
+
+import { IStripeWebhookEventPayload } from "../../../src/service/IStripeWebhookEventPayload";
 
 export const MOCK_VALUES = {
   paymentIntentSecretAsPaid: "IntentAsPaid",
@@ -49,8 +51,12 @@ export class StripeMock<K extends IMinimalId> implements IPaymentClient<K> {
   }
 
   // Simulate handling webhook callbacks
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  handleWebhook(eventPayload: WebhookEventPayload, webhookSecret: string) {
+  handleWebhook(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    eventPayload: IStripeWebhookEventPayload,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    webhookSecret: string,
+  ) {
     // For testing purposes, you can return a mock Stripe event
     const mockEvent = {
       id: "mockEventId",

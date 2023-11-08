@@ -1,13 +1,14 @@
+import {
+  IMinimalId,
+  IOrder,
+  IOrderStatus,
+  IPaymentClient,
+  PaymentError,
+} from "@user-credits/core";
 import Stripe from "stripe";
 
-import { IMinimalId, IOrder } from "../../db/model";
-import { IOrderStatus } from "../../db/model/IOrderStatus";
-import { PaymentError } from "../../errors";
 import { IConfigReader } from "../../service/config/IConfigReader";
-import {
-  IPaymentClient,
-  WebhookEventPayload,
-} from "../../service/IPaymentClient";
+import { IStripeWebhookEventPayload } from "../../service/IStripeWebhookEventPayload";
 
 /**
  * This class abstracts out all stripe-specific objects by handling both calls to the stripe endpoint, and webhooks parsing. Results will be in the format of this project interfaces.
@@ -130,7 +131,7 @@ export class StripeClient<K extends IMinimalId> implements IPaymentClient<K> {
 
   // Handle webhook callbacks
   handleWebhook(
-    eventPayload: WebhookEventPayload,
+    eventPayload: IStripeWebhookEventPayload,
     webhookSecret: string,
   ): Stripe.Event {
     const signature = eventPayload.headers["stripe-signature"];

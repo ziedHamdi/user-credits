@@ -1,7 +1,7 @@
 // offerModel.test.js
+import type { IOffer } from "@user-credits/core";
 import mongoose, { Model } from "mongoose";
 
-import type { IOffer } from "../../../../db/model";
 import { ObjectId } from "../../TypeDefs";
 import { Offer } from "../index";
 

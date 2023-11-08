@@ -3,17 +3,16 @@ type ObjectId = Types.ObjectId;
 
 import {
   IDaoFactory,
-  IOfferDao,
-  IOrderDao,
-  ITokenTimetableDao,
-  IUserCreditsDao,
-} from "../../../db/dao";
-import {
   IOffer,
+  IOfferDao,
   IOrder,
+  IOrderDao,
   ITokenTimetable,
+  ITokenTimetableDao,
   IUserCredits,
-} from "../../../db/model";
+  IUserCreditsDao,
+} from "@user-credits/core";
+
 import { OfferDao, OrderDao, TokenTimetableDao, UserCreditsDao } from ".";
 
 export class MongooseDaoFactory implements IDaoFactory<ObjectId> {

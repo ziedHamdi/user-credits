@@ -1,14 +1,19 @@
 //NODE: these imports are a temporary workaround to avoid the warning: "Corresponding file is not included in tsconfig.json"
 // FIXME references to ObjectID should be removed as this file is testing the interface IOfferDao not its implementation in mongoose
 import { afterEach, beforeEach, describe, it } from "@jest/globals";
+import {
+  BaseService,
+  IDaoFactory,
+  IMinimalId,
+  IOfferDao,
+  IOrder,
+  IUserCredits,
+} from "@user-credits/core";
 import expect from "expect";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import { Connection } from "mongoose";
 
-import { IDaoFactory, IOfferDao } from "../../../src/db/dao";
-import { IMinimalId, IOrder, IUserCredits } from "../../../src/db/model";
 import { IMongooseOffer } from "../../../src/impl/mongoose/model/Offer";
-import { BaseService } from "../../../src/service/BaseService";
 // eslint-disable-next-line no-unused-vars,@typescript-eslint/no-unused-vars
 // import { toHaveSameFields } from "../../extend/sameObjects";
 import { initMocks, ObjectId } from "../../service/mocks/BaseService.mocks";

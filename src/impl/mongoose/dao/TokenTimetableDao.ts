@@ -1,8 +1,8 @@
 import { Connection, Types } from "mongoose";
 type ObjectId = Types.ObjectId;
 
-import { ITokenTimetableDao } from "../../../db/dao";
-import { ITokenTimetable } from "../../../db/model";
+import { ITokenTimetable, ITokenTimetableDao } from "@user-credits/core";
+
 import { TokenTimetable } from "../model";
 import { IMongooseTokenTimetable } from "../model/TokenTimetable";
 import { BaseMongooseDao } from "./BaseMongooseDao";

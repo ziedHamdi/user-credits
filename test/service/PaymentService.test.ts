@@ -1,16 +1,19 @@
 //NODE: these imports are a temporary workaround to avoid the warning: "Corresponding file is not included in tsconfig.json"
 import { afterEach, beforeEach, describe, it } from "@jest/globals";
+import type {
+  IActivatedOffer,
+  IDaoFactory,
+  IOrder,
+  IOrderStatus,
+  IPaymentClient,
+  IUserCredits,
+  PaymentService,
+} from "@user-credits/core";
+import { addMonths } from "@user-credits/core";
 import { expect } from "expect";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import { Connection, Types } from "mongoose";
 
-import { IDaoFactory } from "../../src/db/dao";
-import { IOrder, IUserCredits } from "../../src/db/model";
-import { IActivatedOffer } from "../../src/db/model/IActivatedOffer";
-import { IOrderStatus } from "../../src/db/model/IOrderStatus";
-import { IPaymentClient } from "../../src/service/IPaymentClient";
-import { PaymentService } from "../../src/service/PaymentService";
-import { addMonths } from "../../src/util/Dates";
 import { TestContainerSingleton } from "../config/testContainer";
 import {
   prefillOrdersForTests,

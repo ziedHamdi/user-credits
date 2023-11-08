@@ -1,14 +1,20 @@
 //NODE: these imports are a temporary workaround to avoid the warning: "Corresponding file is not included in tsconfig.json"
 import { afterEach, beforeAll, beforeEach, describe, it } from "@jest/globals";
+import {
+  BaseService,
+  IDaoFactory,
+  IMinimalId,
+  InvalidOrderError,
+  IOffer,
+  IOrder,
+  IOrderDao,
+  IUserCredits,
+} from "@user-credits/core"; // Import the actual path
 import expect from "expect";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import { Connection } from "mongoose";
 
 import { PaymentError, PaymentService } from "../../src";
-import { IDaoFactory, IOrderDao } from "../../src/db/dao"; // Import the actual path
-import { IMinimalId, IOffer, IOrder, IUserCredits } from "../../src/db/model"; // Import the actual path
-import { InvalidOrderError } from "../../src/errors";
-import { BaseService } from "../../src/service/BaseService"; //IMPROVEMENT Should use { IPayment } and add a secondary interface instead
 import {
   OFFER_GROUP,
   prefillOffersForTests,

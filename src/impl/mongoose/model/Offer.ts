@@ -1,9 +1,8 @@
 import { Types } from "mongoose";
 
 type ObjectId = Types.ObjectId;
+import { IOffer } from "@user-credits/core";
 import { Document, Schema } from "mongoose";
-
-import { IOffer } from "../../../db/model";
 
 export type IMongooseOffer = IOffer<ObjectId> & Document;
 

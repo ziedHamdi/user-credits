@@ -1,8 +1,6 @@
+import { IBaseDao, IBaseEntity, SystemError } from "@user-credits/core";
 import { Connection, Document, Model, Schema } from "mongoose";
 
-import { IBaseDao } from "../../../db/dao";
-import { IBaseEntity } from "../../../db/model";
-import { SystemError } from "../../../errors";
 import type { ObjectId } from "../TypeDefs";
 
 /**

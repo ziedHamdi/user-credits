@@ -1,12 +1,11 @@
 import { Types } from "mongoose";
 type ObjectId = Types.ObjectId;
-import { Document, Model, Schema } from "mongoose";
-
 import type {
   IActivatedOffer,
   ISubscription,
   IUserCredits,
-} from "../../../db/model";
+} from "@user-credits/core";
+import { Document, Model, Schema } from "mongoose";
 
 export type IMongooseUserCredits = IUserCredits<ObjectId> & Document;
 

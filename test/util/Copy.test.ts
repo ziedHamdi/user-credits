@@ -1,5 +1,6 @@
+import { copyFieldsWhenMatching } from "@user-credits/core";
+
 import { DuplicateMatchesError } from "../../src";
-import { copyFieldsWhenMatching } from "../../src/util/Copy";
 
 describe("copyIds function", () => {
   it("should copy _id from source to target", () => {
