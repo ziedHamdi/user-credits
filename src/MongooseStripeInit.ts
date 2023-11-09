@@ -1,14 +1,14 @@
 import { asClass, asValue, createContainer } from "awilix";
 import { AwilixContainer } from "awilix/lib/container";
+import { Stripe } from "stripe";
 
 import { EXPECTED_PROPERTIES } from "./Constants";
 // import { MongooseDaoFactory } from "./impl/mongoose/dao/MongooseDaoFactory";
 import { EnvConfigReader } from "./impl/service/EnvConfigReader";
 import { StripeClient } from "./impl/service/StripeClient";
-import { checkContainer } from "./util/AwilixConfigChecker";
-import { Stripe } from "stripe";
-import { IConfigReader } from "./service";
 import { StripeTypes } from "./impl/service/StripeTypes";
+import { IConfigReader } from "./service";
+import { checkContainer } from "./util/AwilixConfigChecker";
 
 export class MongooseStripeContainerSingleton {
   private static container: AwilixContainer<object>;

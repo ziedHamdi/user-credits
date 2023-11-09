@@ -13,7 +13,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "description": "user-credits is an open-source library designed to simplify the implementation of pay-as-you-go features in your web or mobile applications. Credit flow is managed locally instead of being sent back and forth to payment platforms as Stripe, in addition, you own your data without paying the price of long development hours.",
+  "description": "user-credits is an open-source library designed to simplify the implementation of pay-as-you-go features in your web or mobile applications. Credit flow is managed locally then synced instead of being sent back and forth to payment platforms as Stripe, in addition, you own your data without the odds of long development hours.",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "module": "./dist/index.js",
@@ -31,7 +31,7 @@
     "build": "rmdir /s /q .\\dist & npx tsc",
     "buildTrace": "rmdir /s /q .\\dist & npx tsc --traceResolution",
     "lint": "npx eslint --fix .",
-    "prepublishOnly": "npm run lint && npm run build && npm test",
+    "prepublishOnly": "pnpm lint && pnpm build && pnpm test",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watchAll --no-cache --coverage --coverageDirectory='coverage'"
   },
   "devDependencies": {
@@ -59,7 +59,7 @@
     "node": ">=18"
   },
   "dependencies": {
-    "@user-credits/core": "0.12.5-alpha",
+    "@user-credits/core": "^0.12.5-alpha",
     "awilix": "^9.0.0",
     "bson": "^6.1.0",
     "dotenv": "^16.3.1",
