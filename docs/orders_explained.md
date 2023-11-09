@@ -32,15 +32,13 @@ A user's credits are maintained in two lists: `ISubscription` and `IActivatedOff
 Here's the interface for `ISubscription`:
 
 ```typescript
-import { BaseEntity } from "./BaseEntity";
-import { OfferCycle } from "./IOffer";
-import { MinimalId } from "./MinimalId";
+import { IBaseEntity, IOfferCycle, IMinimalId } from "@user-credits/core";
 
 /**
  * Interface representing a subscription.
  * @param K - The type of foreign keys (used for all foreign key types).
  */
-export interface ISubscription<K extends MinimalId> extends BaseEntity<K> {
+export interface ISubscription<K extends IMinimalId> extends IBaseEntity<K> {
   /**
    * The custom cycle duration in seconds, only applicable when cycle is 'custom'.
    */
@@ -49,7 +47,7 @@ export interface ISubscription<K extends MinimalId> extends BaseEntity<K> {
   /**
    * The cycle of the subscription (e.g., 'once', 'weekly', 'monthly', etc.).
    */
-  cycle: OfferCycle;
+  cycle: IOfferCycle;
 
   /**
    * The name of the subscription.
@@ -135,8 +133,8 @@ export interface IOrder<K extends MinimalId> extends BaseEntity<K> {
   createdAt: Date;
   currency: string;
   customCycle: number | null;
-  cycle: OfferCycle;
-  history: [OrderStatus] | null;
+  cycle: IOfferCycle;
+  history: [IOrderStatus] | null;
   /** Check documentation in @IOffer */
   offerGroup: string[];
   offerId: K;
@@ -169,7 +167,7 @@ Finally, an interesting field to trace the history of the purchase order is `his
 Here's the interface for `OrderStatus`:
 
 ```typescript
-export interface OrderStatus {
+export interface IOrderStatus {
   date: Date;
   message: string;
   status: "pending" | "paid" | "refused" | "error";
