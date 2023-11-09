@@ -3,7 +3,6 @@ import type { IOrder } from "@user-credits/core";
 import { expect } from "expect";
 
 import { StripeClient } from "../../../src/impl/service/StripeClient";
-import { StripeTypes } from "../../../src/impl/service/StripeTypes";
 import type { IConfigReader } from "../../../src/service/config/IConfigReader";
 import {
   clearStripeMocks,
