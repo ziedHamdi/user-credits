@@ -31,8 +31,10 @@
     "build": "rmdir /s /q .\\dist & npx tsc",
     "buildTrace": "rmdir /s /q .\\dist & npx tsc --traceResolution",
     "lint": "npx eslint --fix .",
-    "prepublishOnly": "pnpm lint && pnpm build && pnpm test",
-    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watchAll --no-cache --coverage --coverageDirectory='coverage'"
+    "prepublishOnly": "pnpm lint && pnpm build && pnpm testPublish",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "testWatch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watchAll --no-cache --coverage --coverageDirectory='coverage'",
+    "testPublish": "node --experimental-vm-modules node_modules/jest/bin/jest.js --no-cache"
   },
   "devDependencies": {
     "@jest/globals": "^29.7.0",
