@@ -27,9 +27,6 @@ export class StripeClient<K extends IMinimalId> implements IPaymentClient<K> {
     configReader: IConfigReader,
     protected stripe: StripeTypes,
   ) {
-    // this.stripe = new Stripe(configReader.paymentSecretKey(), {
-    //   apiVersion: "2023-08-16",
-    // }) as StripeTypes;
     this.currency = configReader.currency();
   }
 
