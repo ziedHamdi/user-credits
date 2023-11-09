@@ -12,23 +12,9 @@ import {
   prepareAfterPaymentExecutedMock,
   prepareCreatePaymentIntentMock,
 } from "./mocks/StripeMocks";
+import { StripeTypes } from "../../../src/impl/service/StripeTypes";
 
 const intentId = "payment_intent_id";
-// has to be called globally: https://dev.to/viewplatdevto/jest-mock-module-not-working-double-check-these-4mnp
-jest.unstable_mockModule("stripe", () => {
-  return jest.fn().mockImplementation(() => {
-    return {
-      __esModule: true,
-      paymentIntents: {
-        create: paymentIntentsCreateMock,
-        retrieve: paymentIntentsRetrieveMock,
-      },
-      webhooks: {
-        constructEvent: constructEventMock,
-      },
-    };
-  });
-});
 
 describe("StripeClient", () => {
   let stripeClient: StripeClient<string>;
@@ -40,7 +26,16 @@ describe("StripeClient", () => {
       paymentSecretKey: jest.fn(),
     } as unknown as IConfigReader;
 
-    stripeClient = new StripeClient(configReaderMock);
+    stripeClient = new StripeClient(configReaderMock, {
+      __esModule: true,
+      paymentIntents: {
+        create: paymentIntentsCreateMock,
+        retrieve: paymentIntentsRetrieveMock,
+      },
+      webhooks: {
+        constructEvent: constructEventMock,
+      },
+    } as StripeTypes);
     clearStripeMocks();
   });
 

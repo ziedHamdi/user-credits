@@ -1,10 +1,8 @@
 import { jest } from "@jest/globals";
 import Mock = jest.Mock;
 import { IOrder } from "../../../../src/db/model";
+import type { PaymentIntentsCreate, PaymentIntentsRetrieve, ConstructEvent } from "../../../../src/impl/service/StripeTypes";
 
-type PaymentIntentsCreate = (params: never) => Promise<never>;
-type PaymentIntentsRetrieve = (paymentIntentId: string) => Promise<never>;
-type ConstructEvent = (rawBody: string, sig: string, secret: string) => never;
 
 // Create jest.fn mocks with the specified signatures
 export const paymentIntentsCreateMock: Mock<PaymentIntentsCreate> =

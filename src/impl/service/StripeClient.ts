@@ -9,6 +9,7 @@ import Stripe from "stripe";
 
 import { IConfigReader } from "../../service/config/IConfigReader";
 import { IStripeWebhookEventPayload } from "../../service/IStripeWebhookEventPayload";
+import { StripeTypes } from "./StripeTypes";
 
 /**
  * This class abstracts out all stripe-specific objects by handling both calls to the stripe endpoint, and webhooks parsing. Results will be in the format of this project interfaces.
@@ -19,13 +20,16 @@ import { IStripeWebhookEventPayload } from "../../service/IStripeWebhookEventPay
  * The IOrder.paymentIntentId is therefore a value that can change as long as the status is not "paid"
  */
 export class StripeClient<K extends IMinimalId> implements IPaymentClient<K> {
-  private readonly stripe: Stripe;
+  private readonly stripe: StripeTypes;
   private readonly currency: string;
 
-  constructor(configReader: IConfigReader) {
-    this.stripe = new Stripe(configReader.paymentSecretKey(), {
-      apiVersion: "2023-08-16",
-    });
+  constructor(
+    configReader: IConfigReader,
+    protected stripe: StripeTypes,
+  ) {
+    // this.stripe = new Stripe(configReader.paymentSecretKey(), {
+    //   apiVersion: "2023-08-16",
+    // }) as StripeTypes;
     this.currency = configReader.currency();
   }
 

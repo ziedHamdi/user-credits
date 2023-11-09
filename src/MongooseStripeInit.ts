@@ -6,6 +6,9 @@ import { EXPECTED_PROPERTIES } from "./Constants";
 import { EnvConfigReader } from "./impl/service/EnvConfigReader";
 import { StripeClient } from "./impl/service/StripeClient";
 import { checkContainer } from "./util/AwilixConfigChecker";
+import { Stripe } from "stripe";
+import { IConfigReader } from "./service";
+import { StripeTypes } from "./impl/service/StripeTypes";
 
 export class MongooseStripeContainerSingleton {
   private static container: AwilixContainer<object>;
@@ -27,6 +30,13 @@ export class MongooseStripeContainerSingleton {
 
     this.container.register({
       configReader: asClass(EnvConfigReader).singleton(),
+    });
+    const configReader: IConfigReader = this.container.resolve(EnvConfigReader);
+    const stripe = new Stripe(configReader.paymentSecretKey(), {
+      apiVersion: "2023-08-16",
+    }) as StripeTypes;
+    this.container.register({
+      stripe: asValue(stripe),
     });
     this.container.register({
       stripeClient: asClass(StripeClient).singleton(),
