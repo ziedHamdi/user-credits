@@ -20,7 +20,6 @@ import { StripeTypes } from "./StripeTypes";
  * The IOrder.paymentIntentId is therefore a value that can change as long as the status is not "paid"
  */
 export class StripeClient<K extends IMinimalId> implements IPaymentClient<K> {
-  private readonly stripe: StripeTypes;
   private readonly currency: string;
 
   constructor(

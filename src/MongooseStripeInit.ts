@@ -31,10 +31,10 @@ export class MongooseStripeContainerSingleton {
     this.container.register({
       configReader: asClass(EnvConfigReader).singleton(),
     });
-    const configReader: IConfigReader = this.container.resolve(EnvConfigReader);
+    const configReader: IConfigReader = this.container.resolve("configReader");
     const stripe = new Stripe(configReader.paymentSecretKey(), {
       apiVersion: "2023-08-16",
-    }) as StripeTypes;
+    }) as unknown as StripeTypes;
     this.container.register({
       stripe: asValue(stripe),
     });
