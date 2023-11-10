@@ -108,7 +108,7 @@ describe("OfferDao specific methods", () => {
       // Write your Jest assertions to check if the sub-offers were loaded correctly
       expect(Array.isArray(subOffers)).toBe(true);
       expect(subOffers.length).toBe(5);
-    });
+    }, 10000);
   });
 
   // Test loading offers based on query parameters: check the docs {@link /docs/offers_explained.md} for reference

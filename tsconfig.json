@@ -5,7 +5,11 @@
     "lib": ["ESNext"],
     "declaration": true,
     "outDir": "dist",
-    "module": "ESNext"
+    "module": "ESNext",
+  },
+  "tsc-alias": {
+    "resolveFullPaths": true,
+    "verbose": false
   },
   "baseUrl": ".",
   "exclude": ["coverage", "dist", "node_modules", "test"],

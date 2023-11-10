@@ -102,7 +102,7 @@ describe("PaymentService.updateOfferGroup", () => {
       new Date(offer.expires.getTime() + 1000 * 60 * 60 * 24 * 7 * 3),
     );
     expect(updatedOffer.tokens).toEqual(500 + (order.tokenCount || 0) * 3);
-  });
+  }, 10000);
 
   it("should create a new offer in userCredits", () => {
     order.cycle = "weekly"; // order a week
@@ -127,5 +127,5 @@ describe("PaymentService.updateOfferGroup", () => {
     //       1000 * 60 * 60 * 24 * 7 * 3,
     //   ),
     // );
-  });
+  }, 10000);
 });

@@ -2,7 +2,7 @@
   "name": "@user-credits/stripe-mongoose",
   "author": "Zied Hamdi",
   "type": "module",
-  "version": "0.12.03-alpha",
+  "version": "0.12.07-alpha",
   "license": "MIT",
   "keywords": [
     "user-credits",
@@ -27,8 +27,8 @@
     "dist"
   ],
   "scripts": {
-    "buildX": "rm -rf ./dist && npx tsc",
-    "build": "rmdir /s /q .\\dist & npx tsc",
+    "buildX": "rm -rf ./dist && npx tsc && tsc-alias",
+    "build": "rmdir /s /q .\\dist & npx tsc & tsc-alias",
     "buildTrace": "rmdir /s /q .\\dist & npx tsc --traceResolution",
     "lint": "npx eslint --fix .",
     "prepublishOnly": "pnpm lint && pnpm build && pnpm testPublish",
@@ -55,13 +55,14 @@
     "mongodb-memory-server": "^8.15.1",
     "prettier": "^3.0.3",
     "ts-jest": "^29.1.1",
+    "tsc-alias": "1.8.8",
     "typescript": "^5.2.2"
   },
   "engines": {
     "node": ">=18"
   },
   "dependencies": {
-    "@user-credits/core": "^0.12.6-alpha",
+    "@user-credits/core": "^0.12.9-alpha",
     "awilix": "^9.0.0",
     "bson": "^6.1.0",
     "dotenv": "^16.3.1",
