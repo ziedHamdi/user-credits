@@ -1,13 +1,15 @@
+import {
+  IMinimalId,
+  IOrder,
+  IOrderStatus,
+  IPaymentClient,
+  PaymentError,
+} from "@user-credits/core";
 import Stripe from "stripe";
 
-import { IOrder, MinimalId } from "../../db/model";
-import { OrderStatus } from "../../db/model/IOrder";
-import { PaymentError } from "../../errors";
 import { IConfigReader } from "../../service/config/IConfigReader";
-import {
-  IPaymentClient,
-  WebhookEventPayload,
-} from "../../service/IPaymentClient";
+import { IStripeWebhookEventPayload } from "../../service/IStripeWebhookEventPayload";
+import { StripeTypes } from "./StripeTypes";
 
 /**
  * This class abstracts out all stripe-specific objects by handling both calls to the stripe endpoint, and webhooks parsing. Results will be in the format of this project interfaces.
@@ -17,14 +19,13 @@ import {
  * The strategy is then to store the order, and create new intents if the payment failed or was abandoned.
  * The IOrder.paymentIntentId is therefore a value that can change as long as the status is not "paid"
  */
-export class StripeClient<K extends MinimalId> implements IPaymentClient<K> {
-  private readonly stripe: Stripe;
+export class StripeClient<K extends IMinimalId> implements IPaymentClient<K> {
   private readonly currency: string;
 
-  constructor(configReader: IConfigReader) {
-    this.stripe = new Stripe(configReader.paymentSecretKey(), {
-      apiVersion: "2023-08-16",
-    });
+  constructor(
+    configReader: IConfigReader,
+    protected stripe: StripeTypes,
+  ) {
     this.currency = configReader.currency();
   }
 
@@ -52,11 +53,13 @@ export class StripeClient<K extends MinimalId> implements IPaymentClient<K> {
   }
 
   /**
-   * Execute the after payment routines using the paymentIntentId. This method checks that it is called after Stripe executed a payment (eg. by Stripe Elements) or after a callback webhook triggers.
+   * Execute the after payment routines using the paymentIntentId. This method checks that it is called
+   * after Stripe executed a payment (eg. by Stripe Elements) or after a callback webhook triggers.
    * It will just notify the client of the status change so that information is synced.
    * https://stripe.com/docs/payments/accept-a-payment?ui=elements
    *
-   * If you want to implement more complex cases, your can override this method and call confirmPayment by yourself, handling redirects and other needed actions.
+   * If you want to implement more complex cases, your can override this method and call confirmPayment by yourself,
+   * handling redirects and other needed actions.
    * Docs for that are here https://stripe.com/docs/api/payment_intents/confirm
    *
    * @param order the order containing intent information
@@ -82,7 +85,7 @@ export class StripeClient<K extends MinimalId> implements IPaymentClient<K> {
           this.addHistoryItem(order, {
             message: "Payment succeeded",
             status: "paid",
-          } as OrderStatus);
+          } as IOrderStatus);
           break;
 
         case "requires_payment_method":
@@ -92,7 +95,7 @@ export class StripeClient<K extends MinimalId> implements IPaymentClient<K> {
           this.addHistoryItem(order, {
             message: "Payment method issues",
             status: "refused",
-          } as OrderStatus);
+          } as IOrderStatus);
           break;
 
         case "requires_action":
@@ -103,7 +106,7 @@ export class StripeClient<K extends MinimalId> implements IPaymentClient<K> {
               "Payment requires an action we don't handle: " +
               intent.next_action,
             status: "error",
-          } as OrderStatus);
+          } as IOrderStatus);
           break;
 
         // Handle other payment intent statuses as needed
@@ -117,9 +120,9 @@ export class StripeClient<K extends MinimalId> implements IPaymentClient<K> {
     }
   }
 
-  private addHistoryItem(order: IOrder<K>, historyItem: OrderStatus) {
+  private addHistoryItem(order: IOrder<K>, historyItem: IOrderStatus) {
     if (!order.history) {
-      order.history = [] as unknown as [OrderStatus];
+      order.history = [] as unknown as [IOrderStatus];
     }
     historyItem.date = historyItem.date ?? new Date();
 
@@ -128,7 +131,7 @@ export class StripeClient<K extends MinimalId> implements IPaymentClient<K> {
 
   // Handle webhook callbacks
   handleWebhook(
-    eventPayload: WebhookEventPayload,
+    eventPayload: IStripeWebhookEventPayload,
     webhookSecret: string,
   ): Stripe.Event {
     const signature = eventPayload.headers["stripe-signature"];

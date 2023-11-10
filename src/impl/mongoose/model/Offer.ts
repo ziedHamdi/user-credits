@@ -1,8 +1,8 @@
 import { Types } from "mongoose";
-type ObjectId = Types.ObjectId;
-import { Document, Schema } from "mongoose";
 
-import { IOffer } from "../../../db/model";
+type ObjectId = Types.ObjectId;
+import { IOffer } from "@user-credits/core";
+import { Document, Schema } from "mongoose";
 
 export type IMongooseOffer = IOffer<ObjectId> & Document;
 
@@ -22,7 +22,7 @@ const offerSchema = new Schema<IMongooseOffer>({
     ],
     type: String,
   },
-  hasSubOffers: { type: Boolean },
+  hasDependentOffers: { type: Boolean },
   kind: {
     enum: ["subscription", "tokens", "expertise"],
     required: true,
@@ -34,16 +34,46 @@ const offerSchema = new Schema<IMongooseOffer>({
    */
   offerGroup: { required: true, type: String },
   overridingKey: String,
-  parentOfferId: {
-    ref: "offer",
-    required: false,
-    type: Schema.Types.ObjectId,
-  },
   popular: { type: Number },
   price: { required: true, type: Number },
   quantityLimit: Number,
+  tags: { default: [], type: [String] },
   tokenCount: { required: true, type: Number },
+  unlockedBy: { default: [], type: [String] },
   weight: { default: 0, type: Number },
 });
+
+// Add instance methods to your Mongoose schema
+offerSchema.methods.asUnlockingOffers = function (
+  dependsOnOffers: IMongooseOffer[],
+  reset = false,
+): string[] {
+  if (reset) this.unlockedBy = [];
+  const distinctOfferGroups = new Set<string>(this.unlockedBy);
+
+  dependsOnOffers.forEach((offer) => {
+    offer.hasDependentOffers = true;
+    distinctOfferGroups.add(offer.offerGroup);
+  });
+
+  // Iterate through the dependsOnOffers and add offerGroups to the Set
+  dependsOnOffers.forEach((offer) => {
+    distinctOfferGroups.add(offer.offerGroup);
+  });
+
+  this.unlockedBy = Array.from(distinctOfferGroups);
+  return this.unlockedBy;
+};
+
+offerSchema.methods.asUnlockingOfferGroups = function (
+  offerGroups: string[],
+  reset = false,
+): string[] {
+  if (reset) this.unlockedBy = [];
+  const distinctOfferGroups = new Set([...offerGroups, ...this.unlockedBy]);
+
+  this.unlockedBy = Array.from(distinctOfferGroups);
+  return this.unlockedBy;
+};
 
 export default offerSchema;

@@ -1,15 +1,17 @@
-import { IOrder, MinimalId } from "../../../src/db/model";
-import { OrderStatus } from "../../../src/db/model/IOrder";
 import {
+  IMinimalId,
+  IOrder,
+  IOrderStatus,
   IPaymentClient,
-  WebhookEventPayload,
-} from "../../../src/service/IPaymentClient";
+} from "@user-credits/core";
+
+import { IStripeWebhookEventPayload } from "../../../src/service/IStripeWebhookEventPayload";
 
 export const MOCK_VALUES = {
   paymentIntentSecretAsPaid: "IntentAsPaid",
 };
 
-export class StripeMock<K extends MinimalId> implements IPaymentClient<K> {
+export class StripeMock<K extends IMinimalId> implements IPaymentClient<K> {
   private readonly currency: string;
 
   constructor() {
@@ -30,13 +32,13 @@ export class StripeMock<K extends MinimalId> implements IPaymentClient<K> {
       this.addHistoryItem(order, {
         message: "Payment succeeded",
         status: "paid",
-      } as OrderStatus);
+      } as IOrderStatus);
     } else {
       order.status = "refused";
       this.addHistoryItem(order, {
         message: "Payment failed",
         status: "refused",
-      } as OrderStatus);
+      } as IOrderStatus);
     }
     return order;
   }
@@ -49,8 +51,12 @@ export class StripeMock<K extends MinimalId> implements IPaymentClient<K> {
   }
 
   // Simulate handling webhook callbacks
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  handleWebhook(eventPayload: WebhookEventPayload, webhookSecret: string) {
+  handleWebhook(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    eventPayload: IStripeWebhookEventPayload,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    webhookSecret: string,
+  ) {
     // For testing purposes, you can return a mock Stripe event
     const mockEvent = {
       id: "mockEventId",
@@ -60,9 +66,9 @@ export class StripeMock<K extends MinimalId> implements IPaymentClient<K> {
     return mockEvent;
   }
 
-  private addHistoryItem(order: IOrder<K>, historyItem: OrderStatus) {
+  private addHistoryItem(order: IOrder<K>, historyItem: IOrderStatus) {
     if (!order.history) {
-      order.history = [] as unknown as [OrderStatus];
+      order.history = [] as unknown as [IOrderStatus];
     }
     historyItem.date = new Date();
     order.history.push(historyItem);

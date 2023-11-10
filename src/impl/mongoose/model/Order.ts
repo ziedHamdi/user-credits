@@ -1,12 +1,11 @@
 import { Types } from "mongoose";
 type ObjectId = Types.ObjectId;
+import { IOrder, IOrderStatus } from "@user-credits/core";
 import { Document, Schema } from "mongoose";
-
-import { IOrder, OrderStatus } from "../../../db/model/IOrder";
 
 export type IMongooseOrder = IOrder<ObjectId> & Document;
 
-const orderStatusSchema = new Schema<OrderStatus>({
+const orderStatusSchema = new Schema<IOrderStatus>({
   date: Date,
   message: String,
   status: {
@@ -53,7 +52,7 @@ const orderSchema = new Schema<IMongooseOrder>(
       type: String,
     },
     taxRate: Number,
-    tokenCount: { required: true, type: Number },
+    tokenCount: { type: Number },
     total: Number,
     userId: {
       required: true,

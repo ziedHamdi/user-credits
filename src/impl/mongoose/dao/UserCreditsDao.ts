@@ -1,14 +1,14 @@
 import { Connection, Types } from "mongoose";
 type ObjectId = Types.ObjectId;
 
-import { IUserCreditsDao } from "../../../db/dao/IUserCreditsDao";
-import { IUserCredits } from "../../../db/model/IUserCredits";
+import { IUserCredits, IUserCreditsDao } from "@user-credits/core";
+
 import { UserCredits } from "../model";
 import { IMongooseUserCredits } from "../model/UserCredits";
 import { BaseMongooseDao } from "./BaseMongooseDao";
 
 export class UserCreditsDao
-  extends BaseMongooseDao<IMongooseUserCredits>
+  extends BaseMongooseDao<IMongooseUserCredits, IUserCredits<ObjectId>>
   implements IUserCreditsDao<ObjectId, IMongooseUserCredits>
 {
   constructor(connection: Connection) {

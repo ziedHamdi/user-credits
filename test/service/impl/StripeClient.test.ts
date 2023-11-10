@@ -1,33 +1,19 @@
 import { beforeEach, describe, it, jest } from "@jest/globals";
+import type { IOrder } from "@user-credits/core";
 import { expect } from "expect";
 
-import { IOrder } from "../../../src/db/model";
 import { StripeClient } from "../../../src/impl/service/StripeClient";
-import { IConfigReader } from "../../../src/service/config/IConfigReader";
+import type { IConfigReader } from "../../../src/service/config/IConfigReader";
 import {
   clearStripeMocks,
-  constructEventMock,
   paymentIntentsCreateMock,
   paymentIntentsRetrieveMock,
   prepareAfterPaymentExecutedMock,
   prepareCreatePaymentIntentMock,
+  stripeMockInit,
 } from "./mocks/StripeMocks";
 
 const intentId = "payment_intent_id";
-
-jest.mock("stripe", () => {
-  return jest.fn().mockImplementation(() => {
-    return {
-      paymentIntents: {
-        create: paymentIntentsCreateMock,
-        retrieve: paymentIntentsRetrieveMock,
-      },
-      webhooks: {
-        constructEvent: constructEventMock,
-      },
-    };
-  });
-});
 
 describe("StripeClient", () => {
   let stripeClient: StripeClient<string>;
@@ -39,7 +25,7 @@ describe("StripeClient", () => {
       paymentSecretKey: jest.fn(),
     } as unknown as IConfigReader;
 
-    stripeClient = new StripeClient(configReaderMock);
+    stripeClient = new StripeClient(configReaderMock, stripeMockInit());
     clearStripeMocks();
   });
 

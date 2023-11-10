@@ -1,10 +1,13 @@
 import { jest } from "@jest/globals";
 import Mock = jest.Mock;
-import { IOrder } from "../../../../src/db/model";
+import { IOrder } from "@user-credits/core";
 
-type PaymentIntentsCreate = (params: never) => Promise<never>;
-type PaymentIntentsRetrieve = (paymentIntentId: string) => Promise<never>;
-type ConstructEvent = (rawBody: string, sig: string, secret: string) => never;
+import type {
+  ConstructEvent,
+  PaymentIntentsCreate,
+  PaymentIntentsRetrieve,
+  StripeTypes,
+} from "../../../../src/impl/service/StripeTypes";
 
 // Create jest.fn mocks with the specified signatures
 export const paymentIntentsCreateMock: Mock<PaymentIntentsCreate> =
@@ -14,19 +17,16 @@ export const paymentIntentsRetrieveMock: Mock<PaymentIntentsRetrieve> =
 export const constructEventMock: Mock<ConstructEvent> =
   jest.fn<ConstructEvent>();
 
-export function stripeMockInit() {
+export function stripeMockInit(): StripeTypes {
   return {
-    __esModule: true,
-    default: {
-      paymentIntents: {
-        create: paymentIntentsCreateMock,
-        retrieve: paymentIntentsRetrieveMock,
-      },
-      webhooks: {
-        constructEvent: constructEventMock,
-      },
+    paymentIntents: {
+      create: paymentIntentsCreateMock,
+      retrieve: paymentIntentsRetrieveMock,
     },
-  };
+    webhooks: {
+      constructEvent: constructEventMock,
+    },
+  } as StripeTypes;
 }
 
 export function clearStripeMocks() {

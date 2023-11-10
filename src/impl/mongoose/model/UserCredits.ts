@@ -1,12 +1,11 @@
 import { Types } from "mongoose";
 type ObjectId = Types.ObjectId;
-import { Document, Model, Schema } from "mongoose";
-
-import {
+import type {
   IActivatedOffer,
   ISubscription,
   IUserCredits,
-} from "../../../db/model/IUserCredits";
+} from "@user-credits/core";
+import { Document, Model, Schema } from "mongoose";
 
 export type IMongooseUserCredits = IUserCredits<ObjectId> & Document;
 
@@ -49,7 +48,7 @@ const subscriptionSchema = new Schema<
     required: true,
     type: String,
   },
-  tokens: { default: 0, required: true, type: Number },
+  tokens: { type: Number },
 });
 
 const activatedOfferSchema = new Schema<
@@ -58,7 +57,7 @@ const activatedOfferSchema = new Schema<
 >({
   expires: Date,
   starts: Date,
-  tokens: { default: 0, required: true, type: Number },
+  tokens: { type: Number },
 });
 
 const userCreditsSchema = new Schema<IMongooseUserCredits>(

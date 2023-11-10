@@ -1,8 +1,7 @@
 import { Types } from "mongoose";
 type ObjectId = Types.ObjectId;
+import { ITokenTimetable } from "@user-credits/core";
 import { Document, Schema } from "mongoose";
-
-import { ITokenTimetable } from "../../../db/model/ITokenTimetable";
 
 export type IMongooseTokenTimetable = ITokenTimetable<ObjectId> & Document;
 
