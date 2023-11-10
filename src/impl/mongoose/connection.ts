@@ -17,6 +17,8 @@ export async function connectToDb(uri: string, dbName: string) {
 }
 
 export async function disconnectFromDb() {
+  // cover both cases of mongoose.connect and mongoose.createConnection
+  if (connected != null) await (connected as Mongoose).disconnect();
   await disconnect();
   connected = null;
   dbUri = null;

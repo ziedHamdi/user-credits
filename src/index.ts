@@ -6,11 +6,16 @@
  * Copyright 2023 Zied Hamdi
  */
 
-export { connectToDb } from "./impl/mongoose/connection";
+export { connectToDb, disconnectFromDb } from "./impl/mongoose/connection";
 export { MongooseDaoFactory } from "./impl/mongoose/dao/MongooseDaoFactory";
 export * from "./impl/mongoose/model/index";
 export { EnvConfigReader } from "./impl/service/EnvConfigReader";
 export { StripeClient } from "./impl/service/StripeClient";
-export { MongooseStripeContainerSingleton } from "./MongooseStripeInit";
+export {
+  MongooseStripeContainerSingleton,
+  resolveConfigReader,
+  resolveStripe,
+  resolveStripeClient,
+} from "./MongooseStripeInit";
 export type { IConfigReader } from "./service";
 export * from "./service";

@@ -1,3 +1,4 @@
+import { IMinimalId } from "@user-credits/core";
 import { asClass, asValue, createContainer } from "awilix";
 import { AwilixContainer } from "awilix/lib/container";
 import { Stripe } from "stripe";
@@ -50,6 +51,24 @@ export class MongooseStripeContainerSingleton {
     // const mongoServer: MongoMemoryServer = TestContainerSingleton.container.resolve("mongoServer") as MongoMemoryServer;
     // TestContainerSingleton.active = await mongoServer.stop(true);
   }
+}
+
+export async function resolveConfigReader(): Promise<IConfigReader> {
+  return (await MongooseStripeContainerSingleton.getInstance()).resolve(
+    "configReader",
+  );
+}
+export async function resolveStripe(): Promise<Stripe> {
+  return (await MongooseStripeContainerSingleton.getInstance()).resolve(
+    "stripe",
+  );
+}
+export async function resolveStripeClient<K extends IMinimalId>(): Promise<
+  StripeClient<K>
+> {
+  return (await MongooseStripeContainerSingleton.getInstance()).resolve(
+    "stripeClient",
+  );
 }
 
 async function check(): Promise<boolean> {
