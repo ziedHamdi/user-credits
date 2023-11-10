@@ -1,4 +1,9 @@
-import mongoose, { Connection, ConnectOptions, disconnect, Mongoose } from "mongoose";
+import mongoose, {
+  Connection,
+  ConnectOptions,
+  disconnect,
+  Mongoose,
+} from "mongoose";
 
 let connected: Mongoose | unknown;
 let dbUri: string | null;

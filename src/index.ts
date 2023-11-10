@@ -15,7 +15,7 @@ export {
   MongooseStripeContainerSingleton,
   resolveConfigReader,
   resolveStripe,
-  resolveStripeClient
+  resolveStripeClient,
 } from "./MongooseStripeInit";
 export type { IConfigReader } from "./service";
 export * from "./service";
