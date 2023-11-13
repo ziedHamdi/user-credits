@@ -33,7 +33,7 @@ export class MongooseStripeContainerSingleton {
       configReader: asClass(EnvConfigReader).singleton(),
     });
     const configReader: IConfigReader = this.container.resolve("configReader");
-    const stripe = new Stripe(configReader.paymentSecretKey(), {
+    const stripe = new Stripe(configReader.paymentSecretKey, {
       apiVersion: "2023-08-16",
     }) as unknown as StripeTypes;
     this.container.register({
@@ -42,7 +42,7 @@ export class MongooseStripeContainerSingleton {
     this.container.register({
       stripeClient: asClass(StripeClient).singleton(),
     });
-    this.container.register({ defaultCurrency: asValue("usd") });
+    this.container.register({ currency: asValue("usd") });
 
     return this.container;
   }

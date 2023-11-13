@@ -1,6 +1,8 @@
 export interface IConfigReader {
-  currency(): string;
-  paymentApiVersion(): string;
-  paymentPublicKey(): string;
-  paymentSecretKey(): string;
+  currency: string;
+  dbName: string;
+  dbUrl: string;
+  paymentApiVersion: string;
+  paymentPublicKey: string;
+  paymentSecretKey: string;
 }

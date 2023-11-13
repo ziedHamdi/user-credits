@@ -42,7 +42,7 @@ export class OfferDao
       } as unknown as string[]; // needed cast to use $in
     }
 
-    if (params.tags) {
+    if (params.tags && params.tags.length > 0) {
       if (params.allTags) {
         // Use $all operator to match all provided tags
         query.tags = { $all: params.tags } as unknown as string[]; // obliged to ignore

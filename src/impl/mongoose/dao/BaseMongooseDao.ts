@@ -2,6 +2,7 @@ import { IBaseDao, IBaseEntity, SystemError } from "@user-credits/core";
 import { Connection, Document, Model, Schema } from "mongoose";
 
 import type { ObjectId } from "../TypeDefs";
+import { IAdminDao } from "./IAdminDao";
 
 /**
  * Interface to represent a mongoose entity model
@@ -22,7 +23,7 @@ export interface EntityModel<
 export class BaseMongooseDao<
   D extends Document,
   A extends IBaseEntity<ObjectId>,
-> implements IBaseDao<ObjectId, D>
+> implements IAdminDao<ObjectId, D>
 {
   model: EntityModel<D, A> & Model<D>;
 
@@ -108,6 +109,28 @@ export class BaseMongooseDao<
       const result = await this.model.findByIdAndDelete(userId).exec();
       return !!result;
     }, "deleteById");
+  }
+
+  /**
+   * Drops the entire collection
+   * this method is intentionally hidden from the base interface to oblige developers to cast before use for safety.
+   */
+  async dropTable(): Promise<void> {
+    return this.wrapWithSystemError(async () => {
+      // Use Mongoose's drop method to drop the collection
+      await this.model.collection.drop();
+    }, "dropTable");
+  }
+
+  /**
+   * Delete multiple rows by query
+   * this method is intentionally hidden from the base interface to oblige developers to cast before use for safety.
+   */
+  async delete(query: any): Promise<number> {
+    return this.wrapWithSystemError(async () => {
+      const result = await this.model.deleteMany(query).exec();
+      return result.deletedCount || 0;
+    }, "delete");
   }
 
   // Count documents that match a query

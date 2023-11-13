@@ -26,7 +26,7 @@ export class StripeClient<K extends IMinimalId> implements IPaymentClient<K> {
     configReader: IConfigReader,
     protected stripe: StripeTypes,
   ) {
-    this.currency = configReader.currency();
+    this.currency = configReader.currency;
   }
 
   async createPaymentIntent(order: IOrder<K>): Promise<IOrder<K> | null> {

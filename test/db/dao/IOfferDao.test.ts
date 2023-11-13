@@ -63,6 +63,15 @@ describe("OfferDao specific methods", () => {
       expect(Array.isArray(offers)).toBe(true);
       expect(offers.length).toBe(18);
     });
+    it("should load all offers if passed an empty tag list with allTags on", async () => {
+      const offers = await offerDao.loadOffers({
+        allTags: true,
+        tags: [],
+      });
+      // Write your Jest assertions to check if the offers were loaded correctly
+      expect(Array.isArray(offers)).toBe(true);
+      expect(offers.length).toBe(18);
+    });
   });
 
   // Test loading tagged offers
