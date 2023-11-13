@@ -3,11 +3,11 @@
  */
 import { IBaseDao, IMinimalId } from "@user-credits/core";
 
-export interface IAdminDao<K extends IMinimalId, D> extends IBaseDao<K, D>{
+export interface IAdminDao<K extends IMinimalId, D> extends IBaseDao<K, D> {
   /**
    * Delete multiple rows by query
    */
-  delete(query: any): Promise<number>;
+  delete(query: object): Promise<number>;
 
   /**
    * Drops the entire collection

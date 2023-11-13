@@ -1,4 +1,4 @@
-import { IBaseDao, IBaseEntity, SystemError } from "@user-credits/core";
+import { IBaseEntity, SystemError } from "@user-credits/core";
 import { Connection, Document, Model, Schema } from "mongoose";
 
 import type { ObjectId } from "../TypeDefs";
@@ -126,14 +126,18 @@ export class BaseMongooseDao<
    * Delete multiple rows by query
    * this method is intentionally hidden from the base interface to oblige developers to cast before use for safety.
    */
-  async delete(query: any): Promise<number> {
+  async delete(filter: object): Promise<number> {
     return this.wrapWithSystemError(async () => {
-      const result = await this.model.deleteMany(query).exec();
+      const result = await this.model.deleteMany({ filter }).exec();
       return result.deletedCount || 0;
     }, "delete");
   }
 
-  // Count documents that match a query
+  /**
+   *
+   * Count documents that match a query
+   * @param query
+   */
   async count(query: object): Promise<number> {
     return this.wrapWithSystemError(async () => {
       const count = await this.model.countDocuments(query).exec();

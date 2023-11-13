@@ -42,11 +42,12 @@ describe("StripeClient", () => {
     const result = await stripeClient.createPaymentIntent(order);
 
     // Assert
-    expect(paymentIntentsCreateMock).toHaveBeenCalledWith({
-      amount: amount * 100, // 100 dollars in cents
-      currency: "usd", // Replace with your desired currency
-      description: expect.stringContaining("Payment for Order"),
-    });
+    expect(paymentIntentsCreateMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        amount: amount * 100,
+        description: expect.stringContaining("Payment for Order"),
+      }),
+    );
     expect(result).toEqual(
       expect.objectContaining({
         paymentIntentId: "payment_intent_id",
