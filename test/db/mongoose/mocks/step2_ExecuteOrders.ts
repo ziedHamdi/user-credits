@@ -1,4 +1,5 @@
-import type { IOffer, IOrder, IService } from "../../../../src";
+import type { IOffer, IOrder, IService } from "@user-credits/core";
+
 import {
   newObjectId,
   ObjectId,

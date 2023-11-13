@@ -1,5 +1,6 @@
-import type { IOffer, IOfferDao } from "../../../../src";
-import { IDaoFactory } from "../../../../src";
+import type { IOffer, IOfferDao } from "@user-credits/core";
+import { IDaoFactory } from "@user-credits/core";
+
 import {
   newObjectId,
   ObjectId,

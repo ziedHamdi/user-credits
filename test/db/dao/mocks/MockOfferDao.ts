@@ -4,9 +4,8 @@ global.jest = jest;
 import { Types } from "mongoose";
 type ObjectId = Types.ObjectId;
 
-import type { IOfferDao } from "../../../../src/db/dao";
-import { IFindOffersParams } from "../../../../src/db/dao/IFindOffersParams";
-import type { IOffer } from "../../../../src/db/model";
+import type { IFindOffersParams, IOffer, IOfferDao } from "@user-credits/core";
+
 import { MockBaseDao } from "./MockBaseDao";
 
 export class MockOfferDao

@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   '@user-credits/core':
-    specifier: ^0.12.9-alpha
-    version: 0.12.9-alpha
+    specifier: ^0.12.10-alpha
+    version: 0.12.10-alpha
   awilix:
     specifier: ^9.0.0
     version: 9.0.0
@@ -2328,8 +2328,8 @@ packages:
       eslint-visitor-keys: 3.4.3
     dev: true
 
-  /@user-credits/core@0.12.9-alpha:
-    resolution: {integrity: sha512-bmKYI56uOP74YNJxUkRfKZMIdQTFxmcVYQXydQEvWUPV0LmYnoP0Q4+LBug4K3q4ZPQg4uuG44rfV8XrRSJ+hA==}
+  /@user-credits/core@0.12.10-alpha:
+    resolution: {integrity: sha512-UpEc7mN3tfaNYcGacBRenFAMmRo231arD/V7EqSA4mmUKs0WI0kAeHNT7stPIyRbPijK9SCLm8bqLx+LOx+Qpw==}
     engines: {node: '>=18'}
     dependencies:
       awilix: 9.0.0

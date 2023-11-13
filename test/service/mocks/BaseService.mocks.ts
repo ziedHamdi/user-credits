@@ -1,7 +1,7 @@
+import { IDaoFactory } from "@user-credits/core";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import { Connection, Types } from "mongoose";
 
-import { IDaoFactory } from "../../../src/db/dao";
 import { TestContainerSingleton } from "../../config/testContainer";
 
 export type ObjectId = Types.ObjectId;

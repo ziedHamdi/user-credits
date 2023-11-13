@@ -1,8 +1,8 @@
 import { Types } from "mongoose";
 type ObjectId = Types.ObjectId;
 
-import { IOrderDao } from "../../../../src/db/dao"; // Import the actual path
-import { IOrder } from "../../../../src/db/model"; // Import the actual path
+import { IOrder, IOrderDao } from "@user-credits/core"; // Import the actual path
+
 import { MockBaseDao } from "./MockBaseDao";
 
 export class MockOrderDao

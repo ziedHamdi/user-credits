@@ -5,15 +5,15 @@ import mongoose, { Connection, Types } from "mongoose";
 type ObjectId = Types.ObjectId;
 
 // import { EXPECTED_PROPERTIES } from "../../src/Constants";
-import { MongoMemoryServer } from "mongodb-memory-server";
-
-import type { IDaoFactory } from "../../src/db/dao";
 import type {
+  IDaoFactory,
   IOffer,
   IOrder,
   ITokenTimetable,
   IUserCredits,
-} from "../../src/db/model";
+} from "@user-credits/core";
+import { MongoMemoryServer } from "mongodb-memory-server";
+
 import { MongooseDaoFactory } from "../../src/impl/mongoose/dao/MongooseDaoFactory";
 import { EnvConfigReader } from "../../src/impl/service/EnvConfigReader";
 import { StripeClient } from "../../src/impl/service/StripeClient";

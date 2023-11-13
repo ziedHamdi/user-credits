@@ -1,4 +1,4 @@
-import { IBaseDao } from "../../../../src/db/dao";
+import { IBaseDao } from "@user-credits/core";
 
 export class MockBaseDao<D extends object> implements IBaseDao<string, D> {
   // Declare the functions as public fields with jest.fn()

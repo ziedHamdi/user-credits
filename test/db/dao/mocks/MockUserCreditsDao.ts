@@ -1,8 +1,8 @@
 import { Types } from "mongoose";
 type ObjectId = Types.ObjectId;
 
-import { IUserCreditsDao } from "../../../../src/db/dao";
-import { IUserCredits } from "../../../../src/db/model";
+import { IUserCredits, IUserCreditsDao } from "@user-credits/core";
+
 import { MockBaseDao } from "./MockBaseDao";
 
 export class MockUserCreditsDao

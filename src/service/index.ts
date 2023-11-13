@@ -1,2 +1,2 @@
 export type { IConfigReader } from "./config/IConfigReader";
-export { IStripeWebhookEventPayload } from "./IStripeWebhookEventPayload";
+export type { IStripeWebhookEventPayload } from "./IStripeWebhookEventPayload";

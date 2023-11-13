@@ -1,8 +1,8 @@
 import { Types } from "mongoose";
 type ObjectId = Types.ObjectId;
 
-import { ITokenTimetableDao } from "../../../../src/db/dao";
-import { ITokenTimetable } from "../../../../src/db/model";
+import { ITokenTimetable, ITokenTimetableDao } from "@user-credits/core";
+
 import { MockBaseDao } from "./MockBaseDao";
 
 export class MockTokenTimetableDao

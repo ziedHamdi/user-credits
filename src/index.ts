@@ -17,5 +17,4 @@ export {
   resolveStripe,
   resolveStripeClient,
 } from "./MongooseStripeInit";
-export type { IConfigReader } from "./service";
-export * from "./service";
+export type * from "./service";
