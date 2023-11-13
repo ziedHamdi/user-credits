@@ -21,8 +21,8 @@ dependencies:
     specifier: ^7.5.3
     version: 7.5.3
   stripe:
-    specifier: ^13.9.0
-    version: 13.9.0
+    specifier: ^14.4.0
+    version: 14.4.0
 
 devDependencies:
   '@jest/globals':
@@ -4890,6 +4890,14 @@ packages:
 
   /stripe@13.9.0:
     resolution: {integrity: sha512-sQAqodCvaw/iYWauHHdOWlFGj0oZj/3A51zs4rG5PN3SUJUFSSjtnbc9q5Djpls0iz3nXz2UwjzAdKHVP4dVqQ==}
+    engines: {node: '>=12.*'}
+    dependencies:
+      '@types/node': 20.7.0
+      qs: 6.11.2
+    dev: false
+
+  /stripe@14.4.0:
+    resolution: {integrity: sha512-E3IxDo/Bvu0TtYrKfAf8lEYd0beTjFSN4xemuw2oEfUyxFpJyrzRZOw50HIEXFYYHWNDORicd8G8R4joCbN3/Q==}
     engines: {node: '>=12.*'}
     dependencies:
       '@types/node': 20.7.0
