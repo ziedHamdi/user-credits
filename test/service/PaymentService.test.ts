@@ -1,5 +1,5 @@
 //NODE: these imports are a temporary workaround to avoid the warning: "Corresponding file is not included in tsconfig.json"
-import { afterEach, beforeEach, describe, it } from "@jest/globals";
+import { afterEach, beforeEach, describe, it, jest } from "@jest/globals";
 import type {
   IActivatedOffer,
   IDaoFactory,
@@ -8,17 +8,24 @@ import type {
   IPaymentClient,
   IUserCredits,
 } from "@user-credits/core";
-import { addMonths, PaymentService } from "@user-credits/core";
+import { addMonths, IOffer, PaymentService } from "@user-credits/core";
 import { expect } from "expect";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import { Connection, Types } from "mongoose";
 
+import { IConfigReader, StripeClient } from "../../src";
 import { TestContainerSingleton } from "../config/testContainer";
 import {
   prefillOrdersForTests,
   USER_ORDERS,
 } from "../db/mongoose/mocks/step2_ExecuteOrders";
-import { initMocks, ObjectId } from "./mocks/BaseService.mocks";
+import {
+  clearStripeMocks,
+  paymentIntentsCreateMock,
+  prepareCreatePaymentIntentMock,
+  stripeMockInit,
+} from "./impl/mocks/StripeMocks";
+import { initMocks, newObjectId, ObjectId } from "./mocks/BaseService.mocks";
 
 /**
  * Temporary class to access the protected methods
@@ -34,29 +41,49 @@ class TestPaymentService<K extends ObjectId> extends PaymentService<K> {
 }
 
 describe("PaymentService.updateOfferGroup", () => {
+  // eslint-disable-next-line
+  type OffersToTest = { free: Partial<IOffer<ObjectId>>, enterpriseM: Partial<IOffer<ObjectId>>, vipSeoBackLinks_1_article: Partial<IOffer<ObjectId>>};
+
   let mongooseDaoFactory: IDaoFactory<ObjectId>;
   let mongoMemoryServer: MongoMemoryServer;
   let connection: Connection;
   let order: IOrder<Types.ObjectId>;
   let userCredits: IUserCredits<ObjectId>;
   let service: TestPaymentService<ObjectId>;
-  let paymentClient: IPaymentClient<ObjectId>;
+  // let paymentClient: IPaymentClient<ObjectId>;
+  let stripeClient: StripeClient<string>;
+  let allOffers: OffersToTest;
+  const intentId = "payment_intent_id";
+  const amount: number = 100;
 
   beforeEach(async () => {
+    const configReaderMock = {
+      currency: "usd",
+      paymentApiVersion: jest.fn(),
+      paymentSecretKey: jest.fn(),
+    } as unknown as IConfigReader;
+    prepareCreatePaymentIntentMock(
+      "requires_payment_method",
+      intentId,
+      amount,
+    );
+    stripeClient = new StripeClient(configReaderMock, stripeMockInit());
     // Initialize your mocks and dependencies here.
     const mocks = await initMocks(false);
     ({ connection, mongoMemoryServer, mongooseDaoFactory } = mocks);
 
-    paymentClient = (await TestContainerSingleton.getInstance()).resolve(
-      "stripeMock",
-    );
+    // paymentClient = (await TestContainerSingleton.getInstance()).resolve(
+    //   "stripeMock",
+    // );
 
     service = new TestPaymentService<ObjectId>(
       mongooseDaoFactory,
-      paymentClient,
+      stripeClient,
       "usd",
     );
-    await prefillOrdersForTests(service);
+    ({ allOffers } = await prefillOrdersForTests(service));
+    clearStripeMocks(); // the line above created orders and called the mock
+
     // I have to cheat here as I know it will not be null
     order =
       (await mongooseDaoFactory
@@ -72,6 +99,7 @@ describe("PaymentService.updateOfferGroup", () => {
   });
 
   afterEach(async () => {
+    clearStripeMocks();
     await mongoMemoryServer.stop(false);
     await connection.close();
   });
@@ -128,4 +156,28 @@ describe("PaymentService.updateOfferGroup", () => {
     //   ),
     // );
   }, 10000);
+
+  it("should call the payment service when creating an order", async () => {
+    // Arrange
+
+    // Act
+    const result = await service.createOrder(
+      allOffers.enterpriseM._id,
+      newObjectId(),
+    );
+
+    // Assert
+    expect(paymentIntentsCreateMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        amount: allOffers.enterpriseM.price * 100,
+        description: expect.stringContaining("Payment for Order"),
+      }),
+    );
+    expect(result).toEqual(
+      expect.objectContaining({
+        paymentIntentId: "payment_intent_id",
+        paymentIntentSecret: "client_secret_key",
+      }),
+    );
+  });
 });

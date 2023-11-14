@@ -20,7 +20,7 @@ describe("StripeClient", () => {
 
   beforeEach(() => {
     const configReaderMock = {
-      currency: jest.fn(() => "usd"),
+      currency: "usd",
       paymentApiVersion: jest.fn(),
       paymentSecretKey: jest.fn(),
     } as unknown as IConfigReader;
@@ -45,6 +45,7 @@ describe("StripeClient", () => {
     expect(paymentIntentsCreateMock).toHaveBeenCalledWith(
       expect.objectContaining({
         amount: amount * 100,
+        currency: "usd",
         description: expect.stringContaining("Payment for Order"),
       }),
     );
