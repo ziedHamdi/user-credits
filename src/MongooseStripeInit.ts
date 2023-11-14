@@ -1,7 +1,7 @@
 import { IMinimalId } from "@user-credits/core";
 import { asClass, asValue, createContainer } from "awilix";
 import { AwilixContainer } from "awilix/lib/container";
-import { Stripe } from "stripe";
+import Stripe from "stripe";
 
 import { EXPECTED_PROPERTIES } from "./Constants";
 // import { MongooseDaoFactory } from "./impl/mongoose/dao/MongooseDaoFactory";
@@ -39,8 +39,9 @@ export class MongooseStripeContainerSingleton {
     this.container.register({
       stripe: asValue(stripe),
     });
+    const stripeClient = new StripeClient(configReader, stripe);
     this.container.register({
-      stripeClient: asClass(StripeClient).singleton(),
+      stripeClient: asValue(stripeClient),
     });
     this.container.register({ currency: asValue("usd") });
 

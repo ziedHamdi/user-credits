@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   '@user-credits/core':
-    specifier: link:..\..\WebstormProjects\user-credits-core
-    version: link:../../WebstormProjects/user-credits-core
+    specifier: link:..\user-credits-core
+    version: link:../user-credits-core
   awilix:
     specifier: ^9.0.0
     version: 9.0.0
