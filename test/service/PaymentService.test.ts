@@ -5,7 +5,6 @@ import type {
   IDaoFactory,
   IOrder,
   IOrderStatus,
-  IPaymentClient,
   IUserCredits,
 } from "@user-credits/core";
 import { addMonths, IOffer, PaymentService } from "@user-credits/core";
@@ -14,7 +13,6 @@ import { MongoMemoryServer } from "mongodb-memory-server";
 import { Connection, Types } from "mongoose";
 
 import { IConfigReader, StripeClient } from "../../src";
-import { TestContainerSingleton } from "../config/testContainer";
 import {
   prefillOrdersForTests,
   USER_ORDERS,
@@ -62,11 +60,7 @@ describe("PaymentService.updateOfferGroup", () => {
       paymentApiVersion: jest.fn(),
       paymentSecretKey: jest.fn(),
     } as unknown as IConfigReader;
-    prepareCreatePaymentIntentMock(
-      "requires_payment_method",
-      intentId,
-      amount,
-    );
+    prepareCreatePaymentIntentMock("requires_payment_method", intentId, amount);
     stripeClient = new StripeClient(configReaderMock, stripeMockInit());
     // Initialize your mocks and dependencies here.
     const mocks = await initMocks(false);
