@@ -18,9 +18,9 @@ export class EnvConfigReader implements IConfigReader {
   private readonly _dbName: string;
 
   constructor() {
-    this.publicKey = process.env.STRIPE_PUBLIC_KEY || "";
-    this.privateKey = process.env.STRIPE_PRIVATE_KEY || "";
-    this.apiVersion = process.env.STRIPE_API_VERSION || "2023-08-16";
+    this.publicKey = process.env.PUBLIC_STRIPE_KEY || "";
+    this.privateKey = process.env.PRIVATE_STRIPE_KEY || "";
+    this.apiVersion = process.env.PRIVATE_STRIPE_API_VERSION || "2023-08-16";
     this.defaultCurrency = process.env.CURRENCY || "usd";
     this._dbName = process.env.DB_NAME || "user-credits";
     this._dbUrl = process.env.DB_URL || "mongodb://localhost:27001";
