@@ -34,7 +34,7 @@ export class MongooseStripeContainerSingleton {
     });
     const configReader: IConfigReader = this.container.resolve("configReader");
     const stripe = new Stripe(configReader.paymentSecretKey, {
-      apiVersion: "2023-08-16",
+      apiVersion: "2023-10-16",
     }) as unknown as StripeTypes;
     this.container.register({
       stripe: asValue(stripe),
