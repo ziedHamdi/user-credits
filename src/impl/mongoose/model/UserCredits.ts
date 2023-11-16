@@ -13,6 +13,7 @@ const subscriptionSchema = new Schema<
   ISubscription<ObjectId>,
   Model<ISubscription<ObjectId>>
 >({
+  currency: String,
   cycle: {
     enum: [
       "once",
@@ -42,6 +43,7 @@ const subscriptionSchema = new Schema<
     required: true,
     type: Schema.Types.ObjectId,
   },
+  quantity: Number,
   starts: Date,
   status: {
     enum: ["pending", "paid", "refused", "error"],
@@ -49,6 +51,7 @@ const subscriptionSchema = new Schema<
     type: String,
   },
   tokens: { type: Number },
+  total: Number,
 });
 
 const activatedOfferSchema = new Schema<
@@ -56,6 +59,7 @@ const activatedOfferSchema = new Schema<
   Model<IActivatedOffer>
 >({
   expires: Date,
+  offerGroup: { required: true, type: String },
   starts: Date,
   tokens: { type: Number },
 });

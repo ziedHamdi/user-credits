@@ -1,5 +1,5 @@
 import { IBaseEntity, SystemError } from "@user-credits/core";
-import { Connection, Document, Model, Schema } from "mongoose";
+import { Connection, Document, Model, Schema, Types } from "mongoose";
 
 import type { ObjectId } from "../TypeDefs";
 import { IAdminDao } from "./IAdminDao";
@@ -57,6 +57,18 @@ export class BaseMongooseDao<
   async findById(userId: ObjectId, asPojo: boolean = false): Promise<D | null> {
     return this.wrapWithSystemError(async () => {
       const result = await this.model.findById(userId).exec();
+      if (asPojo) return result ? result.toObject() : null;
+      return result;
+    }, "findById");
+  }
+
+  // Find document by ID
+  async findByIdStr(
+    userId: string,
+    asPojo: boolean = false,
+  ): Promise<D | null> {
+    return this.wrapWithSystemError(async () => {
+      const result = await this.model.findById( new Types.ObjectId( userId )).exec();
       if (asPojo) return result ? result.toObject() : null;
       return result;
     }, "findById");
