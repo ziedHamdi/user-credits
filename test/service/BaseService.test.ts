@@ -301,7 +301,9 @@ describe("BaseService.getActiveSubscriptions", () => {
     const paidOrder = {
       _id: ebEnterprise!.orderId,
       cycle: "monthly",
+      offerGroup: "GT1",
       orderId: ebEnterprise!.orderId,
+      save: jest.fn(),
       status: "paid",
       userId: sampleUserId,
     } as unknown as IOrder<ObjectId>;

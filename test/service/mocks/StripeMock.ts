@@ -40,6 +40,7 @@ export class StripeMock<K extends IMinimalId> implements IPaymentClient<K> {
         status: "refused",
       } as IOrderStatus);
     }
+    order.save = jest.fn(); // will be needed in the process
     return order;
   }
 

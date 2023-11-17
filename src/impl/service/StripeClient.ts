@@ -82,6 +82,7 @@ export class StripeClient<K extends IMinimalId> implements IPaymentClient<K> {
           // Payment is successful
           order.status = "paid";
           // Create a payment status entry in the order's history
+          // FIXME history is not added to the orders, check why: issue:2
           this.addHistoryItem(order, {
             message: "Payment succeeded",
             status: "paid",

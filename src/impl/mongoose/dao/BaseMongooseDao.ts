@@ -68,7 +68,9 @@ export class BaseMongooseDao<
     asPojo: boolean = false,
   ): Promise<D | null> {
     return this.wrapWithSystemError(async () => {
-      const result = await this.model.findById( new Types.ObjectId( userId )).exec();
+      const result = await this.model
+        .findById(new Types.ObjectId(userId))
+        .exec();
       if (asPojo) return result ? result.toObject() : null;
       return result;
     }, "findById");
