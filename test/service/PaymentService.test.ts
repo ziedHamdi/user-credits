@@ -30,11 +30,11 @@ import { initMocks, newObjectId, ObjectId } from "./mocks/BaseService.mocks";
  */
 class TestPaymentService<K extends ObjectId> extends PaymentService<K> {
   // Expose the protected method as public for testing purposes
-  public testUpdateOfferGroup(
+  public async testUpdateOfferGroup(
     userCredits: IUserCredits<K>,
     order: IOrder<K>,
-  ): IActivatedOffer {
-    return this.updateAsPaid(userCredits, order);
+  ): Promise<IActivatedOffer> {
+    return await this.updateAsPaid(userCredits, order);
   }
 }
 
@@ -98,7 +98,7 @@ describe("PaymentService.updateOfferGroup", () => {
     await connection.close();
   });
 
-  it("should update an existing offer in userCredits", () => {
+  it("should update an existing offer in userCredits", async () => {
     const saveSpy = jest.spyOn(order, "save"); // the order must be updated and saved to db but not in testUpdateOfferGroup
     order.cycle = "weekly"; // order a week
     order.quantity = 3; // a total of three weeks
@@ -115,7 +115,7 @@ describe("PaymentService.updateOfferGroup", () => {
     });
 
     // Act
-    const updatedOffer: IActivatedOffer = service.testUpdateOfferGroup(
+    const updatedOffer: IActivatedOffer = await service.testUpdateOfferGroup(
       userCredits,
       order,
     );
@@ -128,7 +128,7 @@ describe("PaymentService.updateOfferGroup", () => {
     expect(updatedOffer.tokens).toEqual(500 + (order.tokenCount || 0) * 3);
   }, 10000);
 
-  it("should create a new offer in userCredits", () => {
+  it("should create a new offer in userCredits", async () => {
     order.cycle = "weekly"; // order a week
     order.quantity = 3; // a total of three weeks
 
@@ -136,7 +136,7 @@ describe("PaymentService.updateOfferGroup", () => {
     userCredits.offers = []; // Clear existing offers
 
     // Act
-    const newOffer: IActivatedOffer = service.testUpdateOfferGroup(
+    const newOffer: IActivatedOffer = await service.testUpdateOfferGroup(
       userCredits,
       order,
     );

@@ -28,6 +28,7 @@ const subscriptionSchema = new Schema<
     ],
     type: String,
   },
+  expires: Date,
   name: { required: true, type: String },
   /**
    * Detailed documentation in interface @IOffer.offerGroup
