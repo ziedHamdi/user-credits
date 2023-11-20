@@ -34,7 +34,7 @@ class TestPaymentService<K extends ObjectId> extends PaymentService<K> {
     userCredits: IUserCredits<K>,
     order: IOrder<K>,
   ): IActivatedOffer {
-    return this.updateOfferGroup(userCredits, order);
+    return this.updateAsPaid(userCredits, order);
   }
 }
 
@@ -99,6 +99,7 @@ describe("PaymentService.updateOfferGroup", () => {
   });
 
   it("should update an existing offer in userCredits", () => {
+    const saveSpy = jest.spyOn(order, "save"); // the order must be updated and saved to db but not in testUpdateOfferGroup
     order.cycle = "weekly"; // order a week
     order.quantity = 3; // a total of three weeks
     const offer = {
@@ -120,6 +121,7 @@ describe("PaymentService.updateOfferGroup", () => {
     );
 
     // Assert
+    expect(saveSpy).not.toHaveBeenCalled();
     expect(updatedOffer.expires).toEqual(
       new Date(offer.expires.getTime() + 1000 * 60 * 60 * 24 * 7 * 3),
     );
@@ -174,4 +176,5 @@ describe("PaymentService.updateOfferGroup", () => {
       }),
     );
   });
+
 });

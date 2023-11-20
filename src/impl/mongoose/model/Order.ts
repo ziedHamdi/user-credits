@@ -35,6 +35,7 @@ const orderSchema = new Schema<IMongooseOrder>(
       ],
       type: String,
     },
+    expires: Date,
     history: [orderStatusSchema],
     offerGroup: { required: true, type: String },
     offerId: {
@@ -46,6 +47,7 @@ const orderSchema = new Schema<IMongooseOrder>(
     // not stored in db, only present to carry information in memory
     paymentIntentSecret: { select: false, type: String },
     quantity: Number,
+    starts: Date,
     status: {
       enum: ["pending", "paid", "refused", "error"],
       required: true,
