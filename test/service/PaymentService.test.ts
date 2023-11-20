@@ -180,7 +180,7 @@ describe("PaymentService.updateOfferGroup", () => {
     order.cycle = "monthly"; // order a week
     order.quantity = 4; // a total of three weeks
     order.starts = new Date( Date.parse('04 Dec 2023' ) );
-    order.tokenCount = 500;
+    order.tokenCount = 501;
 
     // Arrange
     prepareAfterPaymentExecutedMock("succeeded", "payment_intent_id");
@@ -193,7 +193,7 @@ describe("PaymentService.updateOfferGroup", () => {
     expect(updated.expires).toEqual(
       new Date( Date.parse('04 Apr 2024' )),
     );
-    expect(updated.tokenCount).toEqual(2000);
+    expect(updated.tokenCount).toEqual(2004);
     expect(userCredits.offers[0].expires).toEqual(updated.expires);
     expect(userCredits.offers[0].tokens).toEqual(updated.tokenCount);
   }, 10000);

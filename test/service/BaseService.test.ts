@@ -42,7 +42,82 @@ class ExtendedBaseService<K extends IMinimalId> extends BaseService<K> {
   afterExecute(order: IOrder<K>): Promise<IUserCredits<K>> {
     return Promise.resolve(undefined as unknown as IUserCredits<K>);
   }
+
+  async computeStartDate(order: IOrder<K>) {
+    await super.computeStartDate(order);
+  }
 }
+
+describe("computeStartDate", () => {
+  let service;
+  const daoFind = jest.fn();
+  beforeAll(async () => {
+    // Initialize your mocks and dependencies here.
+    // const mocks = await initMocks();
+    // ({ mongooseDaoFactory } = mocks);
+    service = new ExtendedBaseService({
+      getOfferDao: ()=>{},
+      getOrderDao: ()=>({ find: daoFind }),
+      getTokenTimetableDao: () => {},
+      getUserCreditsDao: () => {}
+    } as unknown as IDaoFactory<K>);
+    // ({ allOffers } = await prefillOffersForTests(
+    //   service.getDaoFactory(),
+    // )) as unknown as PrefillResult;
+  });
+  it("should not change startDate if already set", async () => {
+    // Arrange
+    const order = { _id: "someId", starts: new Date() /* other fields */ };
+
+    // Act
+    await service.computeStartDate(order);
+
+    // Assert
+    expect(order.starts).toBeDefined();
+    // Ensure order.starts remains the same
+  });
+
+  it("should set startDate to current date if no existing paid orders", async () => {
+    // Arrange
+    const order = {
+      _id: "someId",
+      offerGroup: "someOfferGroup",
+      starts: undefined /* other fields */,
+    };
+    daoFind.mockResolvedValue([]);
+
+    // Act
+    await service.computeStartDate(order);
+
+    // Assert
+    expect(order.starts).toBeDefined();
+    // Ensure order.starts is set to the current date
+  });
+
+  it("should set startDate to the latest expires date of existing paid orders", async () => {
+    // Arrange
+    const existingOrders = [
+      { expires: new Date("2023-01-01") },
+      { expires: new Date("2023-12-01") },
+      { expires: new Date("2023-12-02") },
+      { expires: new Date("2020-01-01") },
+      // Add more orders with different expires dates
+    ];
+    daoFind.mockResolvedValue(existingOrders);
+    const order = {
+      _id: "someId",
+      offerGroup: "someOfferGroup",
+      starts: undefined,
+    };
+
+    // Act
+    await service.computeStartDate(order);
+
+    // Assert
+    expect(order.starts).toEqual(new Date("2023-12-02"));
+    // Ensure order.starts is set to the latest expires date among existing paid orders
+  });
+});
 
 /**
  * This file is now testing MongoDb adapter (mongooseDaoFactory) only, but the same test should run on any implementation.
