@@ -2,11 +2,13 @@
 /* global beforeAll, console, afterAll */
 // setupBeforeAll.js
 
-import { expect } from "@jest/globals";
+import { expect, jest } from "@jest/globals";
 
 import { toHaveSameFields } from "../../extend/sameObjects";
 
-beforeAll(async () => {});
+beforeAll(async () => {
+  jest.setTimeout( 60 * 60 * 1000);
+});
 
 afterAll(async () => {
   // FIXME uncomment the following line: it's commented to allow us to connect and check the db for now

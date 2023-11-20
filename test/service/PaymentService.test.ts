@@ -19,9 +19,9 @@ import {
 } from "../db/mongoose/mocks/step2_ExecuteOrders";
 import {
   clearStripeMocks,
-  paymentIntentsCreateMock,
+  paymentIntentsCreateMock, prepareAfterPaymentExecutedMock,
   prepareCreatePaymentIntentMock,
-  stripeMockInit,
+  stripeMockInit
 } from "./impl/mocks/StripeMocks";
 import { initMocks, newObjectId, ObjectId } from "./mocks/BaseService.mocks";
 
@@ -176,4 +176,23 @@ describe("PaymentService.updateOfferGroup", () => {
       }),
     );
   });
+  it("should update an offer start and expiry date on payment", async () => {
+    order.cycle = "monthly"; // order a week
+    order.quantity = 4; // a total of three weeks
+    order.starts = new Date( Date.parse('04 Dec 2023' ) );
+    order.tokenCount = 500;
+
+    // Arrange
+    prepareAfterPaymentExecutedMock("succeeded", "payment_intent_id");
+
+
+    // Act
+    const userCredits = await service.afterExecute(order);
+    const updated = await mongooseDaoFactory.getOrderDao().findById(order._id)
+    // Assert
+    expect(updated.expires).toEqual(
+      new Date( Date.parse('04 Apr 2024' )),
+    );
+    expect(updated.tokenCount).toEqual(2000);
+  }, 10000);
 });
