@@ -194,5 +194,8 @@ describe("PaymentService.updateOfferGroup", () => {
       new Date( Date.parse('04 Apr 2024' )),
     );
     expect(updated.tokenCount).toEqual(2000);
+    expect(userCredits.offers[0].expires).toEqual(updated.expires);
+    expect(userCredits.offers[0].tokens).toEqual(updated.tokenCount);
   }, 10000);
+
 });
