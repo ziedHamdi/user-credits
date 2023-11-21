@@ -56,10 +56,10 @@ describe("computeStartDate", () => {
     // const mocks = await initMocks();
     // ({ mongooseDaoFactory } = mocks);
     service = new ExtendedBaseService({
-      getOfferDao: ()=>{},
-      getOrderDao: ()=>({ find: daoFind }),
+      getOfferDao: () => {},
+      getOrderDao: () => ({ find: daoFind }),
       getTokenTimetableDao: () => {},
-      getUserCreditsDao: () => {}
+      getUserCreditsDao: () => {},
     } as unknown as IDaoFactory<K>);
     // ({ allOffers } = await prefillOffersForTests(
     //   service.getDaoFactory(),

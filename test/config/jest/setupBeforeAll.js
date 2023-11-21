@@ -7,7 +7,7 @@ import { expect, jest } from "@jest/globals";
 import { toHaveSameFields } from "../../extend/sameObjects";
 
 beforeAll(async () => {
-  jest.setTimeout( 60 * 60 * 1000);
+  jest.setTimeout(60 * 60 * 1000);
 });
 
 afterAll(async () => {
