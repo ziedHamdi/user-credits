@@ -126,7 +126,7 @@ describe("PaymentService.updateOfferGroup", () => {
     expect(updatedOffer.expires).toEqual(
       new Date(offer.expires.getTime() + 1000 * 60 * 60 * 24 * 7 * 3),
     );
-    expect(updatedOffer.tokens).toEqual(500 + (order.tokenCount || 0) * 3);
+    expect(updatedOffer.tokens).toEqual(500 + (order.tokenCount || 0)); // the order token count is equal offer.tokens x order.quantity
   }, 10000);
 
   it("should create a new offer in userCredits", async () => {
@@ -144,7 +144,7 @@ describe("PaymentService.updateOfferGroup", () => {
 
     // Assert
     expect(newOffer.offerGroup).toEqual(order.offerGroup);
-    expect(newOffer.tokens).toEqual(null);
+    expect(newOffer.tokens).toEqual(300); // quantity: 3 x 100 in order
     // FIXME there's an hour of difference between the expected and found value. I have no clue from where it could come
     // expect(newOffer.expires).toEqual(
     //   new Date(
