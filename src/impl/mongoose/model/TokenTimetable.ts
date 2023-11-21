@@ -7,6 +7,7 @@ export type IMongooseTokenTimetable = ITokenTimetable<ObjectId> & Document;
 
 const tokenTimetableSchema = new Schema<IMongooseTokenTimetable>(
   {
+    offerGroup: String,
     tokens: { default: 0, required: true, type: Number },
     userId: {
       ref: "User",
