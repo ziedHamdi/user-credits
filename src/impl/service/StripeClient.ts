@@ -94,7 +94,12 @@ export class StripeClient<K extends IMinimalId> implements IPaymentClient<K> {
           order.status = "refused";
           // Create a payment status entry in the order's history
           this.addHistoryItem(order, {
-            message: "Payment method issues",
+            message:
+              intent.last_payment_error?.message +
+              " - " +
+              intent.last_payment_error?.type +
+              ": " +
+              intent.last_payment_error?.code,
             status: "refused",
           } as IOrderStatus);
           break;

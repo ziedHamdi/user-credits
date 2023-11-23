@@ -8,6 +8,11 @@ export interface StripeIntent {
   client_secret: string;
   next_action: string;
   status: string;
+  last_payment_error: {
+    code: string;
+    message: string;
+    type: string;
+  }
 }
 export type PaymentIntentsCreate = (params: object) => Promise<StripeIntent>;
 export type PaymentIntentsRetrieve = (paymentIntentId: string) => Promise<StripeIntent>;
