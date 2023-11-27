@@ -177,11 +177,13 @@ describe("PaymentService.updateOfferGroup", () => {
       }),
     );
   });
-  it("should update an offer start and expiry date on payment", async () => {
+  it("should update an offer without changing its start date if any is specified", async () => {
     order.cycle = "monthly"; // order a week
     order.quantity = 4; // a total of three weeks
     order.starts = new Date(Date.parse("04 Dec 2023"));
     order.tokenCount = 501;
+    order.total = 100; // checked before accepting as "paid"
+    order.currency = "eur"; // checked before accepting as "paid"
 
     // Arrange
     prepareAfterPaymentExecutedMock("succeeded", "payment_intent_id");
@@ -194,5 +196,41 @@ describe("PaymentService.updateOfferGroup", () => {
     expect(updated.tokenCount).toEqual(2004);
     expect(userCredits.offers[0].expires).toEqual(updated.expires);
     expect(userCredits.offers[0].tokens).toEqual(updated.tokenCount);
+  }, 10000);
+  it("should refuse to update an order if the paid amount differs", async () => {
+    order.cycle = "monthly"; // order a week
+    order.quantity = 4; // a total of three weeks
+    order.starts = new Date(Date.parse("04 Dec 2023"));
+    order.tokenCount = 501;
+    order.total = 101; // different paid amount
+    order.currency = "eur";
+
+    // Arrange
+    prepareAfterPaymentExecutedMock("succeeded", "payment_intent_id");
+
+    // Act
+    await service.afterExecute(order);
+    const updated = await mongooseDaoFactory.getOrderDao().findById(order._id);
+    // Assert
+    expect(updated.history[0].status).toEqual("inconsistent");
+    expect(updated.expires).toBeUndefined();
+  }, 10000);
+  it("should refuse to update an order if the paid currency differs", async () => {
+    order.cycle = "monthly"; // order a week
+    order.quantity = 4; // a total of three weeks
+    order.starts = new Date(Date.parse("04 Dec 2023"));
+    order.tokenCount = 501;
+    order.total = 100;
+    order.currency = "usd"; // different currency
+
+    // Arrange
+    prepareAfterPaymentExecutedMock("succeeded", "payment_intent_id");
+
+    // Act
+    await service.afterExecute(order);
+    const updated = await mongooseDaoFactory.getOrderDao().findById(order._id);
+    // Assert
+    expect(updated.history[0].status).toEqual("inconsistent");
+    expect(updated.expires).toBeUndefined();
   }, 10000);
 });

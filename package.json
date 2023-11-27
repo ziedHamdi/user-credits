@@ -2,7 +2,7 @@
   "name": "@user-credits/stripe-mongoose",
   "author": "Zied Hamdi",
   "type": "module",
-  "version": "0.15.3-alpha",
+  "version": "0.16.0-beta",
   "license": "MIT",
   "keywords": [
     "user-credits",

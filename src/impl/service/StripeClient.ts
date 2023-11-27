@@ -79,21 +79,31 @@ export class StripeClient<K extends IMinimalId> implements IPaymentClient<K> {
       // Update the order status based on the payment intent status
       switch (intent.status) {
         case "succeeded":
+          if (
+            Number(intent.amount_received) === order.total * 100 &&
+            intent.currency === order.currency
+          ) {
+            order.status = "paid";
+            // Create a payment status entry in the order's history
+            // FIXME history is not added to the orders, check why: issue:2
+            this.addHistoryItem(order, intent, {
+              message: "Payment succeeded",
+              status: "paid",
+            } as IOrderStatus);
+          } else {
+            this.addHistoryItem(order, intent, {
+              message: "Payment amount or currency not corresponding",
+              status: "inconsistent",
+            } as IOrderStatus);
+          }
           // Payment is successful
-          order.status = "paid";
-          // Create a payment status entry in the order's history
-          // FIXME history is not added to the orders, check why: issue:2
-          this.addHistoryItem(order, {
-            message: "Payment succeeded",
-            status: "paid",
-          } as IOrderStatus);
           break;
 
         case "requires_payment_method":
           // Handle payment failure due to payment method issues
           order.status = "refused";
           // Create a payment status entry in the order's history
-          this.addHistoryItem(order, {
+          this.addHistoryItem(order, intent, {
             message:
               intent.last_payment_error?.message +
               " - " +
@@ -107,7 +117,7 @@ export class StripeClient<K extends IMinimalId> implements IPaymentClient<K> {
         case "requires_action":
           order.status = "error";
           // Create a payment status entry in the order's history
-          this.addHistoryItem(order, {
+          this.addHistoryItem(order, intent, {
             message:
               "Payment requires an action we don't handle: " +
               intent.next_action,
@@ -126,11 +136,16 @@ export class StripeClient<K extends IMinimalId> implements IPaymentClient<K> {
     }
   }
 
-  protected addHistoryItem(order: IOrder<K>, historyItem: IOrderStatus) {
+  protected addHistoryItem(
+    order: IOrder<K>,
+    intent: object,
+    historyItem: IOrderStatus,
+  ) {
     if (!order.history) {
       order.history = [] as unknown as [IOrderStatus];
     }
     historyItem.date = historyItem.date ?? new Date();
+    historyItem.payload = JSON.stringify(intent);
 
     order.history.push(historyItem);
   }

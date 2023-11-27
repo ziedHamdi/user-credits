@@ -8,8 +8,9 @@ export type IMongooseOrder = IOrder<ObjectId> & Document;
 const orderStatusSchema = new Schema<IOrderStatus>({
   date: Date,
   message: String,
+  payload: String,
   status: {
-    enum: ["pending", "paid", "refused", "error"],
+    enum: ["pending", "paid", "refused", "error", "inconsistent", "partial"],
     required: true,
     type: String,
   },
@@ -49,7 +50,7 @@ const orderSchema = new Schema<IMongooseOrder>(
     quantity: Number,
     starts: Date,
     status: {
-      enum: ["pending", "paid", "refused", "error"],
+      enum: ["pending", "paid", "refused", "error", "inconsistent", "partial"],
       required: true,
       type: String,
     },

@@ -60,7 +60,9 @@ export function prepareAfterPaymentExecutedMock(
   intentId: string = "payment_intent_id",
 ): IOrder<string> {
   const expectedPaymentIntent = {
+    amount_received: "10000",
     client_secret: "client_secret_key",
+    currency: "eur",
     id: intentId || "payment_intent_id",
     status,
   };
@@ -68,7 +70,9 @@ export function prepareAfterPaymentExecutedMock(
   paymentIntentsRetrieveMock.mockResolvedValue(expectedPaymentIntent as never);
 
   const order: IOrder<string> = {
+    currency: "eur",
     paymentIntentId: intentId,
+    total: 100,
   } as IOrder<string>;
 
   return order;

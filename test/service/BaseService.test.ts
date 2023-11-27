@@ -350,6 +350,7 @@ describe("BaseService.getActiveSubscriptions", () => {
     const paidOrder = {
       _id: newObjectId(),
       cycle: "monthly",
+      markModified: jest.fn(),
       orderId: newObjectId(),
       status: "paid",
       userId: sampleUserId,
@@ -376,6 +377,7 @@ describe("BaseService.getActiveSubscriptions", () => {
     const paidOrder = {
       _id: ebEnterprise!.orderId,
       cycle: "monthly",
+      markModified: jest.fn(),
       offerGroup: "GT1",
       orderId: ebEnterprise!.orderId,
       save: jest.fn(),

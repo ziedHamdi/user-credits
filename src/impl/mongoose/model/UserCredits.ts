@@ -47,7 +47,7 @@ const subscriptionSchema = new Schema<
   quantity: Number,
   starts: Date,
   status: {
-    enum: ["pending", "paid", "refused", "error"],
+    enum: ["pending", "paid", "refused", "error", "inconsistent", "partial"],
     required: true,
     type: String,
   },

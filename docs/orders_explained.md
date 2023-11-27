@@ -78,7 +78,7 @@ export interface ISubscription<K extends IMinimalId> extends IBaseEntity<K> {
   /**
    * The status of the subscription, which can be 'pending', 'paid', 'refused', or 'error'.
    */
-  status: "pending" | "paid" | "refused" | "error";
+  status: "pending" | "paid" | "refused" | "error" | "inconsistent" | "partial";
 
   /**
    * The number of tokens associated with the subscription.
@@ -147,7 +147,7 @@ export interface IOrder<K extends MinimalId> extends BaseEntity<K> {
    */
   paymentIntentSecret: string | null;
   quantity: number;
-  status: "pending" | "paid" | "refused" | "error";
+  status: "pending" | "paid" | "refused" | "error" | "inconsistent" | "partial";
   taxRate: number | null;
   tokenCount: number | null;
   total: number;
@@ -170,7 +170,7 @@ Here's the interface for `OrderStatus`:
 export interface IOrderStatus {
   date: Date;
   message: string;
-  status: "pending" | "paid" | "refused" | "error";
+  status: "pending" | "paid" | "refused" | "error" | "inconsistent" | "partial";
 }
 ```
 

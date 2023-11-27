@@ -4,8 +4,10 @@
 
 /* eslint-disable*/
 export interface StripeIntent {
+  amount_received: string;
   id: string;
   client_secret: string;
+  currency: string;
   next_action: string;
   status: string;
   last_payment_error: {
