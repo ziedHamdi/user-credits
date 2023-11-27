@@ -126,7 +126,7 @@ export class StripeClient<K extends IMinimalId> implements IPaymentClient<K> {
     }
   }
 
-  private addHistoryItem(order: IOrder<K>, historyItem: IOrderStatus) {
+  protected addHistoryItem(order: IOrder<K>, historyItem: IOrderStatus) {
     if (!order.history) {
       order.history = [] as unknown as [IOrderStatus];
     }
