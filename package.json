@@ -67,7 +67,7 @@
     "node": ">=18"
   },
   "dependencies": {
-    "@user-credits/core": "link:..\\user-credits-core",
+    "@user-credits/core": "^0.16.0-beta",
     "awilix": "^9.0.0",
     "bson": "^6.1.0",
     "dotenv": "^16.3.1",
