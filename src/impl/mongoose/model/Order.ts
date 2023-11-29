@@ -1,6 +1,6 @@
 import { Types } from "mongoose";
 type ObjectId = Types.ObjectId;
-import { IOrder, IOrderStatus } from "@user-credits/core";
+import type { ICombinedOrder, IOrder, IOrderStatus } from "@user-credits/core";
 import { Document, Schema } from "mongoose";
 
 export type IMongooseOrder = IOrder<ObjectId> & Document;
@@ -16,9 +16,19 @@ const orderStatusSchema = new Schema<IOrderStatus>({
   },
 });
 
+const combinedOrderSchema = new Schema<ICombinedOrder<Types.ObjectId>>({
+  expires: Date,
+  offerGroup: String,
+  offerId: Schema.ObjectId,
+  quantity: Number,
+  starts: Date,
+  tokenCount: Number,
+});
+
 const orderSchema = new Schema<IMongooseOrder>(
   {
     // identifier on remote payment system to track status
+    combinedItems: [combinedOrderSchema],
     country: String,
     currency: String,
     customCycle: Number,
