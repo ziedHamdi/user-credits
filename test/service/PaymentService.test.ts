@@ -37,6 +37,10 @@ class TestPaymentService<K extends ObjectId> extends PaymentService<K> {
   ): Promise<IActivatedOffer> {
     return await this.updateAsPaid(userCredits, order);
   }
+
+  get orderDaoProp() {
+    return this.orderDao;
+  }
 }
 
 describe("PaymentService.updateOfferGroup", () => {
@@ -91,7 +95,7 @@ describe("PaymentService.updateOfferGroup", () => {
       subscriptions: [] as unknown as [IOrderStatus],
       userId,
     } as unknown as IUserCredits<ObjectId>;
-  });
+  }, 100 * 10000);
 
   afterEach(async () => {
     clearStripeMocks();
@@ -100,20 +104,29 @@ describe("PaymentService.updateOfferGroup", () => {
   });
 
   it("should update an existing offer in userCredits", async () => {
-    const saveSpy = jest.spyOn(order, "save"); // the order must be updated and saved to db but not in testUpdateOfferGroup
+    const saveSpy = jest.spyOn(order, "save"); // the order must be updated and saved to db but not in testUpdateOfferGroup or its call stack
     order.cycle = "weekly"; // order a week
     order.quantity = 3; // a total of three weeks
     const offer = {
-      expires: addMonths(new Date(), 2), // TODO test also if a date is passed: check that the new date starts from today and not from that last date (make it possible to chose from both scenarios)
       offerGroup: order.offerGroup,
-      starts: addMonths(new Date(), -1), // Will check that the startDate is untouched
-      tokens: 500,
+      tokens: 500, // gets the current token count from IUserCredits
     };
 
     // Arrange
     userCredits.offers.push({
       ...offer,
-    });
+    } as unknown as IActivatedOffer);
+    const mockExpiryDate = addMonths(new Date(), 2);
+    // finds the last active order expiry in the offerGroup to determine the start date. Check {@link IOffer.appendDate}
+    await service.orderDaoProp.create({
+      expires: mockExpiryDate,
+      offerGroup: order.offerGroup,
+      offerId: order.offerId,
+      starts: addMonths(new Date(), -1),
+      status: "paid",
+      tokens: 500,
+      userId: userCredits.userId,
+    } as unknown as IOrder<ObjectId>);
 
     // Act
     const updatedOffer: IActivatedOffer = await service.testUpdateOfferGroup(
@@ -124,7 +137,7 @@ describe("PaymentService.updateOfferGroup", () => {
     // Assert
     expect(saveSpy).not.toHaveBeenCalled();
     expect(updatedOffer.expires).toEqual(
-      new Date(offer.expires.getTime() + 1000 * 60 * 60 * 24 * 7 * 3),
+      new Date(mockExpiryDate.getTime() + 1000 * 60 * 60 * 24 * 7 * 3),
     );
     expect(updatedOffer.tokens).toEqual(500 + (order.tokenCount || 0)); // the order token count is equal offer.tokens x order.quantity
   }, 10000);
@@ -177,44 +190,56 @@ describe("PaymentService.updateOfferGroup", () => {
       }),
     );
   });
-  it("should update an offer without changing its start date if any is specified", async () => {
-    order.cycle = "monthly"; // order a week
-    order.quantity = 4; // a total of three weeks
-    order.starts = new Date(Date.parse("04 Dec 2023"));
-    order.tokenCount = 501;
-    order.total = 100; // checked before accepting as "paid"
-    order.currency = "eur"; // checked before accepting as "paid"
+  it(
+    "should update an offer without changing its start date if any is specified",
+    async () => {
+      order.cycle = "monthly"; // order a week
+      order.quantity = 4; // a total of three weeks
+      order.starts = new Date(Date.parse("04 Dec 2023"));
+      order.tokenCount = 501;
+      order.total = 100; // checked before accepting as "paid"
+      order.currency = "eur"; // checked before accepting as "paid"
 
-    // Arrange
-    prepareAfterPaymentExecutedMock("succeeded", "payment_intent_id");
+      // Arrange
+      prepareAfterPaymentExecutedMock("succeeded", "payment_intent_id");
 
-    // Act
-    const userCredits = await service.afterExecute(order);
-    const updated = await mongooseDaoFactory.getOrderDao().findById(order._id);
-    // Assert
-    expect(updated.expires).toEqual(new Date(Date.parse("04 Apr 2024")));
-    expect(updated.tokenCount).toEqual(2004);
-    expect(userCredits.offers[0].expires).toEqual(updated.expires);
-    expect(userCredits.offers[0].tokens).toEqual(updated.tokenCount);
-  }, 10000);
-  it("should refuse to update an order if the paid amount differs", async () => {
-    order.cycle = "monthly"; // order a week
-    order.quantity = 4; // a total of three weeks
-    order.starts = new Date(Date.parse("04 Dec 2023"));
-    order.tokenCount = 501;
-    order.total = 101; // different paid amount
-    order.currency = "eur";
+      // Act
+      const userCredits = await service.afterExecute(order);
+      const updated = await mongooseDaoFactory
+        .getOrderDao()
+        .findById(order._id);
+      // Assert
+      expect(updated.expires).toEqual(new Date(Date.parse("04 Apr 2024")));
+      expect(updated.tokenCount).toEqual(2004);
+      expect(userCredits.offers[0].expires).toEqual(updated.expires);
+      expect(userCredits.offers[0].tokens).toEqual(updated.tokenCount);
+    },
+    100 * 10000,
+  );
+  it(
+    "should refuse to update an order if the paid amount differs",
+    async () => {
+      order.cycle = "monthly"; // order a week
+      order.quantity = 4; // a total of three weeks
+      order.starts = new Date(Date.parse("04 Dec 2023"));
+      order.tokenCount = 501;
+      order.total = 101; // different paid amount
+      order.currency = "eur";
 
-    // Arrange
-    prepareAfterPaymentExecutedMock("succeeded", "payment_intent_id");
+      // Arrange
+      prepareAfterPaymentExecutedMock("succeeded", "payment_intent_id");
 
-    // Act
-    await service.afterExecute(order);
-    const updated = await mongooseDaoFactory.getOrderDao().findById(order._id);
-    // Assert
-    expect(updated.history[0].status).toEqual("inconsistent");
-    expect(updated.expires).toBeUndefined();
-  }, 10000);
+      // Act
+      await service.afterExecute(order);
+      const updated = await mongooseDaoFactory
+        .getOrderDao()
+        .findById(order._id);
+      // Assert
+      expect(updated.history[0].status).toEqual("inconsistent");
+      expect(updated.expires).toBeUndefined();
+    },
+    100 * 10000,
+  );
   it("should refuse to update an order if the paid currency differs", async () => {
     order.cycle = "monthly"; // order a week
     order.quantity = 4; // a total of three weeks

@@ -54,6 +54,11 @@ const orderSchema = new Schema<IMongooseOrder>(
       required: true,
       type: Schema.Types.ObjectId,
     },
+    parentId: {
+      ref: "order",
+      required: false,
+      type: Schema.Types.ObjectId,
+    },
     paymentIntentId: String,
     // not stored in db, only present to carry information in memory
     paymentIntentSecret: { select: false, type: String },

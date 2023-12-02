@@ -7,6 +7,7 @@ import {
 } from "../../../service/mocks/BaseService.mocks";
 
 const baseRootOffer = {
+  appendDate: true,
   cycle: "monthly",
   hasDependentOffers: false, // This offer has no sub-offers
   kind: "subscription",

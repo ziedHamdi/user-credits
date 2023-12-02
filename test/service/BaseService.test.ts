@@ -5,7 +5,7 @@ import {
   beforeEach,
   describe,
   expect,
-  it,
+  it
 } from "@jest/globals";
 import {
   IDaoFactory,
@@ -13,24 +13,24 @@ import {
   IOffer,
   IOrder,
   IOrderDao,
-  IUserCredits,
+  IUserCredits
 } from "@user-credits/core"; // Import the actual path
 import {
   BaseService,
   InvalidOrderError,
   PaymentError,
-  PaymentService,
+  PaymentService
 } from "@user-credits/core"; // Import the actual path
 import { MongoMemoryServer } from "mongodb-memory-server";
 import { Connection } from "mongoose";
 
 import {
   OFFER_GROUP,
-  prefillOffersForTests,
+  prefillOffersForTests
 } from "../db/mongoose/mocks/step1_PrepareLoadOffers";
 import {
   prefillOrdersForTests,
-  USER_ORDERS,
+  USER_ORDERS
 } from "../db/mongoose/mocks/step2_ExecuteOrders";
 // eslint-disable-next-line no-unused-vars,@typescript-eslint/no-unused-vars
 import { toHaveSameFields } from "../extend/sameObjects";
@@ -46,21 +46,42 @@ class ExtendedBaseService<K extends IMinimalId> extends BaseService<K> {
   async computeStartDate(order: IOrder<K>) {
     await super.computeStartDate(order);
   }
+
+  payOrder(orderId: K): Promise<IOrder<K>> {
+    return Promise.resolve(undefined);
+  }
+
+  payOrder(orderId: K): Promise<IOrder<K>> {
+    return Promise.resolve(undefined);
+  }
 }
 
 describe("computeStartDate", () => {
   let service;
-  const daoFind = jest.fn();
+  const baseDao = () => {
+    return {
+      find: jest.fn(),
+      findById: jest.fn(),
+    };
+  };
+  const daos = {
+    offerDao: baseDao(),
+    orderDao: baseDao(),
+    tokenTimetableDao: baseDao(),
+    userCreditsDao: baseDao()
+  };
+  const daoFactory = {
+    getOfferDao: () => daos.offerDao,
+    getOrderDao: () => daos.orderDao,
+    getTokenTimetableDao: () => daos.tokenTimetableDao,
+    getUserCreditsDao: () => daos.userCreditsDao
+  } as unknown as IDaoFactory<K>;
   beforeAll(async () => {
     // Initialize your mocks and dependencies here.
     // const mocks = await initMocks();
     // ({ mongooseDaoFactory } = mocks);
-    service = new ExtendedBaseService({
-      getOfferDao: () => {},
-      getOrderDao: () => ({ find: daoFind }),
-      getTokenTimetableDao: () => {},
-      getUserCreditsDao: () => {},
-    } as unknown as IDaoFactory<K>);
+
+    service = new ExtendedBaseService(daoFactory);
     // ({ allOffers } = await prefillOffersForTests(
     //   service.getDaoFactory(),
     // )) as unknown as PrefillResult;
@@ -82,9 +103,9 @@ describe("computeStartDate", () => {
     const order = {
       _id: "someId",
       offerGroup: "someOfferGroup",
-      starts: undefined /* other fields */,
+      starts: undefined /* other fields */
     };
-    daoFind.mockResolvedValue([]);
+    daos.orderDao.find.mockResolvedValue([]);
 
     // Act
     await service.computeStartDate(order);
@@ -97,24 +118,25 @@ describe("computeStartDate", () => {
   it("should set startDate to the latest expires date of existing paid orders", async () => {
     // Arrange
     const existingOrders = [
-      { expires: new Date("2023-01-01") },
-      { expires: new Date("2023-12-01") },
+      { expires: new Date("2030-01-01") },
+      { expires: new Date("2030-12-01") },
       { expires: new Date("2023-12-02") },
-      { expires: new Date("2020-01-01") },
+      { expires: new Date("2020-01-01") }
       // Add more orders with different expires dates
     ];
-    daoFind.mockResolvedValue(existingOrders);
+    daos.orderDao.find.mockResolvedValue(existingOrders);
+    daos.offerDao.findById.mockResolvedValue({appendDate:true});
     const order = {
       _id: "someId",
       offerGroup: "someOfferGroup",
-      starts: undefined,
+      starts: undefined
     };
 
     // Act
     await service.computeStartDate(order);
 
     // Assert
-    expect(order.starts).toEqual(new Date("2023-12-02"));
+    expect(order.starts).toEqual(new Date("2030-12-01"));
     // Ensure order.starts is set to the latest expires date among existing paid orders
   });
 });
@@ -126,7 +148,7 @@ describe("computeStartDate", () => {
  */
 describe("createOrder: verifying createOrder works before relying on it for other tests", () => {
   // eslint-disable-next-line
-  type OffersToTest = { free: Partial<IOffer<ObjectId>>, enterpriseM: Partial<IOffer<ObjectId>>, vipSeoBackLinks_1_article: Partial<IOffer<ObjectId>>};
+  type OffersToTest = { free: Partial<IOffer<ObjectId>>, enterpriseM: Partial<IOffer<ObjectId>>, vipSeoBackLinks_1_article: Partial<IOffer<ObjectId>> };
   type PrefillResult = { allOffer: OffersToTest };
 
   let service: BaseService<ObjectId>;
@@ -139,7 +161,7 @@ describe("createOrder: verifying createOrder works before relying on it for othe
     ({ mongooseDaoFactory } = mocks);
     service = new ExtendedBaseService(mongooseDaoFactory);
     ({ allOffers } = await prefillOffersForTests(
-      service.getDaoFactory(),
+      service.getDaoFactory()
     )) as unknown as PrefillResult;
   });
 
@@ -172,7 +194,7 @@ describe("createOrder: verifying createOrder works before relying on it for othe
       // Assert
       expect(error).toBeInstanceOf(InvalidOrderError);
       expect((error as InvalidOrderError).message).toBe(
-        "Requested quantity exceeds the limit",
+        "Requested quantity exceeds the limit"
       );
       return; // Exit the test function
     }
@@ -263,8 +285,8 @@ describe("Offer Database Integration Test", () => {
         "Startup",
         "ScaleUp",
         "EbEnterprise",
-        "VipEventTalk",
-      ]),
+        "VipEventTalk"
+      ])
     );
     expect(orders.length).toBe(5);
 
@@ -299,7 +321,7 @@ describe("BaseService.getActiveSubscriptions", () => {
     service = new PaymentService<ObjectId>(
       mongooseDaoFactory,
       paymentClientMock,
-      "usd",
+      "usd"
     );
     await prefillOrdersForTests(service);
   });
@@ -312,7 +334,7 @@ describe("BaseService.getActiveSubscriptions", () => {
     // Create a spy on the real findByUserId method
     const findByUserIdSpy = jest.spyOn(
       mongooseDaoFactory.getUserCreditsDao(),
-      "findByUserId",
+      "findByUserId"
     );
 
     // Call the getActiveSubscriptions method
@@ -334,13 +356,13 @@ describe("BaseService.getActiveSubscriptions", () => {
     // Assert that activeSubscriptions contain only paid subscriptions
     expect(Array.isArray(userCredits.subscriptions)).toEqual(true);
     const ebEnterprise = userCredits.subscriptions.find(
-      (subs) => subs.offerGroup == OFFER_GROUP.EbEnterprise,
+      (subs) => subs.offerGroup == OFFER_GROUP.EbEnterprise
     );
     expect(ebEnterprise).toBeTruthy();
     expect(ebEnterprise!.status).toEqual("pending");
     expect(ebEnterprise!.offerId).toBeTruthy();
     const vipEventTalk = userCredits.subscriptions.find(
-      (subs) => subs.offerGroup == OFFER_GROUP.VipEventTalk,
+      (subs) => subs.offerGroup == OFFER_GROUP.VipEventTalk
     );
     expect(vipEventTalk).toBeTruthy();
     expect(vipEventTalk!.status).toEqual("pending");
@@ -353,7 +375,7 @@ describe("BaseService.getActiveSubscriptions", () => {
       markModified: jest.fn(),
       orderId: newObjectId(),
       status: "paid",
-      userId: sampleUserId,
+      userId: sampleUserId
     } as unknown as IOrder<ObjectId>;
     try {
       // Act: The real implementation would check if the order was really paid, we're using {@link StripeMock} here to bypass that
@@ -361,7 +383,7 @@ describe("BaseService.getActiveSubscriptions", () => {
     } catch (error) {
       expect(error).toBeInstanceOf(PaymentError);
       expect((error as PaymentError).message).toMatch(
-        "has no subscription for order",
+        "has no subscription for order"
       );
       return; // Exit the test function
     }
@@ -372,7 +394,7 @@ describe("BaseService.getActiveSubscriptions", () => {
   it("should update subscriptions on afterExecute with a 'paid' order status", async () => {
     let userCredits = await service.loadUserCredits(sampleUserId);
     let ebEnterprise = userCredits.subscriptions.find(
-      (subs) => subs.offerGroup == OFFER_GROUP.EbEnterprise,
+      (subs) => subs.offerGroup == OFFER_GROUP.EbEnterprise
     );
     const paidOrder = {
       _id: ebEnterprise!.orderId,
@@ -382,7 +404,7 @@ describe("BaseService.getActiveSubscriptions", () => {
       orderId: ebEnterprise!.orderId,
       save: jest.fn(),
       status: "paid",
-      userId: sampleUserId,
+      userId: sampleUserId
     } as unknown as IOrder<ObjectId>;
 
     //The Mock emulates a check that the order is really paid in the payment system, and returns an order with an updated status
@@ -395,7 +417,7 @@ describe("BaseService.getActiveSubscriptions", () => {
     // Assert
     userCredits = await service.loadUserCredits(sampleUserId);
     ebEnterprise = userCredits.subscriptions.find(
-      (subs) => subs.offerGroup == OFFER_GROUP.EbEnterprise,
+      (subs) => subs.offerGroup == OFFER_GROUP.EbEnterprise
     );
 
     // Assert that activeSubscriptions contain only paid subscriptions
