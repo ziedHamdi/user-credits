@@ -11,6 +11,11 @@ import { TokenTimetable } from "../model";
 import { IMongooseTokenTimetable } from "../model/TokenTimetable";
 import { BaseMongooseDao } from "./BaseMongooseDao";
 
+type MatchType = {
+  createdAt: { $gte: Date; $lt: Date };
+  tokens?: { $lt: number };
+};
+
 export class TokenTimetableDao
   extends BaseMongooseDao<IMongooseTokenTimetable, ITokenTimetable<ObjectId>>
   implements ITokenTimetableDao<ObjectId, IMongooseTokenTimetable>
@@ -49,7 +54,7 @@ export class TokenTimetableDao
     negative: boolean = true,
   ): Promise<[ConsumptionPerOfferGroup]> {
     /* eslint-enable sort-keys-fix/sort-keys-fix */
-    const match = {
+    const match: MatchType = {
       createdAt: { $gte: startDate, $lt: endDate },
     };
 
