@@ -5,37 +5,41 @@ import {
   beforeEach,
   describe,
   expect,
-  it
+  it,
 } from "@jest/globals";
 import {
+  addDays,
+  addMonths,
+  addSeconds,
   IDaoFactory,
   IMinimalId,
   IOffer,
   IOrder,
-  IOrderDao,
+  IOrderDao, ITokenTimetable,
   IUserCredits
 } from "@user-credits/core"; // Import the actual path
 import {
   BaseService,
   InvalidOrderError,
   PaymentError,
-  PaymentService
+  PaymentService,
 } from "@user-credits/core"; // Import the actual path
 import { MongoMemoryServer } from "mongodb-memory-server";
 import { Connection } from "mongoose";
 
 import {
   OFFER_GROUP,
-  prefillOffersForTests
+  prefillOffersForTests,
 } from "../db/mongoose/mocks/step1_PrepareLoadOffers";
 import {
   prefillOrdersForTests,
-  USER_ORDERS
+  USER_ORDERS,
 } from "../db/mongoose/mocks/step2_ExecuteOrders";
 // eslint-disable-next-line no-unused-vars,@typescript-eslint/no-unused-vars
 import { toHaveSameFields } from "../extend/sameObjects";
 import { initMocks, newObjectId, ObjectId } from "./mocks/BaseService.mocks";
 import { StripeMock } from "./mocks/StripeMock";
+import { ConsumptionPerOfferGroup } from "../../../user-credits-core/src";
 
 class ExtendedBaseService<K extends IMinimalId> extends BaseService<K> {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -68,13 +72,13 @@ describe("computeStartDate", () => {
     offerDao: baseDao(),
     orderDao: baseDao(),
     tokenTimetableDao: baseDao(),
-    userCreditsDao: baseDao()
+    userCreditsDao: baseDao(),
   };
   const daoFactory = {
     getOfferDao: () => daos.offerDao,
     getOrderDao: () => daos.orderDao,
     getTokenTimetableDao: () => daos.tokenTimetableDao,
-    getUserCreditsDao: () => daos.userCreditsDao
+    getUserCreditsDao: () => daos.userCreditsDao,
   } as unknown as IDaoFactory<K>;
   beforeAll(async () => {
     // Initialize your mocks and dependencies here.
@@ -88,7 +92,10 @@ describe("computeStartDate", () => {
   });
   it("should not change startDate if already set", async () => {
     // Arrange
-    const order = { _id: "someId", starts: new Date() /* other fields */ };
+    const order = {
+      _id: "someId",
+      starts: addSeconds(new Date(), 10) /* other fields */,
+    };
 
     // Act
     await service.computeStartDate(order);
@@ -103,7 +110,7 @@ describe("computeStartDate", () => {
     const order = {
       _id: "someId",
       offerGroup: "someOfferGroup",
-      starts: undefined /* other fields */
+      starts: undefined /* other fields */,
     };
     daos.orderDao.find.mockResolvedValue([]);
 
@@ -118,25 +125,25 @@ describe("computeStartDate", () => {
   it("should set startDate to the latest expires date of existing paid orders", async () => {
     // Arrange
     const existingOrders = [
-      { expires: new Date("2030-01-01") },
-      { expires: new Date("2030-12-01") },
+      { expires: new Date("2050-01-01") },
+      { expires: new Date("2050-12-01") },
       { expires: new Date("2023-12-02") },
-      { expires: new Date("2020-01-01") }
+      { expires: new Date("2020-01-01") },
       // Add more orders with different expires dates
     ];
     daos.orderDao.find.mockResolvedValue(existingOrders);
-    daos.offerDao.findById.mockResolvedValue({appendDate:true});
+    daos.offerDao.findById.mockResolvedValue({ appendDate: true });
     const order = {
       _id: "someId",
       offerGroup: "someOfferGroup",
-      starts: undefined
+      starts: undefined,
     };
 
     // Act
     await service.computeStartDate(order);
 
     // Assert
-    expect(order.starts).toEqual(new Date("2030-12-01"));
+    expect(order.starts).toEqual(new Date("2050-12-01"));
     // Ensure order.starts is set to the latest expires date among existing paid orders
   });
 });
@@ -161,7 +168,7 @@ describe("createOrder: verifying createOrder works before relying on it for othe
     ({ mongooseDaoFactory } = mocks);
     service = new ExtendedBaseService(mongooseDaoFactory);
     ({ allOffers } = await prefillOffersForTests(
-      service.getDaoFactory()
+      service.getDaoFactory(),
     )) as unknown as PrefillResult;
   });
 
@@ -194,7 +201,7 @@ describe("createOrder: verifying createOrder works before relying on it for othe
       // Assert
       expect(error).toBeInstanceOf(InvalidOrderError);
       expect((error as InvalidOrderError).message).toBe(
-        "Requested quantity exceeds the limit"
+        "Requested quantity exceeds the limit",
       );
       return; // Exit the test function
     }
@@ -285,8 +292,8 @@ describe("Offer Database Integration Test", () => {
         "Startup",
         "ScaleUp",
         "EbEnterprise",
-        "VipEventTalk"
-      ])
+        "VipEventTalk",
+      ]),
     );
     expect(orders.length).toBe(5);
 
@@ -294,6 +301,115 @@ describe("Offer Database Integration Test", () => {
     const userCreditsInserted = await userCerditsDao.find({});
     expect(Array.isArray(userCreditsInserted)).toBe(true);
     expect(userCreditsInserted.length).toBe(4);
+  });
+
+  it("should load aggregates from token time table", async () => {
+    const tokenTimetableDao = mongooseDaoFactory.getTokenTimetableDao();
+    const userId = newObjectId();
+    const now = new Date();
+    const ago3Months = addMonths(now, -3);
+    const ago2Months = addMonths(now, -2);
+    const ago1Month = addMonths(now, -1);
+    const ago3Weeks = addDays(now, -21);
+    const ago2Weeks = addDays(now, -14);
+    const ago1Week = addDays(now, -7);
+    /* eslint-disable prettier/prettier */
+    await tokenTimetableDao.create( {createdAt:ago3Months, offerGroup:"G1", tokens:100, userId} as ITokenTimetable<ObjectId> )
+    await tokenTimetableDao.create( {createdAt:ago3Months, offerGroup:"G1", tokens:-1, userId} as ITokenTimetable<ObjectId> )
+    await tokenTimetableDao.create( {createdAt:ago2Months, offerGroup:"G1", tokens:-2, userId} as ITokenTimetable<ObjectId> )
+    await tokenTimetableDao.create( {createdAt:ago1Month, offerGroup:"G1", tokens:-3, userId} as ITokenTimetable<ObjectId> )
+
+    await tokenTimetableDao.create( {createdAt:ago3Weeks, offerGroup:"G1", tokens:-4, userId} as ITokenTimetable<ObjectId> )
+    await tokenTimetableDao.create( {createdAt:ago2Weeks, offerGroup:"G1", tokens:-5, userId} as ITokenTimetable<ObjectId> )
+    await tokenTimetableDao.create( {createdAt:ago1Week, offerGroup:"G1", tokens:-6, userId} as ITokenTimetable<ObjectId> )
+
+    await tokenTimetableDao.create( {createdAt:ago3Months, offerGroup:"G2", tokens:200, userId} as ITokenTimetable<ObjectId> )
+    await tokenTimetableDao.create( {createdAt:ago3Months, offerGroup:"G2", tokens:-1, userId} as ITokenTimetable<ObjectId> )
+    await tokenTimetableDao.create( {createdAt:ago2Months, offerGroup:"G2", tokens:2, userId} as ITokenTimetable<ObjectId> )
+    await tokenTimetableDao.create( {createdAt:ago1Month, offerGroup:"G2", tokens:-3, userId} as ITokenTimetable<ObjectId> )
+
+    await tokenTimetableDao.create( {createdAt:ago3Weeks, offerGroup:"G2", tokens:5, userId} as ITokenTimetable<ObjectId> )
+    await tokenTimetableDao.create( {createdAt:ago2Weeks, offerGroup:"G2", tokens:-8, userId} as ITokenTimetable<ObjectId> )
+    await tokenTimetableDao.create( {createdAt:ago1Week, offerGroup:"G2", tokens:13, userId} as ITokenTimetable<ObjectId> )
+
+    const compareFn = (a, b) => a._id.localeCompare(b._id);
+    const consumptionPerOfferGroups = (await tokenTimetableDao.checkTokens(ago3Months, now)).sort(compareFn);
+    const consumptionPerOfferGroupsShort = (await tokenTimetableDao.checkTokens(ago3Months, ago3Weeks)).sort(compareFn);
+    const consumptionPerOfferGroupsAll = (await tokenTimetableDao.checkTokens(ago3Months, now, false)).sort(compareFn);
+    const consumptionPerOfferGroupsShortAll = (await tokenTimetableDao.checkTokens(ago3Months, ago3Weeks, false)).sort(compareFn);
+
+    // Assert
+    expect(Array.isArray(consumptionPerOfferGroups)).toBe(true);
+    expect(consumptionPerOfferGroups.length).toBe(2);
+    expect(consumptionPerOfferGroups[0]._id).toBe("G1");
+    expect(consumptionPerOfferGroups[0].totalTokens).toBe(-21);
+
+    expect(consumptionPerOfferGroups[1]._id).toBe("G2");
+    expect(consumptionPerOfferGroups[1].totalTokens).toBe(-12);
+
+    expect(consumptionPerOfferGroupsShort[0]._id).toBe("G1");
+    expect(consumptionPerOfferGroupsShort[0].totalTokens).toBe(-6);
+
+    expect(consumptionPerOfferGroupsShort[1]._id).toBe("G2");
+    expect(consumptionPerOfferGroupsShort[1].totalTokens).toBe(-4);
+
+    expect(consumptionPerOfferGroupsAll[0]._id).toBe("G1");
+    expect(consumptionPerOfferGroupsAll[0].totalTokens).toBe(79);
+
+    expect(consumptionPerOfferGroupsAll[1]._id).toBe("G2");
+    expect(consumptionPerOfferGroupsAll[1].totalTokens).toBe(208);
+
+    expect(consumptionPerOfferGroupsShortAll[0]._id).toBe("G1");
+    expect(consumptionPerOfferGroupsShortAll[0].totalTokens).toBe(94);
+
+    expect(consumptionPerOfferGroupsShortAll[1]._id).toBe("G2");
+    expect(consumptionPerOfferGroupsShortAll[1].totalTokens).toBe(198);
+    /* eslint-enable prettier/prettier */
+
+  });
+  it("should sum negative token time table", async () => {
+    const tokenTimetableDao = mongooseDaoFactory.getTokenTimetableDao();
+    const userId = newObjectId();
+    const now = new Date();
+    const ago3Months = addMonths(now, -3);
+    const ago2Months = addMonths(now, -2);
+    const ago1Month = addMonths(now, -1);
+    const ago3Weeks = addDays(now, -21);
+    const ago2Weeks = addDays(now, -14);
+    const ago1Week = addDays(now, -7);
+    /* eslint-disable prettier/prettier */
+    await tokenTimetableDao.create( {createdAt:ago3Months, offerGroup:"G1", tokens:100, userId} as ITokenTimetable<ObjectId> )
+    await tokenTimetableDao.create( {createdAt:ago3Months, offerGroup:"G1", tokens:-1, userId} as ITokenTimetable<ObjectId> )
+    await tokenTimetableDao.create( {createdAt:ago2Months, offerGroup:"G1", tokens:-2, userId} as ITokenTimetable<ObjectId> )
+    await tokenTimetableDao.create( {createdAt:ago1Month, offerGroup:"G1", tokens:-3, userId} as ITokenTimetable<ObjectId> )
+
+    await tokenTimetableDao.create( {createdAt:ago3Weeks, offerGroup:"G1", tokens:-4, userId} as ITokenTimetable<ObjectId> )
+    await tokenTimetableDao.create( {createdAt:ago2Weeks, offerGroup:"G1", tokens:-5, userId} as ITokenTimetable<ObjectId> )
+    await tokenTimetableDao.create( {createdAt:ago1Week, offerGroup:"G1", tokens:-6, userId} as ITokenTimetable<ObjectId> )
+
+    await tokenTimetableDao.create( {createdAt:ago3Months, offerGroup:"G2", tokens:200, userId} as ITokenTimetable<ObjectId> )
+    await tokenTimetableDao.create( {createdAt:ago3Months, offerGroup:"G2", tokens:-1, userId} as ITokenTimetable<ObjectId> )
+    await tokenTimetableDao.create( {createdAt:ago2Months, offerGroup:"G2", tokens:2, userId} as ITokenTimetable<ObjectId> )
+    await tokenTimetableDao.create( {createdAt:ago1Month, offerGroup:"G2", tokens:-3, userId} as ITokenTimetable<ObjectId> )
+
+    await tokenTimetableDao.create( {createdAt:ago3Weeks, offerGroup:"G2", tokens:-5, userId} as ITokenTimetable<ObjectId> )
+    await tokenTimetableDao.create( {createdAt:ago2Weeks, offerGroup:"G2", tokens:-8, userId} as ITokenTimetable<ObjectId> )
+    await tokenTimetableDao.create( {createdAt:ago1Week, offerGroup:"G2", tokens:13, userId} as ITokenTimetable<ObjectId> )
+
+    const consumptionPerOfferGroups1 = (await tokenTimetableDao.consumptionInDateRange("G1", ago3Months, now));
+    const consumptionPerOfferGroups1Short = (await tokenTimetableDao.consumptionInDateRange("G1", ago3Months, ago3Weeks));
+    const consumptionPerOfferGroups2 = (await tokenTimetableDao.consumptionInDateRange("G2", ago3Months, now));
+    const consumptionPerOfferGroups2Short = (await tokenTimetableDao.consumptionInDateRange("G2", ago3Months, ago3Weeks));
+
+    // Assert
+    expect(consumptionPerOfferGroups1).toBe(-21);
+    expect(consumptionPerOfferGroups2).toBe(-17);
+
+    expect(consumptionPerOfferGroups1Short).toBe(-6);
+    expect(consumptionPerOfferGroups2Short).toBe(-4);
+
+    /* eslint-enable prettier/prettier */
+
   });
 
   // TODO should correctly override offers with unlocked offers
@@ -321,7 +437,7 @@ describe("BaseService.getActiveSubscriptions", () => {
     service = new PaymentService<ObjectId>(
       mongooseDaoFactory,
       paymentClientMock,
-      "usd"
+      "usd",
     );
     await prefillOrdersForTests(service);
   });
@@ -334,7 +450,7 @@ describe("BaseService.getActiveSubscriptions", () => {
     // Create a spy on the real findByUserId method
     const findByUserIdSpy = jest.spyOn(
       mongooseDaoFactory.getUserCreditsDao(),
-      "findByUserId"
+      "findByUserId",
     );
 
     // Call the getActiveSubscriptions method
@@ -356,13 +472,13 @@ describe("BaseService.getActiveSubscriptions", () => {
     // Assert that activeSubscriptions contain only paid subscriptions
     expect(Array.isArray(userCredits.subscriptions)).toEqual(true);
     const ebEnterprise = userCredits.subscriptions.find(
-      (subs) => subs.offerGroup == OFFER_GROUP.EbEnterprise
+      (subs) => subs.offerGroup == OFFER_GROUP.EbEnterprise,
     );
     expect(ebEnterprise).toBeTruthy();
     expect(ebEnterprise!.status).toEqual("pending");
     expect(ebEnterprise!.offerId).toBeTruthy();
     const vipEventTalk = userCredits.subscriptions.find(
-      (subs) => subs.offerGroup == OFFER_GROUP.VipEventTalk
+      (subs) => subs.offerGroup == OFFER_GROUP.VipEventTalk,
     );
     expect(vipEventTalk).toBeTruthy();
     expect(vipEventTalk!.status).toEqual("pending");
@@ -375,7 +491,7 @@ describe("BaseService.getActiveSubscriptions", () => {
       markModified: jest.fn(),
       orderId: newObjectId(),
       status: "paid",
-      userId: sampleUserId
+      userId: sampleUserId,
     } as unknown as IOrder<ObjectId>;
     try {
       // Act: The real implementation would check if the order was really paid, we're using {@link StripeMock} here to bypass that
@@ -383,7 +499,7 @@ describe("BaseService.getActiveSubscriptions", () => {
     } catch (error) {
       expect(error).toBeInstanceOf(PaymentError);
       expect((error as PaymentError).message).toMatch(
-        "has no subscription for order"
+        "has no subscription for order",
       );
       return; // Exit the test function
     }
@@ -394,7 +510,7 @@ describe("BaseService.getActiveSubscriptions", () => {
   it("should update subscriptions on afterExecute with a 'paid' order status", async () => {
     let userCredits = await service.loadUserCredits(sampleUserId);
     let ebEnterprise = userCredits.subscriptions.find(
-      (subs) => subs.offerGroup == OFFER_GROUP.EbEnterprise
+      (subs) => subs.offerGroup == OFFER_GROUP.EbEnterprise,
     );
     const paidOrder = {
       _id: ebEnterprise!.orderId,
@@ -404,7 +520,7 @@ describe("BaseService.getActiveSubscriptions", () => {
       orderId: ebEnterprise!.orderId,
       save: jest.fn(),
       status: "paid",
-      userId: sampleUserId
+      userId: sampleUserId,
     } as unknown as IOrder<ObjectId>;
 
     //The Mock emulates a check that the order is really paid in the payment system, and returns an order with an updated status
@@ -417,7 +533,7 @@ describe("BaseService.getActiveSubscriptions", () => {
     // Assert
     userCredits = await service.loadUserCredits(sampleUserId);
     ebEnterprise = userCredits.subscriptions.find(
-      (subs) => subs.offerGroup == OFFER_GROUP.EbEnterprise
+      (subs) => subs.offerGroup == OFFER_GROUP.EbEnterprise,
     );
 
     // Assert that activeSubscriptions contain only paid subscriptions

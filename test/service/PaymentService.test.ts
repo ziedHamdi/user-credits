@@ -195,7 +195,7 @@ describe("PaymentService.updateOfferGroup", () => {
     async () => {
       order.cycle = "monthly"; // order a week
       order.quantity = 4; // a total of three weeks
-      order.starts = new Date(Date.parse("04 Dec 2023"));
+      order.starts = new Date(Date.parse("04 Dec 2050"));
       order.tokenCount = 501;
       order.total = 100; // checked before accepting as "paid"
       order.currency = "eur"; // checked before accepting as "paid"
@@ -209,7 +209,7 @@ describe("PaymentService.updateOfferGroup", () => {
         .getOrderDao()
         .findById(order._id);
       // Assert
-      expect(updated.expires).toEqual(new Date(Date.parse("04 Apr 2024")));
+      expect(updated.expires).toEqual(new Date(Date.parse("04 Apr 2051")));
       expect(updated.tokenCount).toEqual(2004);
       expect(userCredits.offers[0].expires).toEqual(updated.expires);
       expect(userCredits.offers[0].tokens).toEqual(updated.tokenCount);

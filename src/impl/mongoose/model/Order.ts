@@ -10,7 +10,15 @@ const orderStatusSchema = new Schema<IOrderStatus>({
   message: String,
   payload: String,
   status: {
-    enum: ["pending", "paid", "refused", "error", "inconsistent", "partial"],
+    enum: [
+      "pending",
+      "paid",
+      "refused",
+      "error",
+      "inconsistent",
+      "partial",
+      "expired",
+    ],
     required: true,
     type: String,
   },
@@ -65,7 +73,15 @@ const orderSchema = new Schema<IMongooseOrder>(
     quantity: Number,
     starts: Date,
     status: {
-      enum: ["pending", "paid", "refused", "error", "inconsistent", "partial"],
+      enum: [
+        "pending",
+        "paid",
+        "refused",
+        "error",
+        "inconsistent",
+        "partial",
+        "expired",
+      ],
       required: true,
       type: String,
     },
