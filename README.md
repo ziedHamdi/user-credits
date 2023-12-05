@@ -1,10 +1,15 @@
 # UserCredits
 
-UserCredits is an open-source library designed to simplify the implementation of pay-as-you-go features in your web or mobile applications. Whether you're building a subscription-based service, a digital marketplace, or an e-commerce platform, UserCredits provides a flexible and technology-agnostic solution to manage user credits and token-based payments.
+@user-credits is an open-source library that how no dependencies. It is designed to simplify the implementation of pay-as-you-go features in your back-end services or microservices. 
 
-A demo of this library is [available at this link](https://user-credits.dev)
-![img.png](static/offers.png)
-![img.png](static/credits.png)
+Whether you're building a subscription-based service, a digital marketplace, or an e-commerce platform, UserCredits provides a flexible and technology-agnostic solution to manage user credits and token-based payments.
+
+Today it focuses on pre-paid workflows, the version 2 will introduce post-pay flows with free credits and other intersting features.
+
+[![img.png](docs/see_demo.png)](http://user-credits.dev)
+# Core package
+This package is published under [@use-credits/core](https://www.npmjs.com/package/@user-credits/core). It doesn't have any dependency; it only contains the core concept interfaces and basic database-payment-agnostic implementation services. 
+You can find a mongoose + stripe implementation [here](https://www.npmjs.com/package/@user-credits/stripe-mongoose)
 
 ## Getting started guide
 To understand how offers are declared, orders executed and payments tracked a fully explained guide is available:
@@ -16,7 +21,7 @@ To understand how offers are declared, orders executed and payments tracked a fu
  - [Features](#Features)
  - [Architecture](#Architecture)
    - [1. Declarative Interfaces](#1-declarative-interfaces)
-   - [2. Technology-Agnostic Logic](2-technology-agnostic-logic)
+   - [2. Technology-Agnostic Logic](#2-technology-agnostic-logic)
    - [3. Implementation Layer](#3-implementation-layer)
      - [Database Abstraction](#database-abstraction)
      - [Payment Platform Integration](#payment-platform-integration)
@@ -28,15 +33,18 @@ To understand how offers are declared, orders executed and payments tracked a fu
  - [Contributing](#Contributing)
  - [License](#License)
 
+[![img.png](docs/buy_me_a_coffee.png)](https://www.buymeacoffee.com/credits)
 ## Features
 
-- **Token Abstraction:** UserCredits introduces the concept of tokens, which abstracts real-world currency to provide flexibility in pricing models. Users can purchase tokens that can be used to pay for services, products, or subscriptions.
+  - **Token Abstraction:** UserCredits introduces the concept of tokens, which abstracts real-world currency to provide flexibility in pricing models. Users can purchase tokens that can be used to pay for services, products, or subscriptions.
+
+  - **Combined Offers:** Create bundled offers, mimicking the versatility of mobile service packages with varying quotas for calls, data, and additional services like mobile TV or games.
 
   - **Real-Time Credit Tracking:** Keep track of your users' token balances and consumption in real time. Users can easily view their credit history and remaining tokens.
 
   - **Payment Integration:** UserCredits is designed to integrate seamlessly with popular payment gateways, starting with Stripe. Accept payments from your users for token purchases or services rendered.
 
-  - **Flexible Offers and Subscriptions:** Customize your pricing, discounts, and subscription durations for different offers using the `offer.overridingKey` and `weight` options. These features allow you to create tailored subscription plans, making it easier for users to enjoy lower prices on related offers.
+  - **Flexible Offers and Subscriptions:** Customize your pricing, discounts, and subscription durations for different offers using the `offer.overridingKey` and `weight` options. These features allow you to create tailored subscription plans, making it easier to attract users with lower prices unlocked by purchasing some offers.
 
   - **Offer Group Logic:** With the `offer.offerGroup` feature, users can subscribe to multiple offers and services simultaneously while keeping each offer's token balance separated from the others. Conceptually related offers can share the same `offerGroup` value, allowing you to compute the expiry date accordingly. For example, offers in the group 'mobileTV' can offer weekly, monthly, and yearly subscriptions. If a user subscribes for a month and later opts for a yearly subscription while the month hasn't ended, the expiry date of the subscription will combine both durations, providing a seamless and flexible experience.
 
@@ -118,6 +126,24 @@ Retrieve user credits for a given user. User credits represent a list of credits
 const userCredits = await service.getUserCredits(userId);
 ```
 
+### 6. Consume Tokens
+
+Anytime, even if the order is not paid yet, users can call token consumption (this is intentional to allow post-paid behavior). So as mentioned in the start of the document: the library supposes it behaves in a safe environment, where you checked all grants before calling it. The lib gives you the means to check if an operation is possible, but doesn't do it for you when multiple scenarios are possible.
+```javascript
+await service.tokensConsumed(userId: K, offerGroup: string, count: number);
+```
+
+### 7. Deduce Expired Orders Credits
+
+Deduct credits from grants that were not utilized before their expiry date. This function serves to warn users about low credits and imminent expiry orders. 
+```javascript
+await service.checkForExpiredOrders(userId: K, warn?: number, low?: { min: number; offerGroup: string }[])
+```
+You will be using this function to warn users about their low credits and soon expiring orders.
+
+ - The _**warn**_ parameter signifies the time in milliseconds before the expiry date of orders that triggers a warning. 
+ - The _**low**_ parameter offers fine-grained control, allowing warnings based on token counts for specific use cases (e.g., remaining mobile data or unused conference talk credits). It provides a tailored approach for diverse scenarios, ensuring relevant warnings for each offerGroup. 
+
 ## IPaymentClient Interface
 
 The `IPaymentClient` interface abstracts payment processing operations. It allows you to integrate payment gateways seamlessly without locking your application to a specific technology. To use it, follow these steps:
@@ -186,6 +212,8 @@ To adapt to that constraint, TestContainerSingleton.getInstance() now accepts a 
 ## Contributing
 
 UserCredits is an open-source project, and we welcome contributions from the community. Whether you want to add new features, improve documentation, or report issues, your help is valuable. Feel free to [contact me](https://twitter.com/zhamdi) or to fork the project.
+
+[![img.png](docs/buy_me_a_coffee.png)](https://www.buymeacoffee.com/credits)
 
 ## License
 
