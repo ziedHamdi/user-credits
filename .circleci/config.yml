@@ -5,7 +5,7 @@ jobs:
   build: # this can be any name you choose
     docker:
       - image: node:18-bullseye #raw 18 fails: https://github.com/nodejs/docker-node/issues/1916
-    resource_class: large
+    resource_class: medium+
     parallelism: 10
 
     steps:
