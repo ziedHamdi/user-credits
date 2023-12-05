@@ -15,8 +15,9 @@ import {
   IMinimalId,
   IOffer,
   IOrder,
-  IOrderDao, ITokenTimetable,
-  IUserCredits
+  IOrderDao,
+  ITokenTimetable,
+  IUserCredits,
 } from "@user-credits/core"; // Import the actual path
 import {
   BaseService,
@@ -39,7 +40,6 @@ import {
 import { toHaveSameFields } from "../extend/sameObjects";
 import { initMocks, newObjectId, ObjectId } from "./mocks/BaseService.mocks";
 import { StripeMock } from "./mocks/StripeMock";
-import { ConsumptionPerOfferGroup } from "../../../user-credits-core/src";
 
 class ExtendedBaseService<K extends IMinimalId> extends BaseService<K> {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -51,13 +51,7 @@ class ExtendedBaseService<K extends IMinimalId> extends BaseService<K> {
     await super.computeStartDate(order);
   }
 
-  payOrder(orderId: K): Promise<IOrder<K>> {
-    return Promise.resolve(undefined);
-  }
-
-  payOrder(orderId: K): Promise<IOrder<K>> {
-    return Promise.resolve(undefined);
-  }
+  payOrder = jest.fn();
 }
 
 describe("computeStartDate", () => {
@@ -365,7 +359,6 @@ describe("Offer Database Integration Test", () => {
     expect(consumptionPerOfferGroupsShortAll[1]._id).toBe("G2");
     expect(consumptionPerOfferGroupsShortAll[1].totalTokens).toBe(198);
     /* eslint-enable prettier/prettier */
-
   });
   it("should sum negative token time table", async () => {
     const tokenTimetableDao = mongooseDaoFactory.getTokenTimetableDao();
@@ -409,7 +402,6 @@ describe("Offer Database Integration Test", () => {
     expect(consumptionPerOfferGroups2Short).toBe(-4);
 
     /* eslint-enable prettier/prettier */
-
   });
 
   // TODO should correctly override offers with unlocked offers
