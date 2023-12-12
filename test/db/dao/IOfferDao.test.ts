@@ -61,7 +61,7 @@ describe("OfferDao specific methods", () => {
       const offers = await offerDao.loadOffers({});
       // Write your Jest assertions to check if the offers were loaded correctly
       expect(Array.isArray(offers)).toBe(true);
-      expect(offers.length).toBe(18);
+      expect(offers.length).toBe(19);
     });
     it("should load all offers if passed an empty tag list with allTags on", async () => {
       const offers = await offerDao.loadOffers({
@@ -70,7 +70,7 @@ describe("OfferDao specific methods", () => {
       });
       // Write your Jest assertions to check if the offers were loaded correctly
       expect(Array.isArray(offers)).toBe(true);
-      expect(offers.length).toBe(18);
+      expect(offers.length).toBe(19);
     });
   });
 
@@ -116,7 +116,7 @@ describe("OfferDao specific methods", () => {
       );
       // Write your Jest assertions to check if the sub-offers were loaded correctly
       expect(Array.isArray(subOffers)).toBe(true);
-      expect(subOffers.length).toBe(5);
+      expect(subOffers.length).toBe(2);
     }, 10000);
   });
 
@@ -126,7 +126,7 @@ describe("OfferDao specific methods", () => {
       const offers = await offerDao.loadOffers();
       // Write your Jest assertions to check if the offers were loaded correctly
       expect(Array.isArray(offers)).toBe(true);
-      expect(offers.length).toBe(18);
+      expect(offers.length).toBe(19);
     });
     it("should load 13 subscription offers as in the article", async () => {
       const params = {
@@ -176,15 +176,12 @@ describe("OfferDao specific methods", () => {
           "EbScaleUp",
           "EbScaleUp",
           "EbStartup",
-          "1-VIP-event",
-          "3-VIP-events",
           "EbEnterprise",
           "1-article-month",
           "2-articles-month",
-          "7-VIP-events",
         ]),
       );
-      expect(offers.length).toBe(11);
+      expect(offers.length).toBe(8);
     });
     it("should load no offers unlocked by (the standard) Startup offer group", async () => {
       const params = {
@@ -206,24 +203,26 @@ describe("OfferDao specific methods", () => {
         expect.arrayContaining([
           "1-article-month",
           "2-articles-month",
-          "1-VIP-event",
-          "3-VIP-events",
-          "7-VIP-events",
         ]),
       );
-      expect(offers.length).toBe(5);
+      expect(offers.length).toBe(2);
     });
     it("should load 3 offers under the 'VipEventTalk' offerGroup", async () => {
       const params = {
-        offerGroup: OFFER_GROUP.VipEventTalk,
+        offerGroup: OFFER_GROUP.AiTokens,
       };
       const offers = await offerDao.loadOffers(params);
       // Write your Jest assertions to check if the offers were loaded correctly
       expect(Array.isArray(offers)).toBe(true);
       expect(offerNames(offers)).toEqual(
-        expect.arrayContaining(["1-VIP-event", "3-VIP-events", "7-VIP-events"]),
+        expect.arrayContaining([
+          "_20tokens",
+          "_100tokens",
+          "_300tokens",
+          "_700tokens",
+        ]),
       );
-      expect(offers.length).toBe(3);
+      expect(offers.length).toBe(4);
     });
   });
 });

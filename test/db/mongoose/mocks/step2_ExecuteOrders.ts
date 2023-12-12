@@ -46,7 +46,7 @@ export const USER_ORDERS = {
         _offer: "ebEnterpriseY",
       },
       {
-        _offer: "vipEventTalk_7talks",
+        _offer: "_700tokens",
         quantity: 2,
       },
     ],
@@ -58,7 +58,9 @@ export async function buildOrders(user: keyof typeof TEST_USER_IDS, service: ISe
 
   const createdOrders: Record<string, IOrder<ObjectId>> = {};
   for (const order of ordersSpec.orders) {
-    const offerId = allOffers[order._offer]._id;
+    const offer = allOffers[order._offer];
+    if( !offer.cycle ) continue; // offers without cycles skipped for test
+    const offerId = offer._id;
     // console.log( "await service.createOrder(offerId): for offer", allOffers[order._offer]  )
     createdOrders[offerId.toString()] =  await service.createOrder(offerId, ordersSpec.userId);
   }

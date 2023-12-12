@@ -286,7 +286,7 @@ describe("Offer Database Integration Test", () => {
         "Startup",
         "ScaleUp",
         "EbEnterprise",
-        "VipEventTalk",
+        "AiTokens",
       ]),
     );
     expect(orders.length).toBe(5);
@@ -469,12 +469,12 @@ describe("BaseService.getActiveSubscriptions", () => {
     expect(ebEnterprise).toBeTruthy();
     expect(ebEnterprise!.status).toEqual("pending");
     expect(ebEnterprise!.offerId).toBeTruthy();
-    const vipEventTalk = userCredits.subscriptions.find(
-      (subs) => subs.offerGroup == OFFER_GROUP.VipEventTalk,
+    const aiTokens = userCredits.subscriptions.find(
+      (subs) => subs.offerGroup == OFFER_GROUP.AiTokens,
     );
-    expect(vipEventTalk).toBeTruthy();
-    expect(vipEventTalk!.status).toEqual("pending");
-    expect(vipEventTalk!.offerId).toBeTruthy();
+    expect(aiTokens).toBeTruthy();
+    expect(aiTokens!.status).toEqual("pending");
+    expect(aiTokens!.offerId).toBeTruthy();
   });
   it("should throw error if afterExecute is called with an unknown subscription (without createOrder being called previously)", async () => {
     const paidOrder = {

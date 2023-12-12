@@ -157,7 +157,7 @@ describe("PaymentService.updateOfferGroup", () => {
 
     // Assert
     expect(newOffer.offerGroup).toEqual(order.offerGroup);
-    expect(newOffer.tokens).toEqual(300); // quantity: 3 x 100 in order
+    expect(newOffer.tokens).toEqual(49 * 12 * 3); // quantity: 3 x 49 x 12 months in order
     // FIXME there's an hour of difference between the expected and found value. I have no clue from where it could come
     // expect(newOffer.expires).toEqual(
     //   new Date(
