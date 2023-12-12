@@ -200,10 +200,7 @@ describe("OfferDao specific methods", () => {
       // Write your Jest assertions to check if the offers were loaded correctly
       expect(Array.isArray(offers)).toBe(true);
       expect(offerNames(offers)).toEqual(
-        expect.arrayContaining([
-          "1-article-month",
-          "2-articles-month",
-        ]),
+        expect.arrayContaining(["1-article-month", "2-articles-month"]),
       );
       expect(offers.length).toBe(2);
     });
