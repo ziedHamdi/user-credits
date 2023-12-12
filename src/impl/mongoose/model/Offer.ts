@@ -8,12 +8,14 @@ export type IMongooseOffer = IOffer<ObjectId> & Document;
 
 const offerSchema = new Schema<IMongooseOffer>({
   appendDate: Boolean,
-  combinedItems: {
-    // ICombinedOffer
-    offerGroup: String,
-    offerId: Schema.ObjectId,
-    quantity: Number,
-  },
+  combinedItems: [
+    {
+      // ICombinedOffer
+      offerGroup: String,
+      offerId: Schema.ObjectId,
+      quantity: Number,
+    },
+  ],
   currency: String,
   customCycle: Number,
   cycle: {

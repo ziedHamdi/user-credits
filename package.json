@@ -2,7 +2,7 @@
   "name": "@user-credits/stripe-mongoose",
   "author": "Zied Hamdi",
   "type": "module",
-  "version": "1.0.0-beta",
+  "version": "1.0.1-beta",
   "license": "MIT",
   "keywords": [
     "user-credits",
@@ -36,7 +36,7 @@
     "buildTrace": "rmdir /s /q .\\dist & npx tsc --traceResolution",
     "lint": "npx eslint --fix .",
     "prepublishOnly": "pnpm lint && pnpm build && pnpm testPublish",
-    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage --coverageDirectory='coverage'",
     "testWatch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watchAll --no-cache --coverage --coverageDirectory='coverage'",
     "testPublish": "node --experimental-vm-modules node_modules/jest/bin/jest.js --no-cache"
   },
