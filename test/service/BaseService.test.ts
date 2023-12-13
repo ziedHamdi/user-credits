@@ -432,7 +432,7 @@ describe("BaseService.getActiveSubscriptions", () => {
       "usd",
     );
     await prefillOrdersForTests(service);
-  });
+  }, 1000 * 60);
 
   afterEach(async () => {
     await mongoMemoryServer.stop(false);
@@ -499,6 +499,59 @@ describe("BaseService.getActiveSubscriptions", () => {
     // If no error was thrown, fail the test
     fail("Expected InvalidOrderError to be thrown");
   });
+  it(
+    "should insert suborders on afterExecute with a 'paid' order status",
+    async () => {
+      let userCredits = await service.loadUserCredits(sampleUserId);
+      let ebEnterprise = userCredits.subscriptions.find(
+        (subs) => subs.offerGroup == OFFER_GROUP.EbEnterprise,
+      );
+      const orderId = ebEnterprise!.orderId;
+      const paidOrder = {
+        _id: orderId,
+        cycle: "monthly",
+        markModified: jest.fn(),
+        offerGroup: "GT1",
+        offerId: ebEnterprise.offerId,
+        orderId: orderId,
+        save: jest.fn(),
+        status: "paid",
+        total: 1,
+        userId: sampleUserId,
+      } as unknown as IOrder<ObjectId>;
+
+      //The Mock emulates a check that the order is really paid in the payment system, and returns an order with an updated status
+      // eslint-disable-next-line
+    (paymentClientMock.afterPaymentExecuted = jest.fn()).mockResolvedValue(paidOrder);
+
+      // Act: The real implementation would check if the order was really paid, we're using {@link StripeMock} here to bypass that
+      await service.afterExecute({ ...paidOrder, status: "pending" }); // a paid status would be interpreted as an already paid order and throw an exception
+
+      // Assert
+      const order = await service
+        .getDaoFactory()
+        .getOrderDao()
+        .findById(orderId);
+      console.log(order);
+
+      userCredits = await service.loadUserCredits(sampleUserId);
+      ebEnterprise = userCredits.subscriptions.find(
+        (subs) => subs.offerGroup == OFFER_GROUP.EbEnterprise,
+      );
+
+      // Assert that activeSubscriptions contain only paid subscriptions
+      expect(ebEnterprise!.status).toEqual("paid");
+      expect(ebEnterprise!.tokens).toEqual(1800);
+      const aiTokens = userCredits.subscriptions.find(
+        (subs) => subs.offerGroup == OFFER_GROUP.AiTokens,
+      );
+
+      // Assert that activeSubscriptions contain only paid subscriptions
+      expect(aiTokens!.status).toEqual("paid");
+      expect(aiTokens!.tokens).toEqual(700);
+    },
+    1000 * 60,
+  );
   it("should update subscriptions on afterExecute with a 'paid' order status", async () => {
     let userCredits = await service.loadUserCredits(sampleUserId);
     let ebEnterprise = userCredits.subscriptions.find(
