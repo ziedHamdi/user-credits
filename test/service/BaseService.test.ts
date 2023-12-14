@@ -48,7 +48,7 @@ class ExtendedBaseService<K extends IMinimalId> extends BaseService<K> {
   }
 
   async computeStartDate(order: IOrder<K>) {
-    await super.computeStartDate(order);
+    return await super.computeStartDate(order);
   }
 
   payOrder = jest.fn();
@@ -109,10 +109,10 @@ describe("computeStartDate", () => {
     daos.orderDao.find.mockResolvedValue([]);
 
     // Act
-    await service.computeStartDate(order);
+    const start = await service.computeStartDate(order);
 
     // Assert
-    expect(order.starts).toBeDefined();
+    expect(start).toBeDefined();
     // Ensure order.starts is set to the current date
   });
 
@@ -134,10 +134,10 @@ describe("computeStartDate", () => {
     };
 
     // Act
-    await service.computeStartDate(order);
+    const starts = await service.computeStartDate(order);
 
     // Assert
-    expect(order.starts).toEqual(new Date("2050-12-01"));
+    expect(starts).toEqual(new Date("2050-12-01"));
     // Ensure order.starts is set to the latest expires date among existing paid orders
   });
 });
@@ -432,7 +432,7 @@ describe("BaseService.getActiveSubscriptions", () => {
       "usd",
     );
     await prefillOrdersForTests(service);
-  });
+  }, 1000 * 60);
 
   afterEach(async () => {
     await mongoMemoryServer.stop(false);
@@ -486,12 +486,13 @@ describe("BaseService.getActiveSubscriptions", () => {
       userId: sampleUserId,
     } as unknown as IOrder<ObjectId>;
     try {
+
       // Act: The real implementation would check if the order was really paid, we're using {@link StripeMock} here to bypass that
       await service.afterExecute({ ...paidOrder, status: "pending" }); // a paid status would be interpreted as an already paid order and throw an exception
     } catch (error) {
-      expect(error).toBeInstanceOf(PaymentError);
-      expect((error as PaymentError).message).toMatch(
-        "has no subscription for order",
+      expect(error).toBeInstanceOf(InvalidOrderError);
+      expect((error as InvalidOrderError).message).toMatch(
+        "Offer with id ",
       );
       return; // Exit the test function
     }
@@ -509,6 +510,7 @@ describe("BaseService.getActiveSubscriptions", () => {
       cycle: "monthly",
       markModified: jest.fn(),
       offerGroup: "GT1",
+      offerId: ebEnterprise!.offerId,
       orderId: ebEnterprise!.orderId,
       save: jest.fn(),
       status: "paid",

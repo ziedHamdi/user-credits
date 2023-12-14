@@ -328,7 +328,7 @@ export async function prefillOffersForTests(daoFactory: IDaoFactory<ObjectId>) {
   // now save all the prepared data
   await Promise.all(
     Object.values(atomicOffers).map(async (offer) => {
-      console.log("inserting atomic ", offer.name);
+      // console.log("inserting atomic ", offer.name);
       await offer.save();
     }),
   );
@@ -373,7 +373,7 @@ export async function prefillOffersForTests(daoFactory: IDaoFactory<ObjectId>) {
 
   await Promise.all(
     Object.values(allOffers).map(async (offer) => {
-      console.log("inserting ", offer.name);
+      // console.log("inserting ", offer.name);
       await offer.save();
     }),
   );
