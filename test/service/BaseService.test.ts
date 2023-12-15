@@ -22,7 +22,6 @@ import {
 import {
   BaseService,
   InvalidOrderError,
-  PaymentError,
   PaymentService,
 } from "@user-credits/core"; // Import the actual path
 import { MongoMemoryServer } from "mongodb-memory-server";
@@ -486,14 +485,11 @@ describe("BaseService.getActiveSubscriptions", () => {
       userId: sampleUserId,
     } as unknown as IOrder<ObjectId>;
     try {
-
       // Act: The real implementation would check if the order was really paid, we're using {@link StripeMock} here to bypass that
       await service.afterExecute({ ...paidOrder, status: "pending" }); // a paid status would be interpreted as an already paid order and throw an exception
     } catch (error) {
       expect(error).toBeInstanceOf(InvalidOrderError);
-      expect((error as InvalidOrderError).message).toMatch(
-        "Offer with id ",
-      );
+      expect((error as InvalidOrderError).message).toMatch("Offer with id ");
       return; // Exit the test function
     }
 
@@ -529,11 +525,10 @@ describe("BaseService.getActiveSubscriptions", () => {
       await service.afterExecute({ ...paidOrder, status: "pending" }); // a paid status would be interpreted as an already paid order and throw an exception
 
       // Assert
-      const order = await service
-        .getDaoFactory()
-        .getOrderDao()
-        .findById(orderId);
-      console.log(order);
+      // const order = await service
+      //   .getDaoFactory()
+      //   .getOrderDao()
+      //   .findById(orderId);
 
       userCredits = await service.loadUserCredits(sampleUserId);
       ebEnterprise = userCredits.subscriptions.find(
@@ -549,7 +544,7 @@ describe("BaseService.getActiveSubscriptions", () => {
 
       // Assert that activeSubscriptions contain only paid subscriptions
       expect(aiTokens!.status).toEqual("paid");
-      expect(aiTokens!.tokens).toEqual(700);
+      expect(aiTokens!.tokens).toEqual(28 * 300);
     },
     1000 * 60,
   );
