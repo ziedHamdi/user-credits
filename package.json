@@ -2,7 +2,7 @@
   "name": "@user-credits/stripe-mongoose",
   "author": "Zied Hamdi",
   "type": "module",
-  "version": "1.0.3-beta",
+  "version": "1.0.4-beta",
   "license": "MIT",
   "keywords": [
     "user-credits",
@@ -67,7 +67,7 @@
     "node": ">=18"
   },
   "dependencies": {
-    "@user-credits/core": "^1.0.4-beta",
+    "@user-credits/core": "^1.0.5-beta",
     "awilix": "^9.0.0",
     "bson": "^6.1.0",
     "dotenv": "^16.3.1",
