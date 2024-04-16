@@ -1,6 +1,6 @@
 # UserCredits
 
-@user-credits is an open-source library that how no dependencies. It is designed to simplify the implementation of pay-as-you-go features in your back-end services or microservices. 
+@user-credits is an open-source library that has no dependencies. It is designed to simplify the implementation of pay-as-you-go features in your back-end services or microservices. 
 
 Whether you're building a subscription-based service, a digital marketplace, or an e-commerce platform, UserCredits provides a flexible and technology-agnostic solution to manage user credits and token-based payments.
 
